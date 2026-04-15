@@ -1,2 +1,6 @@
 node_modules
 .env
+seed.js
+get-cloudinary-urls.js
+image-urls.json
+categorized-images.json
