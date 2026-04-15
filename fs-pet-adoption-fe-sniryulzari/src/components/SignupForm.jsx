@@ -1,12 +1,9 @@
-import axios from "axios";
-import { useContext } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import FormInput from "../components/FormInput";
-import { UsersContext } from "../Context/Context-Users";
+import { signup } from "../api/users";
 
 function SignupForm(props) {
-  const {getServerUrl} = useContext(UsersContext);
   const { handleClose, handleLoginShow } = props;
   const [values, setValues] = useState({
     firstName: "",
@@ -48,7 +45,7 @@ function SignupForm(props) {
       errorMessage:
         "Phone Number should be 9-16 characters and should include only numbers",
       label: "Phone Number",
-      pattern: "^[0-9]{9,16}",
+      pattern: "^[0-9]{9,16}$",
       required: true,
     },
     {
@@ -84,10 +81,9 @@ function SignupForm(props) {
   ];
 
   const handleSubmit = async (e) => {
-    const url = `${getServerUrl()}/users/signup`;
+    e.preventDefault();
     try {
-      e.preventDefault();
-      const res = await axios.post(url, values);
+      const res = await signup(values);
       if (res.data.email.length > 0) {
         handleClose();
         handleLoginShow();
@@ -96,8 +92,7 @@ function SignupForm(props) {
         });
       }
     } catch (err) {
-      console.log(err);
-      toast.error(err.response.data, {
+      toast.error(err.response?.data ?? "Signup failed.", {
         position: toast.POSITION.TOP_RIGHT,
       });
     }

@@ -1,123 +1,79 @@
 const {
   getAllPetsModel,
-  AddPetModel,
+  addPetModel,
   getPetByIdModel,
   getAllUsersModel,
   deletePetModel,
   editPetModel,
 } = require("../Models/adminModel");
 
-async function getAllPets(req, res) {
+async function getAllPets(_req, res) {
   try {
     const allPets = await getAllPetsModel();
     res.send(allPets);
-    return allPets;
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Get all pets error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function addPet(req, res) {
   try {
-    const {
-      type,
-      breed,
-      name,
-      adoptionStatus,
-      height,
-      weight,
-      color,
-      bio,
-      hypoallergenic,
-      dietaryRestrictions,
-      imageUrl,
-    } = req.body;
-
-    const newPet = {
-      type: type,
-      breed: breed,
-      name: name,
-      adoptionStatus: adoptionStatus,
-      height: height,
-      weight: weight,
-      color: color,
-      bio: bio,
-      hypoallergenic: hypoallergenic,
-      dietaryRestrictions: dietaryRestrictions,
-      imageUrl: imageUrl,
-    };
-    const petId = await AddPetModel(newPet);
-
-    if (petId) {
-      res.send(petId);
-      return;
+    const { type, breed, name, adoptionStatus, height, weight, color, bio, hypoallergenic, dietaryRestrictions, imageUrl } = req.body;
+    if (!imageUrl) {
+      return res.status(400).send("Pet image is required");
     }
+    const newPet = { type, breed, name, adoptionStatus, height, weight, color, bio, hypoallergenic, dietaryRestrictions, imageUrl };
+    const pet = await addPetModel(newPet);
+    res.status(201).send(pet);
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Add pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function getPetById(req, res) {
   try {
-    const { petId } = req.params;
-    const petInfo = await getPetByIdModel(petId);
+    const petInfo = await getPetByIdModel(req.params.petId);
     res.send(petInfo);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Get pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
-async function getAllUsers(req, res) {
+async function getAllUsers(_req, res) {
   try {
     const allUsers = await getAllUsersModel();
     res.send(allUsers);
-    return allUsers;
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Get all users error:", err.message);
+    res.status(500).send("Server error");
   }
-};
+}
 
 async function deletePet(req, res) {
   try {
-    const petId = req.params.petId
-    const deletePet = await deletePetModel(petId);
-    res.send({ ok: true })
+    await deletePetModel(req.params.petId);
+    res.send({ ok: true });
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Delete pet error:", err.message);
+    res.status(500).send("Server error");
   }
-};
-
+}
 
 async function editPet(req, res) {
   try {
-    const {
-      type,
-      breed,
-      name,
-      adoptionStatus,
-      height,
-      weight,
-      color,
-      bio,
-      hypoallergenic,
-      dietaryRestrictions,
-      imageUrl
-    } = req.body;
-
-    const petId = req.body._id;
-    const pet = await editPetModel(req.body, petId);
-    res.send({ ok: true})
+    // Previously destructured 11 variables then ignored them all, passing req.body
+    // directly to the model. Now explicitly whitelisting what is allowed to update.
+    const { type, breed, name, adoptionStatus, height, weight, color, bio, hypoallergenic, dietaryRestrictions, imageUrl, _id } = req.body;
+    const updates = { type, breed, name, adoptionStatus, height, weight, color, bio, hypoallergenic, dietaryRestrictions, imageUrl };
+    await editPetModel(updates, _id);
+    res.send({ ok: true });
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Edit pet error:", err.message);
+    res.status(500).send("Server error");
   }
-};
+}
 
-module.exports = {
-  addPet,
-  getAllPets,
-  getPetById,
-  getAllUsers,
-  deletePet,
-  editPet,
-};
+module.exports = { addPet, getAllPets, getPetById, getAllUsers, deletePet, editPet };

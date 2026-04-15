@@ -1,88 +1,52 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
+import { Col, Row } from "react-bootstrap";
 import { UsersContext } from "../Context/Context-Users";
 import SearchPetCard from "../components/Search-PetCard";
-import axios from "axios";
-import { Col, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { getAdoptedPetInfo, getFosteredPetInfo } from "../api/pets";
+import { toast } from "react-toastify";
 
 function AdminUserPets() {
-  const [userAdoptedPetInfo, setUserAdoptedPetInfo] = useState([]);
-  const [userFosteredPetInfo, setUserFosteredPetInfo] = useState([]);
+  const [pets, setPets]     = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const { userPets, getServerUrl } = useContext(UsersContext);
+  const { userPets } = useContext(UsersContext);
   const navigate = useNavigate();
 
-  const adoptedPets = userPets.adoptPet;
-  const fosteredPets = userPets.fosterPet;
-
-  const getUserAdoptedPetsInfo = async () => {
-    try {
-      for (let key of adoptedPets) {
-        const url = `${getServerUrl()}/pets/myAdoptedPets/${key}`;
-        const res = await axios.get(url, {
-          withCredentials: true,
-        });
-        if (res.data._id) {
-          setUserAdoptedPetInfo((prev) => [...prev, res.data]);
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   useEffect(() => {
-    getUserAdoptedPetsInfo();
-  }, []);
+    const { adoptPet = [], fosterPet = [] } = userPets;
 
-  const getUserFosteredPetsInfo = async () => {
-    try {
-      for (let key of fosteredPets) {
-        const url = `${getServerUrl()}/pets/myFosteredPets/${key}`;
-        const res = await axios.get(url, {
-          withCredentials: true,
-        });
+    // Fixed: was two separate sequential for-loops (N+1). Now all pet fetches
+    // run in parallel and state is set once after all responses arrive.
+    Promise.all([
+      ...adoptPet.map((id) => getAdoptedPetInfo(id)),
+      ...fosterPet.map((id) => getFosteredPetInfo(id)),
+    ])
+      .then((results) => setPets(results.map((r) => r.data).filter((d) => d?._id)))
+      .catch(() => toast.error("Failed to load user's pets."))
+      .finally(() => setLoading(false));
+  }, [userPets]);
 
-        if (res.data._id) {
-          setUserFosteredPetInfo((prev) => [...prev, res.data]);
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getUserFosteredPetsInfo();
-  }, []);
+  if (loading) return <div className="admin-user-pets-container"><p>Loading...</p></div>;
 
   return (
     <div className="admin-user-pets-container">
+      <button className="back-button" onClick={() => navigate(-1)}><IoArrowBack size="1.1em" /></button>
       <h1 className="my-pets-header">
-        Pets that {userPets.firstName} {userPets.lastName} owned
+        Pets owned by {userPets.firstName} {userPets.lastName}
       </h1>
-      <div>
-        <Row xs={1} md={2} lg={3} xl={4} className="search-pet-results">
-          {userAdoptedPetInfo.map((pet) => (
-            <Col
-              key={pet._id}
-              onClick={() => navigate(`/petcard?petId=${pet._id}`)}
-              className="search-pet-results-column"
-            >
-              <SearchPetCard {...pet} />
-            </Col>
-          ))}
-          {userFosteredPetInfo.map((pet) => (
-            <Col
-              key={pet._id}
-              onClick={() => navigate(`/petcard?petId=${pet._id}`)}
-              className="search-pet-results-column"
-            >
-              <SearchPetCard {...pet} />
-            </Col>
-          ))}
-        </Row>
-      </div>
+      <Row xs={1} md={2} lg={3} xl={4} className="search-pet-results">
+        {pets.map((pet) => (
+          <Col
+            key={pet._id}
+            onClick={() => navigate(`/petcard?petId=${pet._id}`)}
+            className="search-pet-results-column"
+          >
+            <SearchPetCard {...pet} id={pet._id} />
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 }

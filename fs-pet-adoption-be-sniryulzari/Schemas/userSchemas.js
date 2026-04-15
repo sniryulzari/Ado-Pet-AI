@@ -9,11 +9,14 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     bio: { type: String },
-    isAdmin: { Boolean },
+    isAdmin: { type: Boolean, default: false },
     savedPet: { type: Array },
     adoptPet: { type: Array },
     fosterPet: { type: Array },
     petOwner: { type: String },
+    profileImage: { type: String },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
   },
   { collection: "users" }
 );

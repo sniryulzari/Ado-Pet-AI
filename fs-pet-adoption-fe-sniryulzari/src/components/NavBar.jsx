@@ -1,40 +1,57 @@
 import React, { useContext, useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { UsersContext } from "../Context/Context-Users";
+import { logout } from "../api/users";
+import { toast } from "react-toastify";
 import logo from "../Images/logo.jpg";
 import { Twirl as Hamburger } from "hamburger-react";
 
-function NavigationBar(props) {
-  const {
-    isAdmin,
-    isLogin,
-    setIsLogin,
-    setisAdmin,
-    firstName,
-    lastName,
-    getServerUrl,
-  } = useContext(UsersContext);
+// Nav links extracted into a variable so the desktop and mobile menus share
+// the same markup. Previously the entire link list was copy-pasted twice,
+// meaning any nav change had to be made in two places.
+function NavLinks({ isLoggedIn, isAdmin, firstName, lastName, onLogout }) {
+  return (
+    <>
+      <li><Link className="link" to="/">Home</Link></li>
+      <li><Link className="link" to="/search">Search</Link></li>
+
+      {isLoggedIn && (
+        <li><Link className="link" to="/mypets">My Pets</Link></li>
+      )}
+      {isLoggedIn && (
+        <li><Link className="link" to="/profile-Settings">Profile Settings</Link></li>
+      )}
+      {isAdmin && (
+        <li><Link className="link" to="/admin-Dashboard">Admin</Link></li>
+      )}
+      {isLoggedIn && (
+        <div className="nav-logout-container">
+          <li>
+            <span className="nav-welcome-user">Welcome {firstName} {lastName}</span>
+            <button className="logout" onClick={onLogout}>Logout</button>
+          </li>
+        </div>
+      )}
+    </>
+  );
+}
+
+function NavigationBar() {
+  const { isAdmin, isLoggedIn, setIsLoggedIn, setIsAdmin, firstName, lastName } =
+    useContext(UsersContext);
 
   const [isOpen, setOpen] = useState(false);
-
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    const url = `${getServerUrl()}/users/logout`;
     try {
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-      if (res.data.ok) {
-        localStorage.clear();
-        setIsLogin(false);
-        setisAdmin(false);
-        navigate("/");
-      }
-    } catch (err) {
-      console.log(err);
+      await logout();
+      localStorage.clear();
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      navigate("/");
+    } catch {
+      toast.error("Logout failed. Please try again.");
     }
   };
 
@@ -47,55 +64,13 @@ function NavigationBar(props) {
             <span className="nav-bar-logo-text">Ado-Pet</span>
           </a>
         </li>
-        <li>
-          <Link className="link" to="/">
-            Home
-          </Link>
-        </li>
-
-        <li>
-          <Link className="link" to="/search">
-            Search
-          </Link>
-        </li>
-
-        {isLogin ? (
-          <li>
-            <Link className="link" to="/mypets">
-              My Pets
-            </Link>
-          </li>
-        ) : null}
-
-        {isLogin ? (
-          <li>
-            <Link className="link" to="/profile-Settings">
-              Profile Settings
-            </Link>
-          </li>
-        ) : null}
-
-        {isAdmin && (
-          <li>
-            <Link className="link" to="/admin-Dashboard">
-              Admin
-            </Link>
-          </li>
-        )}
-
-        {isLogin ? (
-          <div className="nav-logout-container">
-            <li>
-              <span className="nav-welcome-user">
-                Welcome {firstName} {lastName}
-              </span>
-
-              <button className="logout" onClick={handleLogout}>
-                Logout
-              </button>
-            </li>
-          </div>
-        ) : null}
+        <NavLinks
+          isLoggedIn={isLoggedIn}
+          isAdmin={isAdmin}
+          firstName={firstName}
+          lastName={lastName}
+          onLogout={handleLogout}
+        />
       </ul>
 
       <ul className="mobile_nav">
@@ -106,77 +81,26 @@ function NavigationBar(props) {
           </a>
         </li>
         <li className="hamburger-container">
-        <Hamburger
-            className="hamburgerButton"
+          {/* Removed redundant onToggle — toggle={setOpen} already handles state */}
+          <Hamburger
             toggled={isOpen}
             toggle={setOpen}
             size={25}
             direction="left"
             rounded
-            onToggle={toggled => {
-              if (toggled) {
-                 // open a menu
-                 setOpen(true)
-              } else {
-                 // close a menu
-                 setOpen(false)
-              }
-            }}
           />
-          </li>
-        {isOpen ? (
+        </li>
+        {isOpen && (
           <ul className="nav_links_container">
-            <li>
-          <Link className="link" to="/">
-            Home
-          </Link>
-        </li>
-
-        <li>
-          <Link className="link" to="/search">
-            Search
-          </Link>
-        </li>
-
-        {isLogin ? (
-          <li>
-            <Link className="link" to="/mypets">
-              My Pets
-            </Link>
-          </li>
-        ) : null}
-
-        {isLogin ? (
-          <li>
-            <Link className="link" to="/profile-Settings">
-              Profile Settings
-            </Link>
-          </li>
-        ) : null}
-
-        {isAdmin && (
-          <li>
-            <Link className="link" to="/admin-Dashboard">
-              Admin
-            </Link>
-          </li>
-        )}
-
-        {isLogin ? (
-          <div className="nav-logout-container">
-            <li>
-              <span className="nav-welcome-user">
-                Welcome {firstName} {lastName}
-              </span>
-
-              <button className="logout" onClick={handleLogout}>
-                Logout
-              </button>
-            </li>
-          </div>
-        ) : null}
+            <NavLinks
+              isLoggedIn={isLoggedIn}
+              isAdmin={isAdmin}
+              firstName={firstName}
+              lastName={lastName}
+              onLogout={handleLogout}
+            />
           </ul>
-        ) : null}
+        )}
       </ul>
     </nav>
   );

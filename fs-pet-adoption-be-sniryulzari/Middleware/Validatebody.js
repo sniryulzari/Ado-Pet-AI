@@ -5,7 +5,9 @@ function validatebody(schema) {
   return (req, res, next) => {
     const valid = ajv.validate(schema, req.body);
     if (!valid) {
-      res.status(400).send(ajv.errors[0]);
+      // Send a plain string — never the raw AJV error object, which leaks schema structure
+      const msg = ajv.errors[0]?.message ?? "Invalid request body";
+      res.status(400).send(msg);
       return;
     }
     next(); 

@@ -1,102 +1,72 @@
-import axios from 'axios';
-import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Form, Col, Row } from 'react-bootstrap';
-import { PetContext } from '../Context/Context-Pets';
-import { toast } from 'react-toastify';
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
+import { Form, Col, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { PetContext } from "../Context/Context-Pets";
+import { getPetById, editPet } from "../api/admin";
+import Spinner from "../components/Spinner";
+
+const INITIAL_STATE = {
+  type: "", breed: "", name: "", adoptionStatus: "",
+  height: "", weight: "", color: "", bio: "",
+  hypoallergenic: "", dietaryRestrictions: "",
+};
 
 export default function AdminEditPet() {
-  const { petId, getServerUrl } = useContext(PetContext);
-  const [newPetInfo, setNewPetInfo] = useState({
-    type: '',
-    breed: '',
-    name: '',
-    adoptionStatus: '',
-    height: '',
-    weight: '',
-    color: '',
-    bio: '',
-    hypoallergenic: '',
-    dietaryRestrictions: '',
-  });
-  const [petImage, setPetImage] = useState();
+  const { petId } = useContext(PetContext);
+  const [newPetInfo, setNewPetInfo] = useState(INITIAL_STATE);
+  const [petImage, setPetImage]     = useState(null);
+  const [loading, setLoading]       = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const getPetInfo = async (petId) => {
-    const url = `${getServerUrl()}/admin/${petId}`;
-    try {
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-      setNewPetInfo(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   useEffect(() => {
-    getPetInfo(petId);
-  }, []);
+    if (!petId) return;
+    setLoading(true);
+    getPetById(petId)
+      .then((res) => setNewPetInfo(res.data))
+      .catch(() => toast.error("Failed to load pet details."))
+      .finally(() => setLoading(false));
+  }, [petId]);
 
   const handlePetInfo = (e) => {
-    setNewPetInfo({ ...newPetInfo, [e.target.name]: e.target.value });
-  };
-
-  const handleImage = (e) => {
-    setPetImage(e.target.files[0]);
+    setNewPetInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
     try {
-      e.preventDefault();
       const formData = new FormData();
-      for (let key in newPetInfo) {
-        formData.append(key, newPetInfo[key]);
-      }
-      formData.append('petImage', petImage);
+      Object.entries(newPetInfo).forEach(([key, val]) => formData.append(key, val));
+      if (petImage) formData.append("petImage", petImage);
 
-      for (let value of formData.values()) {
-        console.log(value);
-      }
-      const url = `${getServerUrl()}/admin/editpet`;
-      const res = await axios.put(url, formData, {
-        withCredentials: true,
-      });
-      if (res.data) {
-        toast.success('Pet Info updated Successfully  !', {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        navigate('/admin-Dashboard');
-      }
-    } catch (err) {
-      console.log(err);
+      await editPet(formData);
+      toast.success("Pet updated successfully!", { position: toast.POSITION.TOP_RIGHT });
+      navigate("/admin-Dashboard");
+    } catch {
+      toast.error("Failed to update pet. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  if (loading) return <Spinner />;
+
   return (
     <div className="admin-edit-pet-container">
+      <button className="back-button" onClick={() => navigate(-1)}><IoArrowBack size="1.1em" /></button>
       <div className="admin-edit-pet-header-container">
         <h1 className="admin-edit-pet-header">Edit Pet</h1>
-        <img
-          className="pet-img"
-          src={newPetInfo.imageUrl}
-          alt="pet"
-        />
+        {newPetInfo.imageUrl && <img className="pet-img" src={newPetInfo.imageUrl} alt="pet" />}
       </div>
       <Form className="admin-add-pet-form">
         <Row className="edit-pet-row">
-          <Form.Group
-            as={Col}
-            className="mb-3"
-            controlId="formBasicAdoptionStatus"
-          >
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Type</Form.Label>
-            <Form.Select
-              name="type"
-              onChange={handlePetInfo}
-              value={newPetInfo.type}
-            >
-              <option>Select Type of Pet</option>
+            <Form.Select name="type" onChange={handlePetInfo} value={newPetInfo.type}>
+              <option value="">Select Type of Pet</option>
               <option value="Dog">Dog</option>
               <option value="Cat">Cat</option>
               <option value="Horse">Horse</option>
@@ -104,46 +74,21 @@ export default function AdminEditPet() {
               <option value="Tiger">Tiger</option>
             </Form.Select>
           </Form.Group>
-
-          <Form.Group
-            as={Col}
-            className="mb-3"
-            controlId="formBasicBreedOfAnimal"
-          >
-            <Form.Label>Breed of Animal</Form.Label>
-            <Form.Control
-              name="breed"
-              onChange={handlePetInfo}
-              type="text"
-              placeholder="Breed of Pet"
-              value={newPetInfo.breed}
-            />
+          <Form.Group as={Col} className="mb-3">
+            <Form.Label>Breed</Form.Label>
+            <Form.Control name="breed" onChange={handlePetInfo} type="text" value={newPetInfo.breed} />
           </Form.Group>
         </Row>
 
         <Row className="edit-pet-row">
-          <Form.Group as={Col} className="mb-3" controlId="formBasicname">
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Name</Form.Label>
-            <Form.Control
-              name="name"
-              onChange={handlePetInfo}
-              type="text"
-              placeholder="Name"
-              value={newPetInfo.name}
-            />
+            <Form.Control name="name" onChange={handlePetInfo} type="text" value={newPetInfo.name} />
           </Form.Group>
-          <Form.Group
-            as={Col}
-            className="mb-3"
-            controlId="formBasicAdoptionStatus"
-          >
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Adoption Status</Form.Label>
-            <Form.Select
-              name="adoptionStatus"
-              onChange={handlePetInfo}
-              value={newPetInfo.adoptionStatus}
-            >
-              <option>Select Adoption Status</option>
+            <Form.Select name="adoptionStatus" onChange={handlePetInfo} value={newPetInfo.adoptionStatus}>
+              <option value="">Select Adoption Status</option>
               <option value="Adopted">Adopted</option>
               <option value="Fostered">Fostered</option>
               <option value="Available">Available</option>
@@ -152,41 +97,21 @@ export default function AdminEditPet() {
         </Row>
 
         <Row className="edit-pet-row">
-          <Form.Group as={Col} className="mb-3" controlId="formBasicHeight">
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Height (cm)</Form.Label>
-            <Form.Control
-              name="height"
-              onChange={handlePetInfo}
-              type="number"
-              placeholder="Enter Height"
-              value={newPetInfo.height}
-            />
+            <Form.Control name="height" onChange={handlePetInfo} type="number" value={newPetInfo.height} />
           </Form.Group>
-          <Form.Group as={Col} className="mb-3" controlId="formBasicWeight">
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Weight (kg)</Form.Label>
-            <Form.Control
-              name="weight"
-              onChange={handlePetInfo}
-              type="number"
-              placeholder="Enter Weight"
-              value={newPetInfo.weight}
-            />
+            <Form.Control name="weight" onChange={handlePetInfo} type="number" value={newPetInfo.weight} />
           </Form.Group>
         </Row>
 
         <Row className="edit-pet-row">
-          <Form.Group
-            as={Col}
-            className="mb-3"
-            controlId="formBasicAdoptionStatus"
-          >
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Color</Form.Label>
-            <Form.Select
-              name="color"
-              onChange={handlePetInfo}
-              value={newPetInfo.color}
-            >
-              <option>Select Pet Color</option>
+            <Form.Select name="color" onChange={handlePetInfo} value={newPetInfo.color}>
+              <option value="">Select Pet Color</option>
               <option value="White">White</option>
               <option value="Black">Black</option>
               <option value="Brown">Brown</option>
@@ -196,83 +121,39 @@ export default function AdminEditPet() {
               <option value="MixColors">Mix Colors</option>
             </Form.Select>
           </Form.Group>
-
-          <Form.Group as={Col} className="mb-3" controlId="formBasicBio">
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Bio</Form.Label>
-            <Form.Control
-              name="bio"
-              onChange={handlePetInfo}
-              as="textarea"
-              rows={3}
-              type="text"
-              placeholder="Bio"
-              value={newPetInfo.bio}
-            />
+            <Form.Control name="bio" onChange={handlePetInfo} as="textarea" rows={3} value={newPetInfo.bio} />
           </Form.Group>
         </Row>
 
         <Row className="edit-pet-row">
-          <Form.Group
-            as={Col}
-            className="mb-3"
-            controlId="formBasicAdoptionStatus"
-          >
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Hypoallergenic</Form.Label>
-            <Form.Select
-              name="hypoallergenic"
-              onChange={handlePetInfo}
-              type="boolean"
-              placeholder="Hypoallergenic"
-              value={newPetInfo.hypoallergenic}
-            >
-              <option>Hypoallergenic?</option>
+            <Form.Select name="hypoallergenic" onChange={handlePetInfo} value={newPetInfo.hypoallergenic}>
+              <option value="">Hypoallergenic?</option>
               <option value="yes">Yes</option>
               <option value="no">No</option>
             </Form.Select>
           </Form.Group>
-
-          <Form.Group
-            as={Col}
-            className="mb-3"
-            controlId="formBasicDietaryRestrictions"
-          >
+          <Form.Group as={Col} className="mb-3">
             <Form.Label>Dietary Restrictions</Form.Label>
-            <Form.Control
-              name="dietaryRestrictions"
-              onChange={handlePetInfo}
-              type="text"
-              placeholder="Dietary Restrictions"
-              value={newPetInfo.dietaryRestrictions}
-            />
+            <Form.Control name="dietaryRestrictions" onChange={handlePetInfo} type="text" value={newPetInfo.dietaryRestrictions} />
           </Form.Group>
         </Row>
 
         <Row className="edit-pet-row">
-          <Form.Group as={Col} controlId="formImageFile" className="mb-3">
-            <Form.Label>Image</Form.Label>
-            <Form.Control
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={handleImage}
-            />
+          <Form.Group as={Col} className="mb-3">
+            <Form.Label>Replace Image</Form.Label>
+            <Form.Control type="file" accept="image/*" onChange={(e) => setPetImage(e.target.files[0])} />
           </Form.Group>
         </Row>
+
         <div className="add-pet-buttons-container">
-          <button
-            className="add-pet-buttons"
-            type="submit"
-            onClick={handleSubmit}
-          >
-            Edit Pet
+          <button className="add-pet-buttons" type="submit" onClick={handleSubmit} disabled={submitting}>
+            {submitting ? <Spinner size="1.1rem" inline /> : "Save Changes"}
           </button>
-          <button
-            className="add-pet-buttons"
-            type="submit"
-            onClick={() => navigate('/admin-Dashboard')}
-          >
-            Dashboard
-          </button>
+          <button className="add-pet-buttons" type="button" onClick={() => navigate("/admin-Dashboard")} disabled={submitting}>Dashboard</button>
         </div>
       </Form>
     </div>

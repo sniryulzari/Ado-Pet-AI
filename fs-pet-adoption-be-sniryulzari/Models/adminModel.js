@@ -1,69 +1,36 @@
-const { findByIdAndUpdate } = require("../Schemas/petsSchemas");
 const Pets = require("../Schemas/petsSchemas");
 const User = require("../Schemas/userSchemas");
 
 async function getAllPetsModel() {
-  try {
-    const allPets = await Pets.find();
-    return allPets;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.find();
 }
 
-async function AddPetModel(newPet) {
-  try {
-    const pet = new Pets(newPet);
-    await pet.save();
-    return pet;
-  } catch (err) {
-    console.log(err);
-  }
+// Fixed naming: was AddPetModel (PascalCase — inconsistent with every other function)
+async function addPetModel(newPet) {
+  const pet = new Pets(newPet);
+  await pet.save();
+  return pet;
 }
 
 async function getPetByIdModel(petId) {
-  try {
-    const petInfo = await Pets.findById(petId).exec();
-    return petInfo;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.findById(petId);
 }
 
 async function getAllUsersModel() {
-  try {
-    const allUsers = await User.find();
-    return allUsers;
-  } catch (err) {
-    console.log(err);
-  }
+  return User.find().select("-password");
 }
 
 async function deletePetModel(petId) {
-  try {
-    const deletePet = await Pets.findOneAndDelete({ _id: petId });
-    return deletePet;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.findOneAndDelete({ _id: petId });
 }
 
 async function editPetModel(newPet, petId) {
-  try {
-    const pet = await Pets.findByIdAndUpdate(
-        petId ,
-         newPet
-      );
-
-    return pet;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.findByIdAndUpdate(petId, newPet);
 }
 
 module.exports = {
   getAllPetsModel,
-  AddPetModel,
+  addPetModel,
   getPetByIdModel,
   getAllUsersModel,
   deletePetModel,

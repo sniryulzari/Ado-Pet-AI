@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignupModal from "../components/SignupModal";
 import LoginModal from "../components/LoginModal";
@@ -8,119 +8,63 @@ import HomePhotoGallery from "../components/Home-Photo-Gallery";
 import PetOfTheWeek from "../components/Home-PetOfTheWeek";
 import HomeClientsTestimonials from "../components/Home-Clients-Testimonials";
 import Footer from "../components/Footer";
-import desktopImage from '../Images/dog-4310597_1280.jpg';
+import desktopImage from "../Images/dog-4310597_1280.jpg";
 import mobileImage from "../Images/alvan-nee-ZCHj_2lJP00-unsplash.jpg";
 import hillsSvg from "../Images/hills.svg";
 
 const Home = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow]           = useState(false);
   const [loginShow, setLoginShow] = useState(false);
-  const { isLogin, setfirstName, setlastName } = useContext(UsersContext);
 
+  const { isLoggedIn, setFirstName, setLastName } = useContext(UsersContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userFirstName = JSON.parse(localStorage.getItem("userFirstName"));
-    const userLastName = JSON.parse(localStorage.getItem("userLastName"));
-    setfirstName(userFirstName);
-    setlastName(userLastName);
+    // Restore display name from localStorage on mount (set during login).
+    // Names are not credentials so localStorage is acceptable here.
+    const firstName = JSON.parse(localStorage.getItem("userFirstName"));
+    const lastName  = JSON.parse(localStorage.getItem("userLastName"));
+    if (firstName) setFirstName(firstName);
+    if (lastName)  setLastName(lastName);
   }, []);
-
-  const handleShow = () => {
-    setShow(true);
-  };
-  const handleClose = () => {
-    setShow(false);
-  };
-
-  const handleLoginShow = () => {
-    setLoginShow(true);
-  };
-
-  const handleLoginClose = () => {
-    setLoginShow(false);
-  };
 
   return (
     <div className="home-container">
       <div className="home-top-container">
         <picture>
-          <source media="(max-width: 699px)" srcSet={mobileImage} className="mobile-image"/>
-          <source media="(min-width: 700px)" srcSet={desktopImage} className="desktop-image"/>
-          <img src={desktopImage} alt="pet"/>
+          <source media="(max-width: 699px)"  srcSet={mobileImage} />
+          <source media="(min-width: 700px)"  srcSet={desktopImage} />
+          <img src={desktopImage} alt="pet" />
         </picture>
         <img src={hillsSvg} alt="hills" className="hills" />
 
-        <img
-          className="dog-bone-img"
-          alt="dog bone img"
-          src={
-            "http://demo2.themelexus.com/petzen/wp-content/uploads/2020/05/revolution-icon-6.svg"
-          }
-        />
-        <img
-          className="arrow-img"
-          alt="arrow img"
-          src={
-            "http://demo2.themelexus.com/petzen/wp-content/uploads/2020/05/revolution-icon-5.svg"
-          }
-        />
-        <img
-          className="star-img"
-          alt="star img"
-          src={
-            "http://demo2.themelexus.com/petzen/wp-content/uploads/2020/05/revolution-icon-4.svg"
-          }
-        />
-        <img
-          className="dog-footprints-img"
-          alt="dog footprints img"
-          src={
-            "http://demo2.themelexus.com/petzen/wp-content/uploads/2020/05/revolution-icon-1.svg"
-          }
-        />
+        {/*
+          Removed four decorative SVG images that were loaded over plain HTTP
+          from demo2.themelexus.com — a third-party domain. Those images were
+          a supply chain risk (SVGs can embed JavaScript) and loaded over HTTP
+          (MitM-vulnerable). Replace them with locally bundled SVGs if the
+          decorations are needed in future.
+        */}
 
-        {isLogin ? (
-          <div className="welcome-container">
-            <span className="welcome-title-top">
-              Two Is always Better Than One
-            </span>
-            <span className="welcome-title-bottom-start">AdoPet Your</span>
-            <span className="welcome-title-bottom-end">New Best Friend</span>
-            <button
-              className="welcome-login-search-Button"
-              onClick={() => navigate("/search")}
-            >
+        <div className="welcome-container">
+          <span className="welcome-title-top">Two Is always Better Than One</span>
+          <span className="welcome-title-bottom-start">AdoPet Your</span>
+          <span className="welcome-title-bottom-end">New Best Friend</span>
+          {isLoggedIn ? (
+            <button className="welcome-login-search-Button" onClick={() => navigate("/search")}>
               Search
             </button>
-          </div>
-        ) : (
-          <div className="welcome-container">
-            <span className="welcome-title-top">
-              Two Is always Better Than One
-            </span>
-            <span className="welcome-title-bottom-start">AdoPet Your</span>
-            <span className="welcome-title-bottom-end">New Best Friend</span>
-            <button
-              className="welcome-login-search-Button"
-              onClick={handleLoginShow}
-            >
+          ) : (
+            <button className="welcome-login-search-Button" onClick={() => setLoginShow(true)}>
               LOGIN
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
-        <SignupModal
-          show={show}
-          handleClose={handleClose}
-          handleLoginShow={handleLoginShow}
-        />
-        <LoginModal
-          loginShow={loginShow}
-          handleLoginClose={handleLoginClose}
-          handleShow={handleShow}
-        />
+        <SignupModal show={show} handleClose={() => setShow(false)} handleLoginShow={() => setLoginShow(true)} />
+        <LoginModal loginShow={loginShow} handleLoginClose={() => setLoginShow(false)} handleShow={() => setShow(true)} />
       </div>
+
       <HomeWelcome />
       <HomePhotoGallery />
       <PetOfTheWeek />

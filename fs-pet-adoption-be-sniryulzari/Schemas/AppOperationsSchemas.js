@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const appOperationsSchema = new Schema(
   {
     petsOfTheWeek: { type: Array },
-    isRandomized: { type:  Boolean, defualt: false },
+    isRandomized: { type: Boolean, default: false },
     petsOfTheWeekInfo: {type: Object },
   },
   { collection: "appOperations" }

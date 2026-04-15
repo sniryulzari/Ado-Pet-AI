@@ -1,27 +1,36 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const router = express.Router();
 const UsersController = require("../Controllers/usersControllers");
 const { validatebody } = require("../Middleware/Validatebody");
-const { signupSchema, loginSchema, editUserSettongsSchema } = require("../Schemas/allSchemas");
-const { passwordMatch, isNewUser, isExistingUser, hashPassword, verifyPassword } = require("../Middleware/UsersMiddleware")
+const { signupSchema, loginSchema, editUserSettingsSchema } = require("../Schemas/allSchemas");
+const { passwordMatch, isNewUser, isExistingUser, hashPassword, verifyPassword } = require("../Middleware/UsersMiddleware");
 const { Auth } = require("../Middleware/AuthMiddleWare");
-const { isAdmin } = require("../Middleware/AdminMiddleWare");
 
+// Limit auth endpoints to 10 attempts per IP per 15 minutes to block brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Too many attempts from this IP, please try again in 15 minutes",
+});
 
-router.post('/signup', validatebody(signupSchema), passwordMatch, isNewUser, hashPassword, UsersController.signup);
-router.post('/login', validatebody(loginSchema), isExistingUser, verifyPassword, UsersController.login);
-router.get('/logout', UsersController.logout);
-router.get('/userInfo', Auth, UsersController.getUserInfoById);
-router.put('/userInfo', Auth, validatebody(editUserSettongsSchema), hashPassword, UsersController.editUser);
+router.post("/signup", authLimiter, validatebody(signupSchema), passwordMatch, isNewUser, hashPassword, UsersController.signup);
+router.post("/login", authLimiter, validatebody(loginSchema), isExistingUser, verifyPassword, UsersController.login);
 
-router.put('/:petId', Auth, UsersController.savePet);
-router.delete('/:petId', Auth, UsersController.deleteSavedPet);
-router.put('/adopt/:petId', Auth, UsersController.adoptPet);
-router.put('/foster/:petId', Auth, UsersController.fosterPet);
-router.delete('/returnPet/:petId', Auth, UsersController.returnPet);
-router.get('/mypets', Auth, UsersController.getMyPets);
+// Changed from GET to POST — GET requests must not have side effects (RFC 7231).
+// Logout clears a session cookie, which is a state change.
+router.post("/logout", UsersController.logout);
 
+router.get("/userInfo", Auth, UsersController.getUserInfoById);
+router.put("/userInfo", Auth, validatebody(editUserSettingsSchema), hashPassword, UsersController.editUser);
+
+router.put("/:petId", Auth, UsersController.savePet);
+router.delete("/:petId", Auth, UsersController.deleteSavedPet);
+router.put("/adopt/:petId", Auth, UsersController.adoptPet);
+router.put("/foster/:petId", Auth, UsersController.fosterPet);
+router.delete("/returnPet/:petId", Auth, UsersController.returnPet);
+router.get("/mypets", Auth, UsersController.getMyPets);
 
 module.exports = router;
-
-

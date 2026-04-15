@@ -1,88 +1,39 @@
 const Pets = require("../Schemas/petsSchemas");
 
 async function searchPetsModel(petsQuery) {
-  try {
-    const searchResult = await Pets.find(petsQuery);
-    return searchResult;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.find(petsQuery);
 }
 
 async function getPetByIdModel(petId) {
-  try {
-    const pet = await Pets.findById(petId).exec();
-    return pet;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.findById(petId);
 }
 
 async function adoptPetStatusModel(userId, petId) {
-  try {
-    const petStatus = await Pets.updateOne(
-      { _id: petId },
-      { $set: { adoptionStatus: "Adopted", userId: userId } }
-    );
-    return petStatus;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.updateOne(
+    { _id: petId },
+    { $set: { adoptionStatus: "Adopted", userId } }
+  );
 }
 
 async function fosterPetStatusModel(userId, petId) {
-  try {
-    const petStatus = await Pets.updateOne(
-      { _id: petId },
-      { $set: { adoptionStatus: "Fostered", userId: userId } }
-    );
-    return petStatus;
-  } catch (err) {
-    console.log(err);
-  }
+  return Pets.updateOne(
+    { _id: petId },
+    { $set: { adoptionStatus: "Fostered", userId } }
+  );
 }
 
-async function returnPetModel(userId, petId) {
-  try {
-    const returnPet = await Pets.updateOne(
-      { _id: petId },
-      { $set: { adoptionStatus: "Available", userId: "" } }
-    );
-
-    return returnPet;
-  } catch (err) {
-    console.log(err);
-  }
+async function returnPetModel(_userId, petId) {
+  return Pets.updateOne(
+    { _id: petId },
+    { $set: { adoptionStatus: "Available", userId: "" } }
+  );
 }
 
-async function savedPetInfoModel(id) {
-  try {
-    const { petId } = id;
-    const petinfo = await Pets.findById({ _id: petId });
-    return petinfo;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function adoptedPetInfoModel(id) {
-  try {
-    const { petId } = id;
-    const petinfo = await Pets.findById({ _id: petId });
-    return petinfo;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function fosteredPetInfoModel(id) {
-  try {
-    const { petId } = id;
-    const petinfo = await Pets.findById({ _id: petId });
-    return petinfo;
-  } catch (err) {
-    console.log(err);
-  }
+// Previously three byte-for-byte identical functions: savedPetInfoModel,
+// adoptedPetInfoModel, fosteredPetInfoModel. Consolidated into one.
+// Controllers that called each variant now all call this single function.
+async function getPetInfoModel(petId) {
+  return Pets.findById(petId);
 }
 
 module.exports = {
@@ -91,7 +42,5 @@ module.exports = {
   adoptPetStatusModel,
   fosterPetStatusModel,
   returnPetModel,
-  savedPetInfoModel,
-  adoptedPetInfoModel,
-  fosteredPetInfoModel,
+  getPetInfoModel,
 };

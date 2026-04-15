@@ -1,74 +1,101 @@
 const Pets = require("../Schemas/petsSchemas");
 const AppOperations = require("../Schemas/AppOperationsSchemas");
 
+const AVAILABLE = "Available";
+
 async function petOfTheWeekModel() {
   try {
     let currentDay = new Date().getDay();
-    let obj = await AppOperations.find({}, { isRandomized: 1 });
-    let isRandomized = obj[0].isRandomized;
+    let doc = await AppOperations.findOne({});
+
+    if (!doc) {
+      // Collection is empty — seed a default document with a random available pet
+      const petInfo = await randomizedPet();
+      await AppOperations.create({
+        isRandomized: true,
+        petsOfTheWeek: petInfo ? [petInfo._id] : [],
+        petsOfTheWeekInfo: petInfo || null,
+      });
+      return petInfo ? [petInfo] : [];
+    }
+
+    const isRandomized = doc.isRandomized;
 
     if (currentDay === 0 && !isRandomized) {
+      // Sunday — pick a new pet for the week
       const petInfo = await randomizedPet();
-
-      let petId = petInfo[0]._id;
-      const PetsOfTheWeekList = await AppOperations.updateOne(
-        { _id: "63c3ca514d92b37155fdc20d" },
-        { $push: { petsOfTheWeek: petId } }
-      );
-
-      const changeIsRandomized = await AppOperations.updateOne(
-        { _id: "63c3ca514d92b37155fdc20d" },
-        { isRandomized: true }
-      );
-
-      const PetOfTheWeek = await AppOperations.updateOne(
-        { _id: "63c3ca514d92b37155fdc20d" },
-        { petsOfTheWeekInfo: petInfo[0] }
-      );
-
-      return petInfo;
-    } else if (currentDay === 1 && isRandomized) {
-      const changeIsRandomized = await AppOperations.updateOne(
-        { _id: "63c3ca514d92b37155fdc20d" },
-        { isRandomized: false }
-      );
-      const petInfo = await getPetOfTheWeek();
-
-      return petInfo;
-    } else {
-      const petInfo = await getPetOfTheWeek();
-
-      return petInfo;
+      if (petInfo) {
+        await AppOperations.updateOne(
+          { _id: doc._id },
+          {
+            $push: { petsOfTheWeek: petInfo._id },
+            $set: { isRandomized: true, petsOfTheWeekInfo: petInfo },
+          }
+        );
+      }
+      return petInfo ? [petInfo] : [];
     }
+
+    if (currentDay === 1 && isRandomized) {
+      // Monday — reset the flag so next Sunday triggers a new pick
+      await AppOperations.updateOne(
+        { _id: doc._id },
+        { $set: { isRandomized: false } }
+      );
+    }
+
+    return getPetOfTheWeek(doc._id);
   } catch (err) {
-    console.log(err);
+    console.error("petOfTheWeekModel error:", err);
+    const fallback = await randomizedPet();
+    return fallback ? [fallback] : [];
   }
 }
 
+// Only pick from pets that are currently available for adoption
 async function randomizedPet() {
   try {
-    const allPets = await Pets.find({}, { _id: 1 }); // remove isadopted pet from result
-    const rnd = Math.round(Math.random() * allPets.length);
-    const petId = allPets[rnd];
-    const petInfo = await Pets.find({ _id: petId });
-
-    return petInfo;
+    const availablePets = await Pets.find({ adoptionStatus: AVAILABLE }, { _id: 1 });
+    if (!availablePets.length) return null;
+    const rnd = Math.floor(Math.random() * availablePets.length);
+    return Pets.findById(availablePets[rnd]._id);
   } catch (err) {
-    console.log(err);
+    console.error("randomizedPet error:", err);
+    return null;
   }
 }
 
-async function getPetOfTheWeek() {
+// Return the stored pet of the week, but re-randomize if it is no longer available
+async function getPetOfTheWeek(docId) {
   try {
-    const petOfTheWeek = await AppOperations.find(
-      { _id: "63c3ca514d92b37155fdc20d" },
-      { petsOfTheWeekInfo: 1 }
-    );
+    const doc = await AppOperations.findById(docId, { petsOfTheWeekInfo: 1 });
+    if (!doc || !doc.petsOfTheWeekInfo) return [];
 
-    const petInfo = [petOfTheWeek[0].petsOfTheWeekInfo];
-    return petInfo;
+    const storedPetId = doc.petsOfTheWeekInfo._id;
+    if (storedPetId) {
+      // Check the pet's live status in case it was adopted/fostered this week
+      const livePet = await Pets.findById(storedPetId, { adoptionStatus: 1 });
+      if (!livePet || livePet.adoptionStatus !== AVAILABLE) {
+        // Pet is gone — pick a fresh available one and persist it
+        const newPet = await randomizedPet();
+        if (newPet) {
+          await AppOperations.updateOne(
+            { _id: docId },
+            {
+              $push: { petsOfTheWeek: newPet._id },
+              $set: { petsOfTheWeekInfo: newPet },
+            }
+          );
+          return [newPet];
+        }
+        return [];
+      }
+    }
+
+    return [doc.petsOfTheWeekInfo];
   } catch (err) {
-    console.log(err);
+    console.error("getPetOfTheWeek error:", err);
+    return [];
   }
 }
 

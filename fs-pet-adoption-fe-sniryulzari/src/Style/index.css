@@ -559,33 +559,46 @@ th {
 
 .pet-of-the-week-image-container {
   overflow: hidden;
-  height: 79%;
-  width: 84%;
+  /* width % is relative to the frame's explicit width (40rem) — reliable */
+  width: 76%;
+  /* aspect-ratio keeps it a perfect circle without relying on height: %
+     which breaks when the parent height is auto */
+  aspect-ratio: 1 / 1;
   position: absolute;
-  top: 68px;
-  left: 67px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
+  box-shadow: 0 0 0 4px #ffffff;
+  z-index: 2;
 }
 
 .pet-of-the-week-image {
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0px;
-  left: 0px;
+  object-fit: cover;
   border-radius: 50%;
-  transition: 2s all ease-in-out;
+  transition: transform 2s ease-in-out;
 }
 
 .pet-of-the-week-image:hover {
   transform: scale(1.1);
-  transition-duration: 2s;
 }
 
 .pet-name {
   font-family: 'MikadoBold';
   color: #ffae01;
   font-size: 1.7rem;
+}
+
+.pet-meta {
+  font-family: 'Montserrat', sans-serif;
+  color: #ff4880;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+  text-transform: capitalize;
+  margin: 4px 0 0;
 }
 
 .pet-bio {
@@ -1352,17 +1365,358 @@ label {
   font-size: 1rem;
 }
 
+/* ── Browse / Filter bar ──────────────────────────────────────── */
+.browse-filter-bar {
+  width: 100%;
+  max-width: 900px;
+  background: #f8f8fc;
+  border: 1px solid rgba(57, 61, 114, 0.12);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1rem;
+}
+
+.browse-type-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.browse-type-icons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.browse-type-all-btn {
+  font-family: 'MikadoBold';
+  font-size: 0.8rem;
+  color: #393d72;
+  background: transparent;
+  border: 2px solid #393d72;
+  border-radius: 12px;
+  padding: 0.3rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  height: 2.2rem;
+  white-space: nowrap;
+}
+
+.browse-type-all-btn:hover,
+.browse-type-all-btn.active {
+  background: #393d72;
+  color: #ffffff;
+}
+
+.browse-filter-row {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.browse-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.browse-filter-label {
+  font-family: 'MikadoBold';
+  font-size: 0.8rem;
+  color: #393d72;
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+  margin: 0;
+}
+
+.browse-filter-input {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  color: #393d72;
+  background: #ffffff;
+  border: 1px solid rgba(57, 61, 114, 0.3);
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.browse-filter-input:focus {
+  border-color: #393d72;
+}
+
+.browse-filter-select {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  color: #393d72;
+  background: #ffffff;
+  border: 1px solid rgba(57, 61, 114, 0.3);
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.browse-filter-select:focus {
+  border-color: #393d72;
+}
+
+.browse-range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.browse-range-input {
+  width: 80px;
+  flex: 1;
+}
+
+.browse-range-sep {
+  color: #858687;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.browse-clear-btn {
+  font-family: 'MikadoBold';
+  font-size: 0.8rem;
+  color: #ff4880;
+  background: transparent;
+  border: 1px solid #ff4880;
+  border-radius: 20px;
+  padding: 0.5rem 1.4rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+  white-space: nowrap;
+  align-self: flex-end;
+  transition: background 0.15s, color 0.15s;
+  height: 2.4rem;
+}
+
+.browse-clear-btn:hover {
+  background: #ff4880;
+  color: #ffffff;
+}
+
+/* Result count */
+.browse-result-count {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #858687;
+  margin-bottom: 0.5rem;
+  align-self: flex-start;
+  padding-left: 0.25rem;
+}
+
+.browse-result-count strong {
+  color: #393d72;
+}
+
+/* Grid section */
+.browse-grid-section {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+/* Empty state */
+.browse-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.browse-empty-paw {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.6;
+}
+
+.browse-empty-title {
+  font-family: 'MikadoBold';
+  font-size: 1.8rem;
+  color: #393d72;
+  margin-bottom: 0.75rem;
+}
+
+.browse-empty-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #858687;
+  max-width: 400px;
+  line-height: 1.7;
+}
+
+.browse-empty-reset {
+  background: none;
+  border: none;
+  color: #ff4880;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+/* Pagination */
+.browse-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 2.5rem 0 1rem;
+}
+
+.browse-page-btn {
+  font-family: 'MikadoBold';
+  font-size: 0.85rem;
+  color: #393d72;
+  background: #ffffff;
+  border: 1px solid rgba(57, 61, 114, 0.3);
+  border-radius: 10px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  min-width: 2.4rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.browse-page-btn:hover:not(:disabled) {
+  background: #393d72;
+  color: #ffffff;
+  border-color: #393d72;
+}
+
+.browse-page-btn.active {
+  background: #ff4880;
+  color: #ffffff;
+  border-color: #ff4880;
+}
+
+.browse-page-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.browse-page-nav {
+  padding: 0.45rem 1rem;
+}
+
+.browse-page-ellipsis {
+  font-family: 'Montserrat', sans-serif;
+  color: #858687;
+  padding: 0 0.2rem;
+  user-select: none;
+}
+
+.browse-page-indicator {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: #858687;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Back Button — arrow-only circle, top-left of each page */
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  background: transparent;
+  border: 2px solid #ff4880;
+  border-radius: 50%;
+  color: #ff4880;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin: 0.75rem 0 0.5rem 0;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #ff4880;
+  color: #ffffff;
+}
+
+/* Delete Confirmation Dialog */
+.confirm-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-dialog {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 26rem;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
+
+.confirm-dialog-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  color: #393d72;
+  line-height: 1.5;
+}
+
+.confirm-dialog-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Sortable table headers */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sortable-header:hover {
+  background-color: rgba(255, 72, 128, 0.08);
+}
+
 /* pet-card */
 .pet-card-container {
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 1rem;
 }
 
 .pet-card {
   display: flex;
   justify-content: center;
+  align-self: center;
+  width: 100%;
   padding: 3rem;
 }
 
@@ -1460,8 +1814,40 @@ label {
   margin-top: 1rem;
 }
 
-.my-pets {
-  flex-basis: 25%;
+/* My Pets grid — count-aware layout */
+.my-pets-grid {
+  display: grid;
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem 2rem 2rem;
+  box-sizing: border-box;
+}
+
+/* 1 card: centered, max 400px */
+.my-pets-grid--single {
+  grid-template-columns: minmax(280px, 400px);
+  justify-content: center;
+}
+
+/* 2 cards: two equal columns */
+.my-pets-grid--double {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* 3+ cards: three equal columns */
+.my-pets-grid--many {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.my-pet-card-wrapper {
+  cursor: pointer;
+}
+
+/* Ensure card image fills the card with consistent height */
+.my-pet-card-wrapper .card-img-top {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
 }
 
 /* Profile Settings Page */
@@ -1617,6 +2003,13 @@ label {
   }
 }
 
+/* Tablet — 3-column grid drops to 2 columns */
+@media (min-width: 701px) and (max-width: 1024px) {
+  .my-pets-grid--many {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* Mobile */
 @media (max-width: 700px) {
   /* Nav Bar */
@@ -1762,12 +2155,8 @@ label {
     height: 25rem;
     width: 25rem;
   }
-  .pet-of-the-week-image-container {
-    height: 77%;
-    width: 83%;
-    top: 46px;
-    left: 40px;
-  }
+  /* Inherits width: 76%, aspect-ratio: 1/1, and centering from base rule.
+     No overrides needed — the frame scales and the circle follows. */
   .pet-of-the-week-card-right {
     margin: 0;
     padding: 1rem;
@@ -1910,11 +2299,8 @@ label {
     margin: 1rem 0;
   }
   .my-pets-result-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 0 0.5rem;
+    width: 100%;
   }
   .my-pets-sub-header {
     padding: 0;
@@ -1922,8 +2308,12 @@ label {
   .search-pet-results {
     padding: 0;
   }
-  .my-pets {
-    margin: 5rem 0;
+  /* Mobile: all grid variants collapse to 1 column */
+  .my-pets-grid--single,
+  .my-pets-grid--double,
+  .my-pets-grid--many {
+    grid-template-columns: 1fr;
+    padding: 1rem 0.5rem;
   }
 
   /* Profile Settings */
@@ -1986,5 +2376,564 @@ label {
   }
   .search-pet-results-column {
     margin: 4rem 0;
+  }
+}
+
+/* ── About Page ─────────────────────────────────────────────── */
+.about-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem 2rem 4rem;
+}
+
+/* back button override: align to the right on the About page */
+.about-back-button {
+  align-self: flex-end;
+  margin: 0.75rem 0 0 0;
+}
+
+.about-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+}
+
+.about-hero-tag {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15rem;
+  text-transform: uppercase;
+  color: #ff4880;
+  margin-bottom: 0.75rem;
+}
+
+.about-hero-title {
+  font-family: 'MikadoBold';
+  font-size: 2.8rem;
+  color: #393d72;
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
+}
+
+.about-hero-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #858687;
+  line-height: 1.8;
+  max-width: 680px;
+  margin-bottom: 2rem;
+}
+
+.about-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.about-hero-badge {
+  display: flex;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #393d72;
+  background: #f5efe7;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+}
+
+/* Pet counts */
+.about-counts-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.about-section-title {
+  font-family: 'MikadoBold';
+  font-size: 2rem;
+  color: #393d72;
+  margin-bottom: 0.5rem;
+}
+
+.about-section-title--light {
+  color: #ffffff;
+}
+
+.about-section-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #858687;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.about-section-subtitle--light {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.about-counts-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.about-count-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid #f0e8df;
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  min-width: 100px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.about-count-number {
+  font-family: 'MikadoBold';
+  font-size: 2.5rem;
+  color: #ff4880;
+  line-height: 1;
+}
+
+.about-count-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #858687;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+/* Process sections */
+.about-process-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  border-radius: 20px;
+  margin: 1rem 0;
+}
+
+.about-process-pink {
+  background-color: #ff4880;
+}
+
+.about-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.about-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.about-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  min-width: 2.4rem;
+  background-color: #ffffff;
+  color: #ff4880;
+  border-radius: 50%;
+  font-family: 'MikadoBold';
+  font-size: 1rem;
+}
+
+.about-step-number--yellow {
+  background-color: #ffae00;
+  color: #ffffff;
+}
+
+.about-step-content {
+  flex: 1;
+}
+
+.about-step-title {
+  font-family: 'MikadoBold';
+  font-size: 1rem;
+  color: #393d72;
+  margin-bottom: 0.2rem;
+}
+
+.about-process-pink .about-step-title {
+  color: #ffffff;
+}
+
+.about-step-desc {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: #858687;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about-process-pink .about-step-desc {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.about-cta-button {
+  font-family: 'MikadoBold';
+  font-size: 0.875rem;
+  color: #ffffff;
+  background-color: #ff4880;
+  border: none;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  padding: 0.8125rem 3rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.about-cta-button:hover {
+  background-color: #393d72;
+}
+
+.about-cta-button--outline {
+  background-color: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.about-cta-button--outline:hover {
+  background-color: #ffffff;
+  color: #ff4880;
+}
+
+/* Testimonial extras */
+.testimonial-location {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  color: #858687;
+  margin-bottom: 0.25rem;
+}
+
+.testimonial-stars {
+  color: #ffae00;
+  font-size: 1.1rem;
+  letter-spacing: 0.1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Adoption Success Page ──────────────────────────────────── */
+.adoption-success-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem 1rem;
+}
+
+.adoption-success-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 3rem 3.5rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+.adoption-success-paws {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.adoption-success-heading {
+  font-family: 'MikadoBold';
+  font-size: 2.8rem;
+  color: #393d72;
+  margin-bottom: 0.25rem;
+}
+
+.adoption-success-subheading {
+  font-family: 'MikadoBold';
+  font-size: 1.5rem;
+  color: #ff4880;
+  margin-bottom: 1.5rem;
+}
+
+.adoption-success-pet-image {
+  width: 14rem;
+  height: 14rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ff4880;
+  margin-bottom: 1.25rem;
+}
+
+.adoption-success-badge {
+  font-family: 'MikadoBold';
+  font-size: 0.75rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  border-radius: 20px;
+  padding: 0.35rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.badge-adopted {
+  background-color: #ff4880;
+  color: #ffffff;
+}
+
+.badge-fostered {
+  background-color: #ffae00;
+  color: #ffffff;
+}
+
+.adoption-success-message {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  color: #858687;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.adoption-success-tip {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #5c5c5d;
+  background-color: #f5efe7;
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.adoption-success-button {
+  font-family: 'MikadoBold';
+  font-size: 0.875rem;
+  color: #ffffff;
+  background-color: #ff4880;
+  border: none;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  padding: 0.8125rem 3rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border 0.2s;
+}
+
+.adoption-success-button:hover {
+  color: #ff4880;
+  background-color: #ffffff;
+  border: 1px solid #ff4880;
+}
+
+@media (max-width: 600px) {
+  .about-hero-title {
+    font-size: 2rem;
+  }
+  .about-section-title {
+    font-size: 1.6rem;
+  }
+  .about-container {
+    padding: 1rem;
+  }
+  .about-process-section {
+    padding: 2rem 1rem;
+  }
+  .adoption-success-card {
+    padding: 2rem 1.5rem;
+  }
+  .adoption-success-heading {
+    font-size: 2rem;
+  }
+}
+
+/* ── Spinner ─────────────────────────────────────── */
+.site-spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 0;
+}
+
+.site-spinner {
+  border: 3px solid #f0f0f0;
+  border-top-color: #ff4880;
+  border-radius: 50%;
+  animation: site-spin 0.7s linear infinite;
+}
+
+@keyframes site-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 404 Not Found ───────────────────────────────── */
+.not-found-container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5efe7;
+  padding: 2rem;
+}
+
+.not-found-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(57, 61, 114, 0.08);
+}
+
+.not-found-paw {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.not-found-title {
+  font-family: 'MikadoBold', sans-serif;
+  font-size: 5rem;
+  color: #ff4880;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.not-found-subtitle {
+  font-family: 'MikadoBold', sans-serif;
+  font-size: 1.5rem;
+  color: #393d72;
+  margin-bottom: 1rem;
+}
+
+.not-found-text {
+  font-size: 1rem;
+  color: #858687;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.not-found-button {
+  font-family: 'MikadoBold', sans-serif;
+  font-size: 0.875rem;
+  color: #ffffff;
+  background-color: #ff4880;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  padding: 0.8125rem 3rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.not-found-button:hover {
+  color: #ff4880;
+  background-color: #ffffff;
+  border-color: #ff4880;
+}
+
+/* ── Browse page — tablet ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  .browse-filter-bar {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+/* ── Browse page — mobile ───────────────────────────────────── */
+@media (max-width: 700px) {
+  .browse-filter-bar {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .browse-type-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .browse-filter-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .browse-filter-group {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .browse-clear-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .browse-pagination {
+    gap: 0.3rem;
+  }
+
+  .browse-page-btn {
+    padding: 0.4rem 0.6rem;
+    min-width: 2.1rem;
+    font-size: 0.8rem;
+  }
+
+  .browse-page-nav {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .browse-page-indicator {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    margin-top: 0.3rem;
+  }
+}
+
+/* ── Admin Tables — mobile horizontal scroll ─────── */
+@media (max-width: 700px) {
+  .users-list,
+  .pets-list {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .users-list table,
+  .pets-list table {
+    min-width: 600px;
+  }
+
+  /* Override the squished font sizes set in the 700px breakpoint above */
+  th {
+    font-size: 0.8rem;
+  }
+
+  td {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.5rem;
   }
 }

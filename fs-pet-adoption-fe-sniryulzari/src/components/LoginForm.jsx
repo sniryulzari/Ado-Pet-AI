@@ -1,57 +1,36 @@
 import { useContext, useState } from "react";
 import { Form } from "react-bootstrap";
-import axios from "axios";
-import { UsersContext } from "../Context/Context-Users";
 import { toast } from "react-toastify";
+import { UsersContext } from "../Context/Context-Users";
+import { login, getUserInfo } from "../api/users";
 
-function LoginForm(props) {
-  const { handleLoginClose, handleShow } = props;
-  const [email, setEmail] = useState("");
+function LoginForm({ handleLoginClose, handleShow }) {
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const {
-    setIsLogin,
-    setfirstName,
-    firstName,
-    setlastName,
-    lastName,
-    getServerUrl,
-  } = useContext(UsersContext);
+
+  const { setIsLoggedIn, setFirstName, setLastName, setIsAdmin } =
+    useContext(UsersContext);
 
   const handleLogin = async (e) => {
-    const url = `${getServerUrl()}/users/login`;
+    e.preventDefault();
     try {
-      e.preventDefault();
-      const res = await axios.post(
-        url,
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
-      if (res.data.id.length > 0) {
-        localStorage.setItem("loggedIn", JSON.stringify(res.data.token));
-        localStorage.setItem(
-          "userFirstName",
-          JSON.stringify(res.data.firstName)
-        );
-        localStorage.setItem("userLastName", JSON.stringify(res.data.lastName));
-        setIsLogin(true);
+      const res = await login({ email, password });
+      if (res.data?.id) {
+        // Fetch full user profile so we get isAdmin immediately — without this,
+        // admin users would stay on isAdmin:false until the next page refresh.
+        const infoRes = await getUserInfo();
+        const user = infoRes.data;
+        localStorage.setItem("userFirstName", JSON.stringify(user.firstName));
+        localStorage.setItem("userLastName",  JSON.stringify(user.lastName));
+        setIsLoggedIn(true);
+        setIsAdmin(user.isAdmin === true);
+        setFirstName(user.firstName || "");
+        setLastName(user.lastName || "");
         handleLoginClose();
-        setfirstName(res.data.firstName);
-        setlastName(res.data.lastName);
-        toast.success("Login Success!", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
+        toast.success("Login successful!", { position: toast.POSITION.BOTTOM_RIGHT });
       }
-    } catch (err) {
-      console.log(err);
-      toast.error(
-        "The email address or password is incorrect. Please retry...",
-        {
-          position: toast.POSITION.TOP_RIGHT,
-        }
-      );
+    } catch {
+      toast.error("Invalid email or password.", { position: toast.POSITION.TOP_RIGHT });
     }
   };
 
@@ -76,24 +55,14 @@ function LoginForm(props) {
       </Form.Group>
       <div className="login-modal-bottom">
         <div className="login-buttons">
-          <button
-            className="signup-login-btn"
-            type="submit"
-            onClick={handleLogin}
-          >
+          <button className="signup-login-btn" type="submit" onClick={handleLogin}>
             Log In
           </button>
-          <button
-            className="signup-login-btn"
-            type="button"
-            onClick={handleLoginClose}
-          >
+          <button className="signup-login-btn" type="button" onClick={handleLoginClose}>
             Close
           </button>
         </div>
-        <span className="link-signup" onClick={handleShow}>
-          Not a member? Sign up
-        </span>
+        <span className="link-signup" onClick={handleShow}>Not a member? Sign up</span>
       </div>
     </Form>
   );

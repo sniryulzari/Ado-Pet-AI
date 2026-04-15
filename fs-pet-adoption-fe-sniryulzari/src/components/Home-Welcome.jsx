@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import petImg2 from "../Images/petImg2.jpeg";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 
 function HomeWelcome() {
   const [isMousedOver, setMouseOver] = useState(false);
+  const navigate = useNavigate();
 
   function handleMouseOver() {
     setMouseOver(true);
@@ -72,7 +74,7 @@ function HomeWelcome() {
           </ul>
 
           <div>
-            <button className="learn-more-button">LEARN MORE</button>
+            <button className="learn-more-button" onClick={() => navigate("/about")}>LEARN MORE</button>
           </div>
         </div>
       </div>

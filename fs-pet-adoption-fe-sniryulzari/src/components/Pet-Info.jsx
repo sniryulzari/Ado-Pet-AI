@@ -1,295 +1,160 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
 import { UsersContext } from "../Context/Context-Users";
+import { getPetById, adoptPetStatus, fosterPetStatus, returnPetStatus } from "../api/pets";
+import { getUserInfo, savePet, unsavePet, adoptPet, fosterPet, returnPet } from "../api/users";
+import { toast } from "react-toastify";
 
 function PetCard() {
-  const [pet, setPet] = useState();
-  const { isLogin, getServerUrl } = useContext(UsersContext);
-  const [savePet, setSavePet] = useState(false);
-  const [adoptPet, setAdoptPet] = useState(false);
-  const [fosterPet, setFosterPet] = useState(false);
-  const [avialable, setAvialable] = useState(false);
+  const [pet, setPet]           = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [isSaved, setIsSaved]   = useState(false);
+  const [isAdopted, setIsAdopted] = useState(false);
+  const [isFostered, setIsFostered] = useState(false);
 
-  const getPetId = () => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const id = queryParams.get("petId");
-    return id;
-  };
+  const { isLoggedIn } = useContext(UsersContext);
+  const navigate = useNavigate();
 
-  const fetchPet = async (petId) => {
-    const url = `${getServerUrl()}/pets/${petId}`;
-    try {
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-      setPet(res.data);
-
-      setAvialable(false);
-      if (res.data.adoptionStatus === "Available") {
-        setAvialable(true);
-      }
-
-      console.log("avialable", avialable);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // Using React Router's hook instead of manually parsing window.location.search.
+  // petId is derived once at the top and reused — no repeated URL parsing in handlers.
+  const [searchParams] = useSearchParams();
+  const petId = searchParams.get("petId");
 
   useEffect(() => {
-    const id = getPetId();
-    fetchPet(id);
-  }, []);
+    if (!petId) return;
+    getPetById(petId)
+      .then((res) => setPet(res.data))
+      .catch(() => toast.error("Failed to load pet details."))
+      .finally(() => setLoading(false));
+  }, [petId]);
 
-  const getUserInfo = async () => {
-    const url = `${getServerUrl()}/users/userInfo`;
-    try {
-      const petId = getPetId();
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-
-      const savedPet = res.data.savedPet;
-      const adoptPet = res.data.adoptPet;
-      const fosterPet = res.data.fosterPet;
-
-      setSavePet(false);
-      for (let i = 0; i <= savedPet.length; i++) {
-        if (savedPet[i] === petId) {
-          setSavePet(true);
-          return;
-        }
-      }
-
-      setAdoptPet(false);
-      for (let i = 0; i <= adoptPet.length; i++) {
-        if (adoptPet[i] === petId) {
-          setAdoptPet(true);
-          return;
-        }
-      }
-
-      setFosterPet(false);
-      for (let i = 0; i <= fosterPet.length; i++) {
-        if (fosterPet[i] === petId) {
-          setFosterPet(true);
-          return;
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
+  // Fixed: was missing the [] dependency array, causing this to fire on every
+  // render and spam GET /users/userInfo infinitely.
   useEffect(() => {
-    getUserInfo();
-  });
+    if (!isLoggedIn || !petId) return;
+    getUserInfo()
+      .then((res) => {
+        const { savedPet = [], adoptPet: adopted = [], fosterPet: fostered = [] } = res.data;
+        // Fixed: replaced off-by-one for-loops (`i <= arr.length`) with Array.includes
+        setIsSaved(savedPet.includes(petId));
+        setIsAdopted(adopted.includes(petId));
+        setIsFostered(fostered.includes(petId));
+      })
+      .catch(() => {});
+  }, [isLoggedIn, petId]);
 
   const handleSavePet = async () => {
-    const petId = getPetId();
-    const url = `${getServerUrl()}/users/${petId}`;
     try {
-      const res = await axios.put(
-        url,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-      if (res.data.ok) {
-        setSavePet(true);
-      }
-    } catch (err) {
-      console.log(err);
+      await savePet(petId);
+      setIsSaved(true);
+    } catch {
+      toast.error("Failed to save pet.");
     }
   };
 
-  const handleUnSavedPet = async () => {
+  const handleUnsavePet = async () => {
     try {
-      const petId = getPetId();
-      const url = `${getServerUrl()}/users/${petId}`;
-      const res = await axios.delete(url, {
-        withCredentials: true,
-      });
-      if (res.data.ok) {
-        setSavePet(false);
-      }
-    } catch (err) {
-      console.log(err);
+      await unsavePet(petId);
+      setIsSaved(false);
+    } catch {
+      toast.error("Failed to unsave pet.");
     }
   };
 
   const handleAdopt = async () => {
     try {
-      const petId = getPetId();
-      const url = `${getServerUrl()}/users/adopt/${petId}`;
-      const res = await axios.put(
-        url,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-      const userId = res.data;
-      if (userId) {
-        const url = `${getServerUrl()}/pets/adopt`;
-        try {
-          const res = await axios.put(
-            url,
-            { userId, petId },
-            {
-              withCredentials: true,
-            }
-          );
-          setAdoptPet(true);
-          setFosterPet(false);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    } catch (err) {
-      console.log(err);
+      const { data } = await adoptPet(petId);
+      await adoptPetStatus({ userId: data.userId, petId });
+      navigate("/adoption-success", {
+        state: { petName: pet.name, petImage: pet.imageUrl, action: "adopted" },
+      });
+    } catch {
+      toast.error("Adoption failed. Please try again.");
     }
   };
 
   const handleFoster = async () => {
     try {
-      const petId = getPetId();
-      const url = `${getServerUrl()}/users/foster/${petId}`;
-      const res = await axios.put(
-        url,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
-      const userId = res.data;
-      if (userId) {
-        const url = `${getServerUrl()}/pets/foster`;
-        try {
-          const res = await axios.put(
-            url,
-            { userId, petId },
-            {
-              withCredentials: true,
-            }
-          );
-          setFosterPet(true);
-          setAdoptPet(false);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    } catch (err) {
-      console.log(err);
+      const { data } = await fosterPet(petId);
+      await fosterPetStatus({ userId: data.userId, petId });
+      navigate("/adoption-success", {
+        state: { petName: pet.name, petImage: pet.imageUrl, action: "fostered" },
+      });
+    } catch {
+      toast.error("Fostering failed. Please try again.");
     }
   };
 
   const handleReturn = async () => {
     try {
-      const petId = getPetId();
-      const url = `${getServerUrl()}/users/returnPet/${petId}`;
-      const res = await axios.delete(url, {
-        withCredentials: true,
-      });
-      const userId = res.data;
-      if (userId) {
-        const url = `${getServerUrl()}/pets/returnPet`;
-        try {
-          const res = await axios.put(
-            url,
-            { userId, petId },
-            {
-              withCredentials: true,
-            }
-          );
-          if (res.data) {
-            setFosterPet(false);
-            setAdoptPet(false);
-            setSavePet(false);
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    } catch (err) {
-      console.log(err);
+      const { data } = await returnPet(petId);
+      await returnPetStatus({ userId: data.userId, petId });
+      setIsFostered(false);
+      setIsAdopted(false);
+      setIsSaved(false);
+      toast.success("Pet returned successfully.");
+    } catch {
+      toast.error("Return failed. Please try again.");
     }
   };
 
+  if (loading) {
+    return <section className="pet-card-container"><p>Loading...</p></section>;
+  }
+
+  if (!pet) {
+    return <section className="pet-card-container"><p>Pet not found.</p></section>;
+  }
+
+  const isAvailable = pet.adoptionStatus === "Available";
+
   return (
     <section className="pet-card-container">
-      {pet ? (
-        <div className="pet-card">
-          <img
-            src={pet.imageUrl}
-            height="500em"
-            width="500em"
-            alt="Pet"
-            className="pet-card-image"
-          ></img>
-          <div className="card-right">
-            <div className="pet-card-info">
-              <span className="pet-card-pet-name">{pet.name}</span>
-
-              <p className="pet-info">
-                This {pet.type} is of the breed {pet.breed}.
-              </p>
-              <p className="pet-info">
-                {pet.name} is {pet.height}cm tall and weight {pet.weight}kg.
-              </p>
-              <p className="pet-info">color: {pet.color}</p>
-              <p className="pet-info">Adoption Status: {pet.adoptionStatus}</p>
-              <p className="pet-info">Hypoallergenic: {pet.hypoallergenic}</p>
-              <p className="pet-info">
-                Dietary Restrictions: {pet.dietaryRestrictions}
-              </p>
-              <p className="pet-info">Bio: {pet.bio}</p>
-            </div>
-
-            {isLogin && (avialable || adoptPet || fosterPet) ? (
-              <div className="pet-card-button-container">
-                {fosterPet ? (
-                  <button className="pet-card-button" onClick={handleAdopt}>
-                    Adopt
-                  </button>
-                ) : null}
-
-                {adoptPet || fosterPet ? (
-                  <button className="pet-card-button" onClick={handleReturn}>
-                    Return Pet
-                  </button>
-                ) : (
-                  <div>
-                    <button className="pet-card-button" onClick={handleAdopt}>
-                      Adopt
-                    </button>
-                    <button className="pet-card-button" onClick={handleFoster}>
-                      Foster
-                    </button>
-                  </div>
-                )}
-
-                {savePet && !(adoptPet || fosterPet) ? (
-                  <button
-                    className="pet-card-button"
-                    onClick={handleUnSavedPet}
-                  >
-                    Unsave Pet
-                  </button>
-                ) : null}
-
-                {!savePet && !(adoptPet || fosterPet) ? (
-                  <button className="pet-card-button" onClick={handleSavePet}>
-                    Save Pet
-                  </button>
-                ) : null}
-              </div>
-            ) : null}
+      <button className="back-button" onClick={() => navigate(-1)}><IoArrowBack size="1.1em" /></button>
+      <div className="pet-card">
+        <img
+          src={pet.imageUrl}
+          height="500em"
+          width="500em"
+          alt="Pet"
+          className="pet-card-image"
+        />
+        <div className="card-right">
+          <div className="pet-card-info">
+            <span className="pet-card-pet-name">{pet.name}</span>
+            <p className="pet-info">This {pet.type} is of the breed {pet.breed}.</p>
+            <p className="pet-info">{pet.name} is {pet.height}cm tall and weighs {pet.weight}kg.</p>
+            <p className="pet-info">Color: {pet.color}</p>
+            <p className="pet-info">Adoption Status: {pet.adoptionStatus}</p>
+            <p className="pet-info">Hypoallergenic: {pet.hypoallergenic}</p>
+            <p className="pet-info">Dietary Restrictions: {pet.dietaryRestrictions}</p>
+            <p className="pet-info">Bio: {pet.bio}</p>
           </div>
+
+          {isLoggedIn && (isAvailable || isAdopted || isFostered) && (
+            <div className="pet-card-button-container">
+              {isFostered && (
+                <button className="pet-card-button" onClick={handleAdopt}>Adopt</button>
+              )}
+              {(isAdopted || isFostered) ? (
+                <button className="pet-card-button" onClick={handleReturn}>Return Pet</button>
+              ) : (
+                <>
+                  <button className="pet-card-button" onClick={handleAdopt}>Adopt</button>
+                  <button className="pet-card-button" onClick={handleFoster}>Foster</button>
+                </>
+              )}
+              {isSaved && !(isAdopted || isFostered) && (
+                <button className="pet-card-button" onClick={handleUnsavePet}>Unsave Pet</button>
+              )}
+              {!isSaved && !(isAdopted || isFostered) && (
+                <button className="pet-card-button" onClick={handleSavePet}>Save Pet</button>
+              )}
+            </div>
+          )}
         </div>
-      ) : (
-        ""
-      )}
+      </div>
     </section>
   );
 }

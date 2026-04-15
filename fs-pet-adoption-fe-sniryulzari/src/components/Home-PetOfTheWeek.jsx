@@ -1,57 +1,100 @@
-import axios from "axios";
-import React, { useContext, useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import petOfTheWeekFrame from "../Images/petOfTheWeekFrame.jpeg";
-import { PetContext } from "../Context/Context-Pets";
+import { getPetOfTheWeek } from "../api/pets";
+import { UsersContext } from "../Context/Context-Users";
+import Spinner from "./Spinner";
+
+function buildMarketingBio(pet) {
+  if (pet.bio && pet.bio.trim().length > 10) return pet.bio;
+  const name = pet.name || "This pet";
+  const type = pet.type ? pet.type.toLowerCase() : "animal";
+  const breed = pet.breed ? ` ${pet.breed}` : "";
+  return `${name} is a charming${breed} ${type} who is ready to fill your home with love and joy. ` +
+    `They're looking for a forever family — could that be you? Don't miss your chance to give ${name} the life they deserve!`;
+}
 
 function PetOfTheWeek() {
-  const [petOfTheWeek, setPetOfTheWeek] = useState({});
-  const {getServerUrl} = useContext(PetContext);
-
-  const getPetOfTheWeek = async () => {
-    const url = `${getServerUrl()}/appOperations/weeklyPet`;
-    try {
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-      setPetOfTheWeek(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const [pet, setPet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useContext(UsersContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getPetOfTheWeek();
+    setLoading(true);
+    getPetOfTheWeek()
+      .then((res) => setPet(res.data[0] ?? null))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
+  function handleAdoptClick() {
+    if (isLoggedIn && pet?._id) {
+      navigate(`/petcard?petId=${pet._id}`);
+    } else {
+      navigate("/");
+      // Trigger login — the login button is on the home hero; bounce user there
+      // and let them click it. A future refactor could open the modal directly.
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  const metaItems = [
+    pet?.type,
+    pet?.breed,
+    pet?.age != null ? `${pet.age} yr${pet.age !== 1 ? "s" : ""} old` : null,
+  ].filter(Boolean);
 
   return (
     <section className="home-pet-of-the-week-container">
       <span className="pet-of-the-week-heading-top">Meet Our</span>
       <h2 className="pet-of-the-week-heading-bottom">PET OF THE WEEK!</h2>
-      <div className="pet-of-the-week-card">
-        <div className="pet-of-the-week-card-left">
-          <img src={petOfTheWeekFrame} className="pet-of-the-week-frame" alt="pet-of-the-week"/>
-          <div className="pet-of-the-week-image-container">
-            <img
-              src={petOfTheWeek[0]?.imageUrl}
-              alt="pet-of-the-week"
-              className="pet-of-the-week-image"
-            />
-          </div>
-        </div>
-        <div className="pet-of-the-week-card-right">
-          <span className="pet-name">{petOfTheWeek[0]?.name}</span>
-          {/* <p className="pet-bio">{petOfTheWeek[0]?.bio}</p> */}
-          <p className="pet-bio">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
 
-          <button className="pet-of-the-week-button">
-            Click To Adopte {petOfTheWeek[0]?.name}
-          </button>
+      <div className="pet-of-the-week-card">
+        {/* LEFT — decorative ring + circular photo */}
+        <div className="pet-of-the-week-card-left">
+          <img
+            src={petOfTheWeekFrame}
+            className="pet-of-the-week-frame"
+            alt="decorative ring"
+          />
+          {pet?.imageUrl && (
+            <div className="pet-of-the-week-image-container">
+              <img
+                src={pet.imageUrl}
+                alt={pet.name || "pet of the week"}
+                className="pet-of-the-week-image"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT — info + CTA */}
+        <div className="pet-of-the-week-card-right">
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              {pet?.name && (
+                <span className="pet-name">{pet.name}</span>
+              )}
+
+              {metaItems.length > 0 && (
+                <p className="pet-meta">{metaItems.join(" · ")}</p>
+              )}
+
+              <p className="pet-bio">{buildMarketingBio(pet ?? {})}</p>
+
+              <button
+                className="pet-of-the-week-button"
+                onClick={handleAdoptClick}
+              >
+                {isLoggedIn
+                  ? `Click to Adopt ${pet?.name ?? ""}`
+                  : "Login to Adopt"}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </section>

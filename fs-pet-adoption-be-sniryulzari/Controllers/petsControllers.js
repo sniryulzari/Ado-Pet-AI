@@ -4,94 +4,96 @@ const {
   adoptPetStatusModel,
   fosterPetStatusModel,
   returnPetModel,
-  savedPetInfoModel,
-  adoptedPetInfoModel,
-  fosteredPetInfoModel,
+  getPetInfoModel,
 } = require("../Models/petsModel");
 
 async function searchPets(req, res) {
   try {
-    const searchPets = await searchPetsModel(req.query);
-    res.send(searchPets);
+    const pets = await searchPetsModel(req.query);
+    res.send(pets);
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Search pets error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function getPetById(req, res) {
   try {
-    const { petId } = req.params;
-    const pet = await getPetByIdModel(petId);
+    const pet = await getPetByIdModel(req.params.petId);
     res.send(pet);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Get pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function adoptPetStatus(req, res) {
   try {
-    const { userId } = req.body.userId;
-    const petId = req.body.petId;
+    // Fixed: was `const { userId } = req.body.userId` which always destructured
+    // from a string (undefined), so userId was always undefined and the DB write silently failed.
+    const userId = req.body.userId;
+    const { petId } = req.body;
     await adoptPetStatusModel(userId, petId);
     res.send({ ok: true });
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Adopt pet status error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function fosterPetStatus(req, res) {
   try {
-    const { userId } = req.body.userId;
-    const petId = req.body.petId;
-    const petStatus = await fosterPetStatusModel(userId, petId);
+    // Same destructuring fix as adoptPetStatus
+    const userId = req.body.userId;
+    const { petId } = req.body;
+    await fosterPetStatusModel(userId, petId);
     res.send({ ok: true });
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Foster pet status error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function returnPet(req, res) {
   try {
-    const userId = req.body.userId;
-    const petId = req.body.petId;
-    const petStatus = await returnPetModel(userId, petId);
+    const { userId, petId } = req.body;
+    await returnPetModel(userId, petId);
     res.send({ ok: true });
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Return pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
+// Three previously-identical functions (savedPetInfoModel, adoptedPetInfoModel,
+// fosteredPetInfoModel) are now a single getPetInfoModel — same DB call, one function.
 async function getMySavedPet(req, res) {
   try {
-    const petInfo = await savedPetInfoModel(req.params);
+    const petInfo = await getPetInfoModel(req.params.petId);
     res.send(petInfo);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Get saved pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function getMyAdoptedPet(req, res) {
   try {
-    const petInfo = await adoptedPetInfoModel(req.params);
+    const petInfo = await getPetInfoModel(req.params.petId);
     res.send(petInfo);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Get adopted pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 
 async function getMyFosteredPet(req, res) {
   try {
-    const petInfo = await fosteredPetInfoModel(req.params);
+    const petInfo = await getPetInfoModel(req.params.petId);
     res.send(petInfo);
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Get fostered pet error:", err.message);
+    res.status(500).send("Server error");
   }
 }
 

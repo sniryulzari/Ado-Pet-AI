@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import logo from "../Images/logo.jpg";
 import { GrTwitter } from "react-icons/gr";
 import { RiFacebookFill } from "react-icons/ri";
@@ -7,9 +7,51 @@ import { GrYoutube } from "react-icons/gr";
 import { FaPhoneAlt } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdLocationOn } from "react-icons/md";
+import { toast } from "react-toastify";
+import { subscribeNewsletter } from "../api/newsletter";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function Footer() {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail]       = useState("");
+  const [loading, setLoading]   = useState(false);
+
+  const handleSubscribe = async () => {
+    const trimmed = email.trim();
+
+    if (!trimmed) {
+      toast.error("Please enter your email address.");
+      return;
+    }
+    if (!EMAIL_REGEX.test(trimmed)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await subscribeNewsletter(trimmed);
+      toast.success("Thank you! Check your inbox 🐾");
+      setEmail("");
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 429) {
+        toast.error("Too many attempts. Please try again later.");
+      } else if (status === 503) {
+        toast.error("Email service is not configured yet. Check back soon!");
+      } else {
+        toast.error("Subscription failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSubscribe();
+  };
+
   return (
     <footer className="footer-container">
       <div className="footer-main">
@@ -67,17 +109,31 @@ function Footer() {
           <input
             className="newsletter-input"
             placeholder="Your Email..."
-          ></input>
-          <button className="newsletter-button">SUBSCRIBE</button>
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={loading}
+          />
+          <button
+            className="newsletter-button"
+            onClick={handleSubscribe}
+            disabled={loading}
+          >
+            {loading ? "SENDING..." : "SUBSCRIBE"}
+          </button>
         </div>
       </div>
+
       <div className="footer-bottom">
-        <hr className="footer-bottom-breaking-line"></hr>
+        <hr className="footer-bottom-breaking-line" />
         <div className="footer-bottom-copyright">
-            <span className="footer-copyright-text terms-of-use">Terms of Use</span>
-            <span className="footer-copyright-text privacy-policy">Privacy Policy</span>
-            <span className="footer-copyright-text">Copyright © {currentYear} Ado-Pet LTD. All rights reserved.</span>
-            <span className="footer-copyright-text">Made by Snir Yulzari</span>
+          <span className="footer-copyright-text terms-of-use">Terms of Use</span>
+          <span className="footer-copyright-text privacy-policy">Privacy Policy</span>
+          <span className="footer-copyright-text">
+            Copyright © {currentYear} Ado-Pet LTD. All rights reserved.
+          </span>
+          <span className="footer-copyright-text">Made by Snir Yulzari</span>
         </div>
       </div>
     </footer>

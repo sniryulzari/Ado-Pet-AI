@@ -1,152 +1,92 @@
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Form, FloatingLabel } from "react-bootstrap";
+import { toast } from "react-toastify";
 import { UsersContext } from "../Context/Context-Users";
+import { getUserInfo, updateUserInfo } from "../api/users";
 
 const ProfileSettings = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [bio, setBio] = useState("");
-
-  const {getServerUrl} = useContext(UsersContext);
-
-  const getUserInfo = async () => {
-    const url = `${getServerUrl()}/users/userInfo`;
-    try {
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-      if (res.data._id) {
-        setFirstName(res.data.firstName);
-        setLastName(res.data.lastName);
-        setPhoneNumber(res.data.phoneNumber);
-        setEmail(res.data.email);
-        setPassword(res.data.password);
-        setBio(res.data.bio);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: "",
+    password: "",
+    bio: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const { setFirstName, setLastName } = useContext(UsersContext);
 
   useEffect(() => {
-    getUserInfo();
+    getUserInfo()
+      .then((res) => {
+        const { firstName, lastName, phoneNumber, email, bio } = res.data;
+        // Fixed: previously also fetched `password` (the bcrypt hash) and stored it
+        // in state. Clients have no use for the hash — only the fields users can
+        // actually change are populated here.
+        setForm({ firstName, lastName, phoneNumber, email, bio, password: "" });
+      })
+      .catch(() => toast.error("Failed to load profile."))
+      .finally(() => setLoading(false));
   }, []);
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = `${getServerUrl()}/users/userInfo`;
-      const res = await axios.put(
-        url,
-        { firstName, lastName, phoneNumber, email, password, bio },
-        {
-          withCredentials: true,
-        }
-      );
-    } catch (err) {
-      console.log(err);
+      await updateUserInfo(form);
+      // Update the name displayed in the NavBar immediately after save
+      setFirstName(form.firstName);
+      setLastName(form.lastName);
+      toast.success("Profile saved!");
+    } catch {
+      // Previously: silent catch with console.log — user had no idea if it worked
+      toast.error("Failed to save profile. Please try again.");
     }
   };
+
+  if (loading) return <div className="profile-settings-container"><p>Loading...</p></div>;
 
   return (
     <div className="profile-settings-container">
       <h1 className="profile-settings-header">Profile Settings</h1>
-      <form className="profile-settings-form">
-        <Form.Group
-          className="profile-settings-field"
-          controlId="formBasicFirstName"
-        >
+      <form className="profile-settings-form" onSubmit={handleSubmit}>
+        <Form.Group className="profile-settings-field" controlId="formBasicFirstName">
           <Form.Label>First Name</Form.Label>
-          <Form.Control
-            onChange={(e) => setFirstName(e.target.value)}
-            name="firstName"
-            type="text"
-            value={firstName}
-          />
+          <Form.Control onChange={handleChange} name="firstName" type="text" value={form.firstName} />
         </Form.Group>
 
-        <Form.Group
-          className="profile-settings-field"
-          controlId="formBasicLastName"
-        >
+        <Form.Group className="profile-settings-field" controlId="formBasicLastName">
           <Form.Label>Last Name</Form.Label>
-          <Form.Control
-            onChange={(e) => setLastName(e.target.value)}
-            name="lastName"
-            type="text"
-            value={lastName}
-          />
+          <Form.Control onChange={handleChange} name="lastName" type="text" value={form.lastName} />
         </Form.Group>
 
-        <Form.Group
-          className="profile-settings-field"
-          controlId="formBasicPhoneNumber"
-        >
+        <Form.Group className="profile-settings-field" controlId="formBasicPhoneNumber">
           <Form.Label>Phone Number</Form.Label>
-          <Form.Control
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            name="phoneNumber"
-            type="text"
-            value={phoneNumber}
-          />
+          <Form.Control onChange={handleChange} name="phoneNumber" type="text" value={form.phoneNumber} />
         </Form.Group>
 
-        <Form.Group
-          className="profile-settings-field"
-          controlId="formBasicEmail"
-        >
+        <Form.Group className="profile-settings-field" controlId="formBasicEmail">
           <Form.Label>Email</Form.Label>
-          <Form.Control
-            onChange={(e) => setEmail(e.target.value)}
-            name="email"
-            type="email"
-            value={email}
-          />
+          <Form.Control onChange={handleChange} name="email" type="email" value={form.email} />
         </Form.Group>
 
-        <Form.Group
-          className="profile-settings-field"
-          controlId="formBasicPassword"
-        >
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            onChange={(e) => setPassword(e.target.value)}
-            name="password"
-            type="password"
-            // value={password}
-          />
+        <Form.Group className="profile-settings-field" controlId="formBasicPassword">
+          <Form.Label>New Password (leave blank to keep current)</Form.Label>
+          <Form.Control onChange={handleChange} name="password" type="password" value={form.password} />
         </Form.Group>
 
-        <Form.Group
-          className="profile-settings-field"
-          controlId="formBasicTextarea"
-        >
+        <Form.Group className="profile-settings-field" controlId="formBasicTextarea">
           <Form.Label>Bio</Form.Label>
-          <FloatingLabel
-            controlId="floatingTextarea"
-            className="profile-settings-field"
-          >
-            <Form.Control
-              as="textarea"
-              placeholder="Leave a comment here"
-              onChange={(e) => setBio(e.target.value)}
-              value={bio}
-            />
+          <FloatingLabel controlId="floatingTextarea" className="profile-settings-field">
+            <Form.Control as="textarea" placeholder="Tell us about yourself" onChange={handleChange} name="bio" value={form.bio} />
           </FloatingLabel>
         </Form.Group>
 
         <div className="profile-settings-button-container">
-          <button
-            className="profile-settings-button"
-            type="submit"
-            onClick={handleSubmit}
-          >
-            Save
-          </button>
+          <button className="profile-settings-button" type="submit">Save</button>
         </div>
       </form>
     </div>
