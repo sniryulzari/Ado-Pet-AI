@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 import { UsersContext } from "../Context/Context-Users";
 import { login, getUserInfo } from "../api/users";
 
@@ -10,6 +11,7 @@ function LoginForm({ handleLoginClose, handleShow }) {
 
   const { setIsLoggedIn, setFirstName, setLastName, setIsAdmin } =
     useContext(UsersContext);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -63,6 +65,12 @@ function LoginForm({ handleLoginClose, handleShow }) {
           </button>
         </div>
         <span className="link-signup" onClick={handleShow}>Not a member? Sign up</span>
+        <span
+          className="link-forgot-password"
+          onClick={() => { handleLoginClose(); navigate("/forgot-password"); }}
+        >
+          Forgot password?
+        </span>
       </div>
     </Form>
   );

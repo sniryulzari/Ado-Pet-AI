@@ -5,6 +5,9 @@ const {
   getAllUsersModel,
   deletePetModel,
   editPetModel,
+  getStatsModel,
+  getNewsletterSubscribersModel,
+  deleteNewsletterSubscriberModel,
 } = require("../Models/adminModel");
 
 async function getAllPets(_req, res) {
@@ -76,4 +79,38 @@ async function editPet(req, res) {
   }
 }
 
-module.exports = { addPet, getAllPets, getPetById, getAllUsers, deletePet, editPet };
+async function getStats(_req, res) {
+  try {
+    const stats = await getStatsModel();
+    res.send(stats);
+  } catch (err) {
+    console.error("Get stats error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
+async function getNewsletterSubscribers(_req, res) {
+  try {
+    const subscribers = await getNewsletterSubscribersModel();
+    res.send({ count: subscribers.length, subscribers });
+  } catch (err) {
+    console.error("Get subscribers error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
+async function deleteNewsletterSubscriber(req, res) {
+  try {
+    const email = decodeURIComponent(req.params.email);
+    await deleteNewsletterSubscriberModel(email);
+    res.send({ ok: true });
+  } catch (err) {
+    console.error("Delete subscriber error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
+module.exports = {
+  addPet, getAllPets, getPetById, getAllUsers, deletePet, editPet,
+  getStats, getNewsletterSubscribers, deleteNewsletterSubscriber,
+};

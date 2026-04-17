@@ -7,7 +7,7 @@ import Spinner from "../components/Spinner";
 import SearchPetCard from "../components/Search-PetCard";
 import Footer from "../components/Footer";
 import { searchPets } from "../api/pets";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 
 const PETS_PER_PAGE = 9;
 

@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import petOfTheWeekFrame from "../Images/petOfTheWeekFrame.jpeg";
 import { getPetOfTheWeek } from "../api/pets";
 import { UsersContext } from "../Context/Context-Users";
 import Spinner from "./Spinner";
@@ -51,21 +50,21 @@ function PetOfTheWeek() {
       <h2 className="pet-of-the-week-heading-bottom">PET OF THE WEEK!</h2>
 
       <div className="pet-of-the-week-card">
-        {/* LEFT — decorative ring + circular photo */}
+        {/* LEFT — pet photo in CSS circle ring */}
         <div className="pet-of-the-week-card-left">
-          <img
-            src={petOfTheWeekFrame}
-            className="pet-of-the-week-frame"
-            alt="decorative ring"
-          />
-          {pet?.imageUrl && (
-            <div className="pet-of-the-week-image-container">
+          <div className="pet-of-the-week-ring">
+            {pet?.imageUrl ? (
               <img
                 src={pet.imageUrl}
                 alt={pet.name || "pet of the week"}
                 className="pet-of-the-week-image"
               />
-            </div>
+            ) : (
+              <div className="pet-of-the-week-placeholder">🐾</div>
+            )}
+          </div>
+          {pet?.name && (
+            <p className="pet-of-the-week-photo-name">{pet.name}</p>
           )}
         </div>
 

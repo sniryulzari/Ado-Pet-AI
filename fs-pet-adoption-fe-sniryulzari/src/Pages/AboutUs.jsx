@@ -60,6 +60,10 @@ export default function AboutUs() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
     searchPets({})
       .then((res) => {

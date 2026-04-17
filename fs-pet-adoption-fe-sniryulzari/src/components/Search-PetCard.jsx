@@ -1,55 +1,83 @@
-import React from "react";
-import { Button, Card } from "react-bootstrap";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaHeart, FaRegHeart, FaDog } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { UsersContext } from "../Context/Context-Users";
+import { toast } from "../utils/toast";
 
-function SearchPetCard(props) {
-  const {
-    id,
-    type,
-    breed,
-    name,
-    adoptionStatus,
-    height,
-    weight,
-    color,
-    bio,
-    hypoallergenic,
-    dietaryRestrictions,
-    imageUrl,
-  } = props;
+function statusBadgeClass(status) {
+  if (status === "Available") return "pet-badge pet-badge--available";
+  if (status === "Adopted")   return "pet-badge pet-badge--adopted";
+  return "pet-badge pet-badge--fostered";
+}
+
+function SearchPetCard({ id, breed, name, type, adoptionStatus, imageUrl, index = 0 }) {
   const navigate = useNavigate();
+  const { isLoggedIn, savedPetIds, toggleSavedPet } = useContext(UsersContext);
+  const isSaved = savedPetIds?.has(id);
+
+  const handleHeartClick = async (e) => {
+    e.stopPropagation();
+    if (!isLoggedIn) {
+      navigate("/");
+      toast.info("Please log in to save pets.");
+      return;
+    }
+    try {
+      await toggleSavedPet(id);
+    } catch {
+      toast.error("Failed to update saved pets.");
+    }
+  };
 
   return (
-    <div className="mx-1 my-1 ">
-      <Card border={adoptionStatus === "Available" && "primary"}>
-        <Card.Img
-          variant="top"
-          src={imageUrl}
-          height="300em"
-          width="300em"
-          object-fit="contain"
-        />
-        <Card.Body>
-          <Card.Title>{name}</Card.Title>
-          <Card.Text>Breed: {breed}</Card.Text>
-          <Card.Text
-            style={
-              adoptionStatus === "Available"
-                ? { color: "#22CC14" }
-                : { color: "#EF233C" }
-            }
-          >
-            {adoptionStatus}
-          </Card.Text>
-        </Card.Body>
-        <Button
-          onClick={() => navigate(`/petcard?petId=${id}`)}
-          className="see-more-button"
+    <motion.div
+      className="pet-card-modern"
+      onClick={() => navigate(`/petcard?petId=${id}`)}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: index * 0.06, ease: "easeOut" }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && navigate(`/petcard?petId=${id}`)}
+      aria-label={`View ${name}`}
+    >
+      {/* Image */}
+      <div className="pet-card-modern__img-wrap">
+        <img src={imageUrl} alt={name} className="pet-card-modern__img" />
+        <div className="pet-card-modern__gradient" />
+        <span className="pet-card-modern__name-overlay">{name}</span>
+        <button
+          className={`pet-card-modern__heart${isSaved ? " pet-card-modern__heart--saved" : ""}`}
+          onClick={handleHeartClick}
+          aria-label={isSaved ? "Remove from saved" : "Save pet"}
         >
-          See more
-        </Button>
-      </Card>
-    </div>
+          {isSaved ? <FaHeart size="1em" /> : <FaRegHeart size="1em" />}
+        </button>
+      </div>
+
+      {/* Info */}
+      <div className="pet-card-modern__body">
+        <span className="pet-card-modern__breed">
+          {[type, breed].filter(Boolean).join(" · ")}
+        </span>
+        <div className="pet-card-modern__badges">
+          {type && (
+            <span className="pet-badge pet-badge--type">
+              <FaDog size="0.7em" style={{ marginRight: "0.25rem" }} />
+              {type}
+            </span>
+          )}
+          <span className={statusBadgeClass(adoptionStatus)}>{adoptionStatus}</span>
+        </div>
+        <button
+          className="pet-card-modern__cta"
+          onClick={(e) => { e.stopPropagation(); navigate(`/petcard?petId=${id}`); }}
+        >
+          Meet {name} →
+        </button>
+      </div>
+    </motion.div>
   );
 }
 

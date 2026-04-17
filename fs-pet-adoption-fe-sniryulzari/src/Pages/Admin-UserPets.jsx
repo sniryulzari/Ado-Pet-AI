@@ -5,7 +5,7 @@ import { Col, Row } from "react-bootstrap";
 import { UsersContext } from "../Context/Context-Users";
 import SearchPetCard from "../components/Search-PetCard";
 import { getAdoptedPetInfo, getFosteredPetInfo } from "../api/pets";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 
 function AdminUserPets() {
   const [pets, setPets]     = useState([]);

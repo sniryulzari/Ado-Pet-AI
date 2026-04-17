@@ -42,17 +42,19 @@ function HomeWelcome() {
         </div>
         <div className="home-welcome-text">
           <p className="home-welcome-text-top">
-            Grooming & Supply provides grooming services for all dog and cat
-            breeds. We are fully committed to the health and hygiene of your
-            furry best friends. We offer free estimates and consultations to
-            help your pet look and feel their best!
+            Every pet in our centre has a story — and every story deserves a
+            happy ending. At Ado-Pet, we connect rescue animals with warm,
+            loving families who give them the second chance they deserve.
+            Over <strong>500+ pets</strong> have already found their forever
+            homes with us, and we're just getting started. Could your family
+            be next?
           </p>
 
           <ul className="home-welcome-text-middle">
             <li className="home-welcome-icon-text">
               <BsFillCheckCircleFill className="checkIcon" size="1em" />
               <span className="home-welcome-icon-text-line">
-                CERTIFIED ADOPTION
+                CERTIFIED ADOPTION CENTRE
               </span>
             </li>
             <li className="home-welcome-icon-text">
@@ -63,12 +65,12 @@ function HomeWelcome() {
             </li>
             <li className="home-welcome-icon-text">
               <BsFillCheckCircleFill className="checkIcon" size="1em" />
-              <span className="home-welcome-icon-text-line">ANIMAL LOVER</span>
+              <span className="home-welcome-icon-text-line">500+ PETS REHOMED</span>
             </li>
             <li className="home-welcome-icon-text">
               <BsFillCheckCircleFill className="checkIcon" size="1em" />
               <span className="home-welcome-icon-text-line">
-                PET PARENT OF 3 DOGS
+                LIFELONG ADOPTION SUPPORT
               </span>
             </li>
           </ul>

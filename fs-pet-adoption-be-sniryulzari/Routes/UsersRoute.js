@@ -6,6 +6,7 @@ const { validatebody } = require("../Middleware/Validatebody");
 const { signupSchema, loginSchema, editUserSettingsSchema } = require("../Schemas/allSchemas");
 const { passwordMatch, isNewUser, isExistingUser, hashPassword, verifyPassword } = require("../Middleware/UsersMiddleware");
 const { Auth } = require("../Middleware/AuthMiddleWare");
+const { upload, uploadToCloudinary } = require("../Middleware/ImagesMiddleware");
 
 // Limit auth endpoints to 10 attempts per IP per 15 minutes to block brute-force attacks
 const authLimiter = rateLimit({
@@ -23,8 +24,19 @@ router.post("/login", authLimiter, validatebody(loginSchema), isExistingUser, ve
 // Logout clears a session cookie, which is a state change.
 router.post("/logout", UsersController.logout);
 
+// Forgot/reset password — rate-limited, no auth required
+router.post("/forgot-password", authLimiter, UsersController.forgotPassword);
+router.post("/reset-password", authLimiter, UsersController.resetPassword);
+
 router.get("/userInfo", Auth, UsersController.getUserInfoById);
-router.put("/userInfo", Auth, validatebody(editUserSettingsSchema), hashPassword, UsersController.editUser);
+// upload.single runs before validatebody so multer populates req.body from FormData first.
+// For plain JSON requests (no file), multer skips silently and express.json() has already
+// populated req.body — both paths end up with the same req.body shape.
+router.put("/userInfo", Auth, upload.single("profileImage"), uploadToCloudinary, validatebody(editUserSettingsSchema), hashPassword, UsersController.editUser);
+
+// GET /savedPets must be declared before PUT /:petId — otherwise Express would
+// try to match "savedPets" as a petId parameter.
+router.get("/savedPets", Auth, UsersController.getSavedPets);
 
 router.put("/:petId", Auth, UsersController.savePet);
 router.delete("/:petId", Auth, UsersController.deleteSavedPet);

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../Images/logo.jpg";
 import { GrTwitter } from "react-icons/gr";
 import { RiFacebookFill } from "react-icons/ri";
@@ -7,7 +8,7 @@ import { GrYoutube } from "react-icons/gr";
 import { FaPhoneAlt } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdLocationOn } from "react-icons/md";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 import { subscribeNewsletter } from "../api/newsletter";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,7 +62,7 @@ function Footer() {
             <span className="social-media-header">Ado-Pet</span>
           </div>
           <p className="footer-social-media-text">
-            Lorem ipsum dolor sit amet, elit. Aenean ligula eget dolor.
+            Finding loving homes for every pet. Because every animal deserves a family.
           </p>
           <div className="footer-social-media-links">
             <GrTwitter size="2em" className="twitter-link" />
@@ -91,7 +92,7 @@ function Footer() {
                 <MdLocationOn size="1.3em" />
               </span>
               <span className="contact-us-info">
-                Daniel Frisch St. 3, Tel Aviv-Yafo
+                121 Menachem Begin Rd, Tel Aviv, 61st Floor
               </span>
             </div>
           </div>
@@ -128,8 +129,8 @@ function Footer() {
       <div className="footer-bottom">
         <hr className="footer-bottom-breaking-line" />
         <div className="footer-bottom-copyright">
-          <span className="footer-copyright-text terms-of-use">Terms of Use</span>
-          <span className="footer-copyright-text privacy-policy">Privacy Policy</span>
+          <Link to="/terms" className="footer-copyright-text terms-of-use">Terms of Use</Link>
+          <Link to="/privacy" className="footer-copyright-text privacy-policy">Privacy Policy</Link>
           <span className="footer-copyright-text">
             Copyright © {currentYear} Ado-Pet LTD. All rights reserved.
           </span>

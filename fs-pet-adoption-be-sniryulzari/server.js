@@ -14,13 +14,17 @@ for (const key of REQUIRED_ENV) {
   }
 }
 
+// Warn loudly if the JWT secret is dangerously short
+if (process.env.TOKEN_SECRET.length < 32) {
+  console.error("TOKEN_SECRET is too short (minimum 32 characters). Use a long random string.");
+  process.exit(1);
+}
+
 const PORT = process.env.PORT || 8080;
 
-// Frontend origin — the server allows requests from here (not from itself)
-const FRONTEND_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://pet-adoption-133f.onrender.com"
-    : "http://localhost:3000";
+// Frontend origin — prefer the env variable so it can be overridden per environment
+// without touching code. Falls back to localhost for local development.
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 const app = express();
 
@@ -40,12 +44,14 @@ const petsRoute = require("./Routes/PetsRoute");
 const adminRoute = require("./Routes/AdminRoute");
 const appOperationsRoute = require("./Routes/AppOperationsRoute");
 const newsletterRoute = require("./Routes/NewsletterRoute");
+const contactRoute    = require("./Routes/ContactRoute");
 
 app.use("/users", usersRoute);
 app.use("/pets", petsRoute);
 app.use("/admin", adminRoute);
 app.use("/appOperations", appOperationsRoute);
 app.use("/newsletter", newsletterRoute);
+app.use("/contact", contactRoute);
 
 mongoose.set("strictQuery", true);
 

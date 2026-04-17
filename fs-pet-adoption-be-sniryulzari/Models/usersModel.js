@@ -95,6 +95,13 @@ async function resetPasswordModel(userId, hashedPassword) {
   });
 }
 
+async function getSavedPetsModel(userId) {
+  const Pet = require("../Schemas/petsSchemas");
+  const user = await User.findById(userId).select("savedPet");
+  if (!user) return [];
+  return Pet.find({ _id: { $in: user.savedPet } });
+}
+
 module.exports = {
   signupModel,
   getUserByEmailModel,
@@ -109,4 +116,5 @@ module.exports = {
   saveResetTokenModel,
   getUserByResetTokenModel,
   resetPasswordModel,
+  getSavedPetsModel,
 };

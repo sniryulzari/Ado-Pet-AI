@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Col, Row } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 import { addPet } from "../api/admin";
 import Spinner from "../components/Spinner";
 

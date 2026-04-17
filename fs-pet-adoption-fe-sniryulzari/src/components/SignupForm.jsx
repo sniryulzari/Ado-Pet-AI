@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 import FormInput from "../components/FormInput";
 import { signup } from "../api/users";
 

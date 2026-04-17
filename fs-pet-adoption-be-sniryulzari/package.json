@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devSt": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "repository": {
-    "start": "node server.js",
     "type": "git",
     "url": "git+https://github.com/israeltechchallenge/fs-pet-adoption-be-sniryulzari.git"
   },
@@ -31,11 +30,8 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.5.2",
-    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^8.0.5",
     "nodemon": "^3.1.14",
-    "sib-api-v3-sdk": "^8.5.0",
-    "uuid": "^8.3.2"
+    "sib-api-v3-sdk": "^8.5.0"
   }
 }

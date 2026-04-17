@@ -12,12 +12,15 @@ const {
   getUserByResetTokenModel,
   resetPasswordModel,
   getUserByEmailModel,
+  getSavedPetsModel,
 } = require("../Models/usersModel");
 
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-const { sendPasswordResetEmail } = require("../utils/emailService");
+const { sendPasswordResetEmail, sendAdoptionConfirmationEmail } = require("../utils/emailService");
+const Pet = require("../Schemas/petsSchemas");
+const User = require("../Schemas/userSchemas");
 require("dotenv").config();
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
@@ -103,8 +106,31 @@ async function deleteSavedPet(req, res) {
 
 async function adoptPet(req, res) {
   try {
-    await adoptPetModel(req.params.petId, req.body.userId);
-    res.send({ userId: req.body.userId });
+    const { petId } = req.params;
+    const { userId } = req.body;
+    await adoptPetModel(petId, userId);
+    res.send({ userId });
+
+    // Fire-and-forget confirmation email — don't block the response
+    try {
+      const [user, pet] = await Promise.all([
+        User.findById(userId).select("email firstName lastName"),
+        Pet.findById(petId).select("name type breed imageUrl"),
+      ]);
+      if (user && pet) {
+        await sendAdoptionConfirmationEmail({
+          toEmail:    user.email,
+          userName:   user.firstName,
+          petName:    pet.name,
+          petType:    pet.type,
+          petBreed:   pet.breed,
+          petImageUrl: pet.imageUrl,
+          action:     "adopted",
+        });
+      }
+    } catch (emailErr) {
+      console.error("Adoption confirmation email failed:", emailErr.message);
+    }
   } catch (err) {
     console.error("Adopt pet error:", err.message);
     res.status(500).send("Server error");
@@ -113,8 +139,31 @@ async function adoptPet(req, res) {
 
 async function fosterPet(req, res) {
   try {
-    await fosterPetModel(req.params.petId, req.body.userId);
-    res.send({ userId: req.body.userId });
+    const { petId } = req.params;
+    const { userId } = req.body;
+    await fosterPetModel(petId, userId);
+    res.send({ userId });
+
+    // Fire-and-forget confirmation email
+    try {
+      const [user, pet] = await Promise.all([
+        User.findById(userId).select("email firstName lastName"),
+        Pet.findById(petId).select("name type breed imageUrl"),
+      ]);
+      if (user && pet) {
+        await sendAdoptionConfirmationEmail({
+          toEmail:    user.email,
+          userName:   user.firstName,
+          petName:    pet.name,
+          petType:    pet.type,
+          petBreed:   pet.breed,
+          petImageUrl: pet.imageUrl,
+          action:     "fostered",
+        });
+      }
+    } catch (emailErr) {
+      console.error("Foster confirmation email failed:", emailErr.message);
+    }
   } catch (err) {
     console.error("Foster pet error:", err.message);
     res.status(500).send("Server error");
@@ -168,7 +217,9 @@ async function editUser(req, res) {
     // imageUrl is set by the Cloudinary upload middleware when a profile image is uploaded
     if (req.body.imageUrl) updates.profileImage = req.body.imageUrl;
     await editUserModel(userId, updates);
-    res.send({ ok: true });
+    // Return the updated profileImage URL so the frontend can update the
+    // navbar avatar immediately without a second GET /getUserInfo round-trip.
+    res.send({ ok: true, profileImage: updates.profileImage ?? null });
   } catch (err) {
     console.error("Edit user error:", err.message);
     res.status(500).send("Server error");
@@ -191,10 +242,7 @@ async function forgotPassword(req, res) {
 
     await saveResetTokenModel(user._id, token, expires);
 
-    const isProd = process.env.NODE_ENV === "production";
-    const frontendUrl = isProd
-      ? "https://pet-adoption-133f.onrender.com"
-      : "http://localhost:3000";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
     await sendPasswordResetEmail(email, resetUrl);
@@ -225,6 +273,16 @@ async function resetPassword(req, res) {
   }
 }
 
+async function getSavedPets(req, res) {
+  try {
+    const pets = await getSavedPetsModel(req.body.userId);
+    res.send(pets);
+  } catch (err) {
+    console.error("Get saved pets error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
 module.exports = {
   signup,
   login,
@@ -239,4 +297,5 @@ module.exports = {
   editUser,
   forgotPassword,
   resetPassword,
+  getSavedPets,
 };

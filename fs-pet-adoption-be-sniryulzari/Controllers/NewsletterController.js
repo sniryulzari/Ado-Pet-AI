@@ -1,7 +1,8 @@
 const SibApiV3Sdk = require('sib-api-v3-sdk');
+const { saveSubscriberModel } = require("../Models/newsletterModel");
 require("dotenv").config();
 
-function buildEmailHtml(email) {
+function buildEmailHtml(email, frontendUrl) {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -79,7 +80,7 @@ function buildEmailHtml(email) {
                       anyone who walks through the door. Biscuit has been with us for 3 weeks and
                       is ready to fill your home with joy.
                     </p>
-                    <a href="https://pet-adoption-133f.onrender.com/search"
+                    <a href="${frontendUrl}/search"
                       style="display:inline-block;margin-top:16px;background:#ff4880;
                         color:#ffffff;text-decoration:none;font-size:13px;font-weight:700;
                         text-transform:uppercase;letter-spacing:1px;
@@ -223,7 +224,7 @@ function buildEmailHtml(email) {
                 space, gives a pet stability, and often — just often — ends up adopting anyway.
                 We provide food, medical care, and 24/7 support. You provide the love.
               </p>
-              <a href="https://pet-adoption-133f.onrender.com/about"
+              <a href="${frontendUrl}/about"
                 style="display:inline-block;background:#393d72;color:#ffffff;
                   text-decoration:none;font-size:13px;font-weight:700;
                   text-transform:uppercase;letter-spacing:1px;
@@ -271,7 +272,7 @@ function buildEmailHtml(email) {
               <h3 style="margin:0 0 10px;font-size:20px;color:#ffffff;font-weight:800;">
                 Ready to find your perfect match?
               </h3>
-              <a href="https://pet-adoption-133f.onrender.com/search"
+              <a href="${frontendUrl}/search"
                 style="display:inline-block;background:#ff4880;color:#ffffff;
                   text-decoration:none;font-size:13px;font-weight:700;
                   text-transform:uppercase;letter-spacing:1px;
@@ -298,12 +299,12 @@ function buildEmailHtml(email) {
               <p style="margin:12px 0 0;font-size:11px;color:#aaaaaa;line-height:1.6;">
                 You're receiving this email because <strong>${email}</strong> subscribed to
                 the Ado-Pet newsletter.<br />
-                <a href="https://pet-adoption-133f.onrender.com"
+                <a href="${frontendUrl}"
                   style="color:#ff4880;text-decoration:none;">
                   Unsubscribe
                 </a>
                 &nbsp;·&nbsp;
-                <a href="https://pet-adoption-133f.onrender.com"
+                <a href="${frontendUrl}"
                   style="color:#ff4880;text-decoration:none;">
                   Privacy Policy
                 </a>
@@ -346,9 +347,13 @@ async function subscribe(req, res) {
     sendSmtpEmail.to = [{ email }];
     sendSmtpEmail.sender = { email: process.env.EMAIL_FROM, name: 'Ado-Pet' };
     sendSmtpEmail.subject = 'Welcome to Ado-Pet Newsletter! 🐾';
-    sendSmtpEmail.htmlContent = buildEmailHtml(email);
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    sendSmtpEmail.htmlContent = buildEmailHtml(email, frontendUrl);
 
     await apiInstance.sendTransacEmail(sendSmtpEmail);
+    // Persist subscriber after successful email — if the email fails we don't
+    // record them, which avoids orphaned DB entries for unconfirmed addresses.
+    await saveSubscriberModel(email);
     res.send({ ok: true });
   } catch (err) {
     console.error("Newsletter email error:", err.message);

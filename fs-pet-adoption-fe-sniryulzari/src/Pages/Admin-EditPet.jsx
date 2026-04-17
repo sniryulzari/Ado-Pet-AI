@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 import { Form, Col, Row } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toast } from "../utils/toast";
 import { PetContext } from "../Context/Context-Pets";
 import { getPetById, editPet } from "../api/admin";
 import Spinner from "../components/Spinner";

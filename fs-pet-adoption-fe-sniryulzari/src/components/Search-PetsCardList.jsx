@@ -9,10 +9,10 @@ function SearchPetsCardList() {
   return (
     <section>
       <Row xs={1} md={2} lg={3} xl={4} className="search-pet-results g-4">
-        {petSearchRes.map((pet) => (
+        {petSearchRes.map((pet, i) => (
           <Col key={pet._id} className="pet-card-result">
             {/* Spread the pet object instead of passing 11 individual props */}
-            <SearchPetCard {...pet} id={pet._id} />
+            <SearchPetCard {...pet} id={pet._id} index={i} />
           </Col>
         ))}
       </Row>
