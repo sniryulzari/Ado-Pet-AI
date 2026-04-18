@@ -28,7 +28,7 @@ const AdminDashboard = () => {
       })
       .catch(() => toast.error("Failed to load dashboard data."))
       .finally(() => setLoading(false));
-  }, []);
+  }, [setPets, setUsers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <Spinner />;
 

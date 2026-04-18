@@ -57,7 +57,7 @@ const Home = () => {
     const lastName  = JSON.parse(localStorage.getItem("userLastName"));
     if (firstName) setFirstName(firstName);
     if (lastName)  setLastName(lastName);
-  }, []);
+  }, [setFirstName, setLastName]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="home-container">
