@@ -77,7 +77,9 @@ Backend requires a `.env` file:
 - `MONGO_URI` — MongoDB connection string
 - `TOKEN_SECRET` — JWT signing secret
 - `PORT` — defaults to 8080
-- Cloudinary credentials (`CLOUD_NAME`, `API_KEY`, `API_SECRET`) — currently hardcoded in `Middleware/ImagesMiddleware.js`, should be moved to `.env`
+- Cloudinary credentials: `CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- Email service: `BREVO_API_KEY`, `EMAIL_FROM`
+- `FRONTEND_URL` — used by CORS and password-reset links
 
 ## Deployment
 

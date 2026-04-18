@@ -23,7 +23,7 @@ function PetCard() {
   const petId = searchParams.get("petId");
 
   useEffect(() => {
-    if (!petId) return;
+    if (!petId) { setLoading(false); return; }
     getPetById(petId)
       .then((res) => setPet(res.data))
       .catch(() => toast.error("Failed to load pet details."))

@@ -1,4 +1,6 @@
-/* ── CSS variables – light mode (default) ───────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   2. CSS VARIABLES – Light Mode (:root)
+   ══════════════════════════════════════════════════ */
 :root {
   --bg-primary:    #ffffff;
   --bg-secondary:  #f5efe7;
@@ -15,7 +17,9 @@
   --accent-blue:   #393d72;
 }
 
-/* ── Dark mode overrides ────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   3. CSS VARIABLES – Dark Mode ([data-theme="dark"])
+   ══════════════════════════════════════════════════ */
 [data-theme="dark"] {
   --bg-primary:    #121212;
   --bg-secondary:  #1a1a2e;
@@ -31,6 +35,10 @@
   --accent-gold:   #ffbe33;
   --accent-blue:   #5a5faa;
 }
+
+/* ══════════════════════════════════════════════════
+   4. RESET & BASE
+   ══════════════════════════════════════════════════ */
 
 html {
   box-sizing: border-box;
@@ -58,6 +66,10 @@ picture {
   max-width: 100%;
 }
 
+/* ══════════════════════════════════════════════════
+   5. LAYOUT
+   ══════════════════════════════════════════════════ */
+
 .main-container {
   display: flex;
   flex-direction: column;
@@ -73,6 +85,10 @@ section {
 th {
   font-size: 1.25rem;
 }
+
+/* ══════════════════════════════════════════════════
+   7. HOME PAGE
+   ══════════════════════════════════════════════════ */
 
 /* Home Page */
 .home-container {
@@ -113,24 +129,6 @@ th {
   animation-name: dog-bone-img;
 }
 
-@keyframes dog-bone-img {
-  0% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-    opacity: 0.7;
-  }
-
-  50% {
-    transform: scaleX(1.3) scaleY(1.3) translateX(0px) translateY(0px)
-      rotate(0deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-    opacity: 0.7;
-  }
-}
-
 .arrow-img {
   height: 9.375rem;
   width: 7.625rem;
@@ -147,20 +145,6 @@ th {
   animation-name: arrow-img;
 }
 
-@keyframes arrow-img {
-  0% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-  }
-
-  50% {
-    transform: scaleX(1) scaleY(1) translateX(20px) translateY(0px) rotate(0deg);
-  }
-
-  100% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-  }
-}
-
 .star-img {
   height: 1.25rem;
   width: 1.25rem;
@@ -175,24 +159,6 @@ th {
   animation-fill-mode: none;
   animation-play-state: running;
   animation-name: star-img;
-}
-
-@keyframes star-img {
-  0% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scaleX(1.3) scaleY(1.3) translateX(0px) translateY(0px)
-      rotate(0deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-    opacity: 0.5;
-  }
 }
 
 .dog-footprints-img {
@@ -227,6 +193,10 @@ th {
   animation-play-state: running;
   animation-name: title-top;
 }
+
+/* ══════════════════════════════════════════════════
+   1. FONTS (@font-face)
+   ══════════════════════════════════════════════════ */
 
 @font-face {
   font-family: 'Comic-Gecko';
@@ -330,28 +300,6 @@ th {
   );
 }
 
-@keyframes petImg2-hover {
-  0% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-  }
-
-  100% {
-    transform: scaleX(1.2) scaleY(1.2) translateX(0px) translateY(40px)
-      rotate(10deg);
-  }
-}
-
-@keyframes petImg2-unhover {
-  0% {
-    transform: scaleX(1.2) scaleY(1.2) translateX(0px) translateY(40px)
-      rotate(10deg);
-  }
-
-  100% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-  }
-}
-
 .petImg3 {
   position: absolute;
   top: 12%;
@@ -364,28 +312,6 @@ th {
   clip-path: path(
     'M478.57,0.4c-99.74,0-116.28,76.85-191.72,116.59C201.86,161.75,23.42,124.9,2.21,244.6c-30.14,170.07,266.27,253.45,389.84,175.18c78.22-49.54,203.58-206.77,205.54-299.42C599.07,49.77,552.22,0.4,478.57,0.4z'
   );
-}
-
-@keyframes petImg3-hover {
-  0% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-  }
-
-  100% {
-    transform: scaleX(1) scaleY(0.9) translateX(0px) translateY(20px)
-      rotate(-5deg);
-  }
-}
-
-@keyframes petImg3-unhover {
-  0% {
-    transform: scaleX(1) scaleY(0.9) translateX(0px) translateY(20px)
-      rotate(-5deg);
-  }
-
-  100% {
-    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
-  }
 }
 
 .home-welcome-text {
@@ -446,28 +372,6 @@ th {
   color: #ff4880;
   background-color: #ffffff;
   border: 1px solid #ff4880;
-}
-
-@media (max-width: 1150px) {
-  .home-welcome-content {
-    flex-flow: column nowrap;
-  }
-  .home-welcome-heading {
-    font-size: 2.5rem;
-  }
-  .home-welcome-text {
-    flex-basis: 100%;
-    order: 1;
-    padding: 2rem;
-    margin-bottom: 3rem;
-  }
-  .home-welcome-text-top,
-  .home-welcome-text-middle {
-    padding: 0;
-  }
-  .learn-more-button {
-    margin-left: 0;
-  }
 }
 
 /* photo gallery */
@@ -673,23 +577,6 @@ th {
   border: 1px solid #ff4880;
 }
 
-@media (max-width: 1250px) {
-  .pet-of-the-week-card {
-    flex-flow: column wrap;
-  }
-  .pet-of-the-week-card-left {
-    margin: 0 auto;
-  }
-  .pet-of-the-week-ring {
-    width: 16rem;
-    height: 16rem;
-  }
-  .pet-of-the-week-card-right {
-    margin: 0 auto;
-    padding: 2rem 2rem 0;
-  }
-}
-
 /* Clients Testimonias */
 .clients-testimonias-container {
   display: flex;
@@ -753,25 +640,9 @@ th {
   line-height: 1.67rem;
 }
 
-@media (max-width: 850px) {
-  .clients-testimonias-heading {
-    font-size: 2rem;
-    margin-bottom: 0rem;
-    text-align: center;
-  }
-  .clients-testimonias-person {
-    flex-flow: column nowrap;
-    flex-basis: content;
-    text-align: center;
-  }
-  .clients-testimonias-person-image {
-    margin-top: 3rem;
-  }
-  .clients-testimonias-person-name {
-    margin-top: -1rem;
-    margin-bottom: -1rem;
-  }
-}
+/* ══════════════════════════════════════════════════
+   15. FOOTER
+   ══════════════════════════════════════════════════ */
 
 /* Footer */
 .footer-container {
@@ -973,6 +844,10 @@ th {
   text-decoration: underline;
 }
 
+/* ══════════════════════════════════════════════════
+   6. NAVBAR
+   ══════════════════════════════════════════════════ */
+
 /* nav bar */
 /* ══════════════════════════════════════════════════════
    Navbar  (nb-* prefix)
@@ -1075,6 +950,10 @@ th {
   color: var(--accent-pink);
   background-color: var(--bg-secondary);
 }
+
+/* ══════════════════════════════════════════════════
+   12. AUTH (LOGIN / REGISTER)
+   ══════════════════════════════════════════════════ */
 
 /* Auth pill buttons (guest) */
 .nb-auth-btns {
@@ -1221,17 +1100,6 @@ th {
   padding: 0.75rem 1.5rem 0;
 }
 
-/* ── Responsive: hide desktop nav, show hamburger ── */
-@media (max-width: 768px) {
-  .nb-links,
-  .nb-right {
-    display: none;
-  }
-  .nb-hamburger {
-    display: flex;
-  }
-}
-
 /* Signup and Login Modal */
 .SignupForm,
 .loginForm {
@@ -1323,6 +1191,10 @@ input:invalid[focused='true'] ~ .error-message {
   padding-top: 1.5rem;
   font-size: 1.2rem;
 }
+
+/* ══════════════════════════════════════════════════
+   11. ADMIN PANEL
+   ══════════════════════════════════════════════════ */
 
 /* Admin Pages */
 .admin-dashboard-pets-container,
@@ -1645,6 +1517,10 @@ input:invalid[focused='true'] ~ .error-message {
   display: flex;
   flex-direction: column;
 }
+
+/* ══════════════════════════════════════════════════
+   8. BROWSE / FILTER / PET CARDS
+   ══════════════════════════════════════════════════ */
 
 /* Search */
 .search-container {
@@ -2220,6 +2096,10 @@ label {
   border: 1px solid #ff4880;
 }
 
+/* ══════════════════════════════════════════════════
+   10. MY PETS / SAVED PETS
+   ══════════════════════════════════════════════════ */
+
 /* my pets page */
 .my-pets-container {
   display: flex;
@@ -2579,422 +2459,9 @@ label {
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
-  .ps-row { flex-direction: column; }
-  .ps-photo-body { flex-direction: column; text-align: center; }
-  .ps-field--half { max-width: 100%; }
-  .ps-actions { flex-direction: column-reverse; }
-  .ps-btn { width: 100%; text-align: center; }
-}
-
-/* tablet */
-@media (max-width: 1200px) {
-  .welcome-container {
-    top: 3rem;
-    right: 3rem;
-  }
-  .welcome-title-top {
-    font-size: 1.2rem;
-  }
-  .welcome-title-bottom-start,
-  .welcome-title-bottom-end {
-    font-size: 2.5rem;
-  }
-  .dog-bone-img {
-    top: 9rem;
-    right: 28rem;
-  }
-  .arrow-img {
-    bottom: 7rem;
-    right: 32rem;
-  }
-  .dog-footprints-img {
-    bottom: 15rem;
-    right: 4rem;
-  }
-  .hills {
-    height: 10%;
-  }
-  .home-welcome-img,
-  .petImg3,
-  .petImg2 {
-    display: none;
-  }
-
-  /* Footer */
-  .footer-social-media,
-  .footer-newsletter {
-    margin: 0;
-  }
-
-  /* Pet Card */
-  .pet-card {
-    flex-direction: column;
-    padding: 1rem 0;
-  }
-  .pet-card-image {
-    width: 30rem;
-    height: 30rem;
-    border-radius: 5px;
-  }
-  .card-right {
-    margin: 1rem 0;
-  }
-  .pet-card-pet-name {
-    font-size: 2.5rem;
-  }
-  .pet-card-button-container {
-    margin-top: 2rem;
-  }
-
-  /* Profile Settings — handled by .ps-* responsive rules */
-
-  /* Admin */
-  .admin-dashboard-pets-container,
-  .admin-add-pet-container,
-  .admin-edit-pet-container {
-    padding: 1rem;
-  }
-  th {
-    font-size: 0.7rem;
-  }
-  td {
-    font-size: 0.5rem;
-  }
-  .admin-add-pet-form {
-    padding: 1rem;
-    margin: 0;
-  }
-  .add-pet-row {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-  }
-  .admin-edit-pet-header-container {
-    flex-direction: column;
-  }
-  .pet-img {
-    width: 10rem;
-    height: 10rem;
-  }
-}
-
-/* Tablet — 3-column grid drops to 2 columns */
-@media (min-width: 701px) and (max-width: 1024px) {
-  .my-pets-grid--many {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Mobile */
-@media (max-width: 700px) {
-  /* Nav Bar — handled by .nb-* @media (max-width: 768px) block */
-
-  /* Home */
-  .home-welcome-img,
-  .petImg3,
-  .petImg2 {
-    display: none;
-  }
-  .home-top-container {
-    flex-direction: column;
-  }
-  .welcome-container {
-    top: 0;
-    left: 0;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  .welcome-title-top {
-    position: absolute;
-    bottom: -100px;
-  }
-  .welcome-login-search-Button {
-    position: absolute;
-    bottom: 20%;
-    padding: 0.6rem 3rem;
-  }
-  .hills {
-    height: 10%;
-  }
-  .star-img {
-    top: 2rem;
-    right: 2rem;
-  }
-  .dog-bone-img {
-    top: 10rem;
-    left: 2rem;
-  }
-  .arrow-img {
-    bottom: 8rem;
-    right: 14rem;
-  }
-  .dog-footprints-img {
-    bottom: 11rem;
-    right: 2rem;
-  }
-
-  /* Home Welcome */
-  .home-welcome-container,
-  .home-welcome-content,
-  .home-welcome-text {
-    margin: 0;
-    padding: 0 1rem;
-  }
-
-  /* Photo Gallery */
-  .photo-gallery-image-container {
-    flex-direction: column;
-    gap: 10%;
-    width: 100%;
-    margin-top: 10rem;
-    padding: 0 1rem 0 1rem;
-  }
-  .photo-gallery-heading-bottom {
-    font-size: 2.5rem;
-  }
-  .photo-gallery-image {
-    margin: 0;
-    padding: 0;
-    height: 8rem;
-    width: 8rem;
-  }
-  .photo-gallery-image-col-1,
-  .photo-gallery-image-col-2,
-  .photo-gallery-image-col-3,
-  .photo-gallery-image-col-4,
-  .photo-gallery-image-col-5 {
-    margin: 0;
-    padding: 1rem 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10%;
-  }
-  /* Pet of the week */
-  .pet-of-the-week-heading-bottom {
-    margin-bottom: 1rem;
-    font-size: 2.5rem;
-  }
-  .pet-of-the-week-card-left {
-    margin: 0 auto;
-  }
-  .pet-of-the-week-ring {
-    width: 14rem;
-    height: 14rem;
-  }
-  .pet-of-the-week-card-right {
-    margin: 0;
-    padding: 1rem;
-  }
-
-  /* Clients Testimonials */
-  .clients-testimonias-container {
-    margin: 0;
-  }
-  .clients-testimonias-heading {
-    font-size: 2.5rem;
-  }
-  .clients-testimonias-person-recommendation {
-    text-align: left;
-  }
-  .clients-testimonias-person {
-    padding: 0;
-  }
-
-  /* Footer */
-  .footer-container {
-    margin: 0;
-  }
-  .footer-main {
-    flex-direction: column;
-    padding: 1rem;
-  }
-  .footer-social-media,
-  .footer-contact-us,
-  .footer-working-hours,
-  .footer-newsletter {
-    flex-basis: 100%;
-    padding: 0;
-    margin: 1rem;
-  }
-  .newsletter-input {
-    width: auto;
-  }
-  .footer-social-media-links {
-    justify-content: flex-start;
-    gap: 10%;
-  }
-  .footer-bottom-breaking-line {
-    margin: 1rem 0;
-  }
-  .footer-bottom-copyright {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .footer-bottom-copyright > span {
-    margin-bottom: 1rem;
-  }
-
-  /* Search */
-  .search-header-text {
-    font-size: 2.5rem;
-  }
-  .advanced-search-container {
-    max-width: 80%;
-    margin: 0 auto;
-  }
-  .search-pet-btn-container {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-  }
-  .search-pet-btn {
-    margin: 1rem auto;
-    width: 100%;
-  }
-  .pet-icon {
-    margin: 1rem;
-  }
-  .search-pet-results {
-    padding: 0 1.5rem;
-  }
-  section {
-    padding: 0;
-    margin: 0;
-  }
-  .pet-card-result {
-    margin: 2rem 0;
-  }
-
-  /* Pet Card */
-  .pet-card {
-    flex-direction: column;
-    padding: 1rem;
-  }
-  .pet-card-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-  }
-  .pet-card-pet-name {
-    font-size: 2rem;
-  }
-  .pet-card-button-container {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-  .pet-card-button-container > div {
-    display: flex;
-  }
-  .pet-card-button {
-    padding: 0.4rem 1rem;
-    margin: 0.4rem 0.4rem 0 0;
-    font-size: 0.7rem;
-  }
-
-  /* Signup and Login Form */
-  .SignupForm,
-  .loginForm {
-    padding: 1rem;
-  }
-  .signup-buttons,
-  .login-buttons {
-    padding: 0;
-    flex-direction: column;
-  }
-  .signup-buttons {
-    margin-top: 1rem;
-  }
-  .signup-login-btn {
-    margin: 0.5rem 0;
-    padding: 0.6rem 2rem;
-    width: 100%;
-  }
-
-  /* My Pets */
-  .my-pets-container {
-    padding: 0;
-  }
-  .my-pets-header-container {
-    flex-direction: column;
-    margin-bottom: 1rem;
-  }
-  .my-pets-header {
-    font-size: 2rem;
-    margin: 1rem 0;
-  }
-  .my-pets-result-container {
-    padding: 0 0.5rem;
-    width: 100%;
-  }
-  .my-pets-sub-header {
-    padding: 0;
-  }
-  .search-pet-results {
-    padding: 0;
-  }
-  /* Mobile: all grid variants collapse to 1 column */
-  .my-pets-grid--single,
-  .my-pets-grid--double,
-  .my-pets-grid--many {
-    grid-template-columns: 1fr;
-    padding: 1rem 0.5rem;
-  }
-
-  /* Profile Settings — handled by .ps-* responsive rules */
-
-  /* Admin */
-  .admin-dashboard-header,
-  .admin-add-pet-header,
-  .admin-edit-pet-header {
-    font-size: 2.2rem;
-    margin: 1rem auto;
-  }
-  .admin-dashboard-table-header {
-    font-size: 1.2rem;
-    padding: 0;
-    margin: 0 0 0.5rem 0;
-  }
-  th {
-    font-size: 10px;
-  }
-  td {
-    font-size: 10px;
-  }
-  .add-pet-button-link {
-    padding: 0.5rem 2rem;
-  }
-
-  /* Add Pet */
-  .add-pet-buttons-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .add-pet-buttons-container > .add-pet-buttons {
-    margin: 0.5rem 0;
-    width: 100%;
-  }
-
-  /* Edit Pet */
-  .pet-img {
-    width: 7rem;
-    height: 7rem;
-  }
-  .edit-pet-row {
-    flex-direction: column;
-  }
-
-  /* Admin User Pets */
-  .admin-user-pets-container {
-    padding: 1rem;
-  }
-  .search-pet-results-column {
-    margin: 4rem 0;
-  }
-}
+/* ══════════════════════════════════════════════════
+   13. ABOUT PAGE
+   ══════════════════════════════════════════════════ */
 
 /* ── About Page ─────────────────────────────────────────────── */
 .about-container {
@@ -3370,27 +2837,6 @@ label {
   border: 1px solid #ff4880;
 }
 
-@media (max-width: 600px) {
-  .about-hero-title {
-    font-size: 2rem;
-  }
-  .about-section-title {
-    font-size: 1.6rem;
-  }
-  .about-container {
-    padding: 1rem;
-  }
-  .about-process-section {
-    padding: 2rem 1rem;
-  }
-  .adoption-success-card {
-    padding: 2rem 1.5rem;
-  }
-  .adoption-success-heading {
-    font-size: 2rem;
-  }
-}
-
 /* ── Spinner ─────────────────────────────────────── */
 .site-spinner-wrapper {
   display: flex;
@@ -3404,12 +2850,6 @@ label {
   border-top-color: #ff4880;
   border-radius: 50%;
   animation: site-spin 0.7s linear infinite;
-}
-
-@keyframes site-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* ── 404 Not Found ───────────────────────────────── */
@@ -3481,88 +2921,6 @@ label {
   color: #ff4880;
   background-color: #ffffff;
   border-color: #ff4880;
-}
-
-/* ── Browse page — tablet ───────────────────────────────────── */
-@media (max-width: 1024px) {
-  .browse-filter-bar {
-    padding: 1.25rem 1.5rem;
-  }
-}
-
-/* ── Browse page — mobile ───────────────────────────────────── */
-@media (max-width: 700px) {
-  .browse-filter-bar {
-    padding: 1rem;
-    border-radius: 14px;
-  }
-
-  .browse-type-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .browse-filter-row {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .browse-filter-group {
-    width: 100%;
-    min-width: unset;
-  }
-
-  .browse-clear-btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .browse-pagination {
-    gap: 0.3rem;
-  }
-
-  .browse-page-btn {
-    padding: 0.4rem 0.6rem;
-    min-width: 2.1rem;
-    font-size: 0.8rem;
-  }
-
-  .browse-page-nav {
-    padding: 0.4rem 0.75rem;
-  }
-
-  .browse-page-indicator {
-    width: 100%;
-    text-align: center;
-    margin-left: 0;
-    margin-top: 0.3rem;
-  }
-}
-
-/* ── Admin Tables — mobile horizontal scroll ─────── */
-@media (max-width: 700px) {
-  .users-list,
-  .pets-list {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .users-list table,
-  .pets-list table {
-    min-width: 600px;
-  }
-
-  /* Override the squished font sizes set in the 700px breakpoint above */
-  th {
-    font-size: 0.8rem;
-  }
-
-  td {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.5rem;
-  }
 }
 
 /* ── Forgot / Reset Password pages ──────────────────────────────── */
@@ -4276,153 +3634,7 @@ label {
 
 .newsletter-confirm-no:hover { border-color: #393d72; }
 
-/* ── Responsive tweaks ───────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .contact-hero-title { font-size: 2rem; }
-  .contact-main-section { padding: 0 1rem; }
-  .contact-form-card { padding: 1.5rem; }
-  .stat-cards-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-  .stats-bar-section { max-width: 100%; }
-  .newsletter-header-row { flex-direction: column; }
-}
 
-/* ═══════════════════════════════════════════════════════════════════
-   DARK MODE OVERRIDES
-   Applied when <html data-theme="dark"> is set by ThemeContext
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* ── Global backgrounds & text ─────────────────────────────────── */
-[data-theme="dark"] body { background-color: var(--bg-primary); color: var(--text-body); }
-[data-theme="dark"] .main-container { background-color: var(--bg-primary); }
-
-/* ── Navbar ─────────────────────────────────────────────────────── */
-[data-theme="dark"] .nb-nav { background-color: var(--bg-navbar); }
-[data-theme="dark"] .nb-mobile-menu { background-color: var(--bg-navbar); }
-[data-theme="dark"] .nb-logo-text { color: var(--accent-gold); }
-[data-theme="dark"] .nb-dropdown { background-color: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .nb-dropdown-header { border-bottom-color: var(--border-color); }
-[data-theme="dark"] .nb-dropdown-logout { border-top-color: var(--border-color); }
-
-/* ── Section and page containers ───────────────────────────────── */
-[data-theme="dark"] section { background-color: transparent; }
-[data-theme="dark"] .home-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .home-top-container { background-color: var(--bg-primary); }
-
-/* ── Pet card (Pet-Info.jsx) ────────────────────────────────────── */
-[data-theme="dark"] .pet-card-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .pet-card { background-color: var(--bg-card); border-radius: 16px; padding: 1rem; }
-[data-theme="dark"] .pet-card-pet-name { color: var(--text-primary); }
-[data-theme="dark"] .pet-info { color: var(--text-secondary); }
-[data-theme="dark"] .card-right { background-color: var(--bg-card); }
-
-/* ── Search / Browse ────────────────────────────────────────────── */
-[data-theme="dark"] .search-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .filter-bar { background-color: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .filter-select,
-[data-theme="dark"] .filter-input { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
-[data-theme="dark"] .filter-label { color: var(--text-secondary); }
-
-/* Bootstrap Cards (Search-PetCard) */
-[data-theme="dark"] .card { background-color: var(--bg-card) !important; border-color: var(--border-color) !important; color: var(--text-body) !important; }
-[data-theme="dark"] .card-body { background-color: var(--bg-card); }
-[data-theme="dark"] .card-title { color: var(--text-primary) !important; }
-[data-theme="dark"] .card-text { color: var(--text-secondary) !important; }
-
-/* ── Home sections ──────────────────────────────────────────────── */
-[data-theme="dark"] .home-welcome-container { background-color: var(--bg-secondary); }
-[data-theme="dark"] .home-welcome-title,
-[data-theme="dark"] .home-welcome-subtitle { color: var(--text-primary); }
-[data-theme="dark"] .home-pet-of-the-week-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .pet-of-the-week-info { color: var(--text-secondary); }
-[data-theme="dark"] .testimonials-container { background-color: var(--bg-secondary); }
-[data-theme="dark"] .testimonial-card { background-color: var(--bg-card); }
-[data-theme="dark"] .testimonial-text { color: var(--text-secondary); }
-[data-theme="dark"] .testimonial-author { color: var(--text-primary); }
-
-/* ── Forms & inputs (global) ────────────────────────────────────── */
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
-  background-color: var(--bg-input);
-  color: var(--text-body);
-  border-color: var(--border-color);
-}
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder { color: var(--text-secondary); }
-[data-theme="dark"] input:focus,
-[data-theme="dark"] textarea:focus,
-[data-theme="dark"] select:focus { border-color: var(--accent-pink); }
-
-/* ── Newsletter section ─────────────────────────────────────────── */
-[data-theme="dark"] .newsletter-container { background-color: var(--bg-secondary); }
-[data-theme="dark"] .newsletter-input { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
-
-/* ── My Pets page ───────────────────────────────────────────────── */
-[data-theme="dark"] .my-pets-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .my-pets-toggle-btn { background-color: var(--bg-card); color: var(--text-primary); border-color: var(--border-color); }
-
-/* ── Profile Settings ───────────────────────────────────────────── */
-[data-theme="dark"] .ps-page           { background-color: var(--bg-secondary); }
-[data-theme="dark"] .ps-card           { background-color: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .ps-card-header    { border-bottom-color: var(--border-color); }
-[data-theme="dark"] .ps-input          { background: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
-[data-theme="dark"] .ps-title          { color: var(--text-primary); }
-[data-theme="dark"] .ps-subtitle       { color: var(--text-secondary); }
-
-/* ── Contact page ───────────────────────────────────────────────── */
-[data-theme="dark"] .contact-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .contact-hero { background-color: var(--bg-secondary); }
-[data-theme="dark"] .contact-hero-title,
-[data-theme="dark"] .contact-hero-subtitle { color: var(--text-primary); }
-[data-theme="dark"] .contact-form-card,
-[data-theme="dark"] .contact-info-panel { background-color: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .contact-card-title { color: var(--text-primary); }
-[data-theme="dark"] .contact-label { color: var(--text-secondary); }
-[data-theme="dark"] .contact-input { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
-[data-theme="dark"] .contact-input:focus { border-color: var(--accent-pink); }
-[data-theme="dark"] .contact-info-item { color: var(--text-primary); }
-[data-theme="dark"] .contact-social-label { color: var(--text-primary); }
-
-/* ── Admin Dashboard ────────────────────────────────────────────── */
-[data-theme="dark"] .admin-tab-bar { border-color: var(--border-color); }
-[data-theme="dark"] .admin-tab-btn { color: var(--text-secondary); }
-[data-theme="dark"] .admin-tab-btn:hover { color: var(--text-primary); }
-[data-theme="dark"] .admin-stats-title { color: var(--text-primary); }
-[data-theme="dark"] .stat-card { background-color: var(--bg-card); border-top-color: var(--accent-blue); }
-[data-theme="dark"] .stat-card-value { color: var(--text-primary); }
-[data-theme="dark"] .stats-bar-section { background-color: var(--bg-card); }
-[data-theme="dark"] .stats-bar-title,
-[data-theme="dark"] .stats-bar-label { color: var(--text-primary); }
-[data-theme="dark"] .stats-bar-track { background: var(--border-color); }
-[data-theme="dark"] .admin-table-wrapper { background-color: var(--bg-card); }
-[data-theme="dark"] .admin-table { background-color: var(--bg-card); }
-[data-theme="dark"] .admin-table td { color: var(--text-primary); border-bottom-color: var(--border-color); }
-[data-theme="dark"] .admin-table tr:hover td { background: var(--bg-secondary); }
-[data-theme="dark"] .newsletter-count-badge { background: var(--bg-secondary); color: var(--text-primary); }
-[data-theme="dark"] .newsletter-confirm-dialog { background-color: var(--bg-card); }
-[data-theme="dark"] .newsletter-confirm-text { color: var(--text-primary); }
-[data-theme="dark"] .newsletter-confirm-no { background-color: var(--bg-input); color: var(--text-primary); border-color: var(--border-color); }
-
-/* ── Modals (Login / Signup) ────────────────────────────────────── */
-[data-theme="dark"] .modal-content { background-color: var(--bg-card); color: var(--text-body); }
-[data-theme="dark"] .modal-header { border-color: var(--border-color); }
-[data-theme="dark"] .modal-footer { border-color: var(--border-color); }
-[data-theme="dark"] .modal-title { color: var(--text-primary); }
-[data-theme="dark"] .SignupForm label,
-[data-theme="dark"] .loginForm label { color: var(--text-secondary); }
-
-/* ── About & Adoption Success ───────────────────────────────────── */
-[data-theme="dark"] .about-container,
-[data-theme="dark"] .adoption-success-container { background-color: var(--bg-primary); color: var(--text-body); }
-
-/* ── Forgot / Reset Password ────────────────────────────────────── */
-[data-theme="dark"] .forgot-password-container,
-[data-theme="dark"] .reset-password-container { background-color: var(--bg-primary); }
-[data-theme="dark"] .forgot-password-card,
-[data-theme="dark"] .reset-password-card { background-color: var(--bg-card); }
-
-/* ── Back button ────────────────────────────────────────────────── */
-[data-theme="dark"] .back-button { color: var(--text-primary); border-color: var(--border-color); background-color: var(--bg-card); }
 
 /* ═══════════════════════════════════════════════════════════════════
    SAVED PETS — Heart icon on cards
@@ -4585,13 +3797,10 @@ label {
 
 .saved-pet-unsave-btn:hover { background: #ff4880; color: #ffffff; }
 
-/* Dark mode for saved pets */
-[data-theme="dark"] .saved-pets-title { color: var(--text-primary); }
-[data-theme="dark"] .saved-pet-card { background: var(--bg-card); }
-[data-theme="dark"] .saved-pet-name { color: var(--text-primary); }
-[data-theme="dark"] .saved-pet-actions { border-top-color: var(--border-color); }
-[data-theme="dark"] .heart-btn { background: rgba(30,30,30,0.85); color: #666; }
-[data-theme="dark"] .heart-btn--saved { color: #ff6b9d; }
+
+/* ══════════════════════════════════════════════════
+   9. PET DETAILS PAGE
+   ══════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════
    SHARE PET BUTTON
@@ -4662,10 +3871,6 @@ label {
 .share-option--facebook:hover { color: #1877f2; }
 .share-option--twitter:hover  { color: #1da1f2; }
 
-/* Dark mode overrides for share */
-[data-theme="dark"] .share-dropdown { background: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .share-option { color: var(--text-primary); }
-[data-theme="dark"] .share-option:hover { background-color: var(--bg-secondary); }
 
 /* ═══════════════════════════════════════════════════════════════════
    CUSTOM TOAST NOTIFICATIONS
@@ -4725,10 +3930,6 @@ label {
 }
 .toast-close:hover { opacity: 1; }
 
-/* Dark mode */
-[data-theme="dark"] .toast-item--success { background: #1a3326; color: #6edfa0; border-color: #2d6b4a; }
-[data-theme="dark"] .toast-item--error   { background: #3b1515; color: #f78a8a; border-color: #6b2d2d; }
-[data-theme="dark"] .toast-item--info    { background: #151d3b; color: #8ab0f5; border-color: #2d3f6b; }
 
 /* ═══════════════════════════════════════════════════════════════════
    MODERN PET CARDS (Search / Browse)
@@ -4861,10 +4062,6 @@ label {
 }
 .pet-card-modern__cta:hover { opacity: 0.88; transform: translateY(-1px); }
 
-[data-theme="dark"] .pet-card-modern { border-color: var(--border-color); }
-[data-theme="dark"] .pet-card-modern__heart { background: rgba(30,30,30,0.88); color: #666; }
-[data-theme="dark"] .pet-card-modern__heart--saved { color: #ff6b9d; }
-[data-theme="dark"] .pet-badge--type { background: #1e2a4a; color: #8ab0f5; }
 
 /* ═══════════════════════════════════════════════════════════════════
    PET DETAIL — ACTION PANEL
@@ -4954,8 +4151,6 @@ label {
   margin-top: 0.25rem;
   font-family: 'Montserrat', sans-serif;
 }
-
-[data-theme="dark"] .action-btn-return { background: var(--bg-secondary); color: var(--text-secondary); border-color: var(--border-color); }
 
 /* ═══════════════════════════════════════════════════════════════════
    TESTIMONIALS CAROUSEL
@@ -5050,9 +4245,6 @@ label {
 }
 .testimonial-dot--active { background: #ff4880; transform: scale(1.3); }
 
-[data-theme="dark"] .testimonial-arrow { border-color: var(--text-primary); color: var(--text-primary); }
-[data-theme="dark"] .testimonial-arrow:hover { background: var(--text-primary); color: var(--bg-primary); }
-
 /* My Pets – saved link */
 .my-pets-saved-link {
   margin-top: 2rem;
@@ -5063,171 +4255,10 @@ label {
 .my-pets-saved-link a { color: #ff4880; font-weight: 600; text-decoration: none; }
 .my-pets-saved-link a:hover { text-decoration: underline; }
 
-/* ═══════════════════════════════════════════════════════════════════
-   DARK MODE — COMPREHENSIVE AUDIT (wave, footer, all pages)
-   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Hills / wave ────────────────────────────────────────────────── */
-[data-theme="dark"] .hills { color: var(--bg-primary); }
-
-/* ── Home: hero text ─────────────────────────────────────────────── */
-[data-theme="dark"] .welcome-title-top,
-[data-theme="dark"] .welcome-title-bottom-start,
-[data-theme="dark"] .welcome-title-bottom-end { text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
-
-/* ── Home: welcome section ───────────────────────────────────────── */
-[data-theme="dark"] .home-welcome-heading        { color: var(--text-primary); }
-[data-theme="dark"] .home-welcome-text-top       { color: var(--text-secondary); }
-[data-theme="dark"] .home-welcome-icon-text-line { color: var(--text-primary); }
-[data-theme="dark"] .checkIcon                   { color: var(--accent-pink); }
-[data-theme="dark"] .petImg3                     { background-color: rgba(255,255,255,0.05); }
-[data-theme="dark"] .learn-more-button {
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-  border: 2px solid var(--border-color);
-}
-[data-theme="dark"] .learn-more-button:hover {
-  background-color: var(--accent-pink);
-  color: #fff;
-  border-color: var(--accent-pink);
-}
-
-/* ── Home: photo gallery headings ────────────────────────────────── */
-[data-theme="dark"] .photo-gallery-heading-top    { color: var(--accent-pink); }
-[data-theme="dark"] .photo-gallery-heading-bottom { color: var(--text-primary); }
-
-/* ── Pet of the Week ─────────────────────────────────────────────── */
-[data-theme="dark"] .pet-of-the-week-heading-top    { color: var(--accent-pink); }
-[data-theme="dark"] .pet-of-the-week-heading-bottom { color: var(--text-primary); }
-[data-theme="dark"] .pet-name                       { color: var(--accent-gold); }
-[data-theme="dark"] .pet-bio                        { color: var(--text-secondary); }
-[data-theme="dark"] .pet-meta                       { color: var(--accent-pink); }
-
-/* ── Testimonials carousel ───────────────────────────────────────── */
-[data-theme="dark"] .clients-testimonias-heading { color: var(--text-primary); }
-[data-theme="dark"] .testimonial-quote           { color: var(--text-secondary); }
-[data-theme="dark"] .testimonial-author-loc      { color: var(--text-secondary); }
-[data-theme="dark"] .testimonial-location        { color: var(--text-secondary); }
-
-/* ── Footer ──────────────────────────────────────────────────────── */
-[data-theme="dark"] .footer-container {
-  background-image: none;
-  background-color: #0d0d1a;
-}
-[data-theme="dark"] .social-media-header,
-[data-theme="dark"] .contact-us-header,
-[data-theme="dark"] .working-hours-header,
-[data-theme="dark"] .newsletter-header       { color: var(--text-primary); }
-[data-theme="dark"] .footer-social-media-text,
-[data-theme="dark"] .working-hours-text      { color: var(--text-secondary); }
-[data-theme="dark"] .contact-us-info         { color: var(--text-primary); }
-[data-theme="dark"] .twitter-link,
-[data-theme="dark"] .facebook-link,
-[data-theme="dark"] .instagram-link,
-[data-theme="dark"] .youTube-link {
-  background-color: var(--bg-card);
-  color: var(--text-secondary);
-}
-[data-theme="dark"] .footer-bottom-breaking-line {
-  border-color: var(--border-color);
-  opacity: 0.4;
-}
-[data-theme="dark"] .footer-copyright-text { color: var(--text-secondary); }
-[data-theme="dark"] .newsletter-input {
-  background-color: var(--bg-input);
-  color: var(--text-body);
-  border-color: var(--border-color);
-}
-
-/* ── Browse / filter bar ─────────────────────────────────────────── */
-[data-theme="dark"] .browse-filter-bar     { background-color: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .browse-filter-input  { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
-[data-theme="dark"] .browse-filter-select { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
-[data-theme="dark"] .browse-filter-label  { color: var(--text-secondary); }
-[data-theme="dark"] .browse-type-all-btn  {
-  background-color: var(--bg-card);
-  color: var(--text-secondary);
-  border-color: var(--border-color);
-}
-[data-theme="dark"] .browse-type-all-btn:hover,
-[data-theme="dark"] .browse-type-all-btn.active {
-  background-color: var(--accent-pink);
-  color: #fff;
-  border-color: var(--accent-pink);
-}
-[data-theme="dark"] .search-no-result-text { color: var(--text-primary); }
-
-/* ── Modern pet card body ────────────────────────────────────────── */
-[data-theme="dark"] .pet-card-modern       { background: var(--bg-card); }
-[data-theme="dark"] .pet-card-modern__body { background: var(--bg-card); }
-[data-theme="dark"] .pet-card-modern__breed { color: var(--text-secondary); }
-[data-theme="dark"] .pet-badge--available  { background: #0d2e1c; color: #6edfa0; }
-[data-theme="dark"] .pet-badge--adopted    { background: #2e0d0d; color: #f78a8a; }
-[data-theme="dark"] .pet-badge--fostered   { background: #2e2300; color: #f5c842; }
-
-/* ── My Pets page ────────────────────────────────────────────────── */
-[data-theme="dark"] .my-pets-header     { color: var(--text-primary); }
-[data-theme="dark"] .my-pets-sub-header { color: var(--accent-pink); }
-[data-theme="dark"] .my-pets-saved-link { color: var(--text-secondary); }
-
-/* ── Saved Pets page ─────────────────────────────────────────────── */
-[data-theme="dark"] .saved-pets-title    { color: var(--text-primary); }
-[data-theme="dark"] .saved-pets-subtitle,
-[data-theme="dark"] .saved-pets-loading,
-[data-theme="dark"] .saved-pets-empty   { color: var(--text-secondary); }
-
-/* ── Legacy Bootstrap form-control dark mode (used in other pages) ── */
-[data-theme="dark"] .form-control  {
-  background-color: var(--bg-input) !important;
-  color: var(--text-body) !important;
-  border-color: var(--border-color) !important;
-}
-[data-theme="dark"] .form-control:focus { border-color: var(--accent-pink) !important; }
-[data-theme="dark"] .form-label         { color: var(--text-secondary); }
-[data-theme="dark"] .floating-label-control { color: var(--text-secondary); }
-
-/* ── About page ──────────────────────────────────────────────────── */
-[data-theme="dark"] .about-hero-title    { color: var(--text-primary); }
-[data-theme="dark"] .about-hero-text     { color: var(--text-secondary); }
-[data-theme="dark"] .about-hero-badge    { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
-[data-theme="dark"] .about-section-title { color: var(--text-primary); }
-[data-theme="dark"] .about-section-subtitle { color: var(--text-secondary); }
-[data-theme="dark"] .about-count-card    { background: var(--bg-card); border-color: var(--border-color); }
-[data-theme="dark"] .about-count-label   { color: var(--text-secondary); }
-[data-theme="dark"] .about-step-title    { color: var(--text-primary); }
-[data-theme="dark"] .about-step-desc     { color: var(--text-secondary); }
-/* Keep the pink process section as-is — it looks good in dark mode already */
-
-/* ── Action panel ────────────────────────────────────────────────── */
-[data-theme="dark"] .action-panel-note  { color: var(--text-secondary); }
-[data-theme="dark"] .action-btn-save    { color: var(--text-secondary); }
-[data-theme="dark"] .action-btn-save--saved { color: var(--accent-pink); }
-[data-theme="dark"] .action-btn-return  {
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border-color: var(--border-color);
-}
-[data-theme="dark"] .action-btn-return:hover { background: var(--bg-card); color: var(--text-primary); }
-
-/* ── Admin tables ────────────────────────────────────────────────── */
-[data-theme="dark"] .admin-table-wrap   { border-color: var(--border-color); }
-[data-theme="dark"] .admin-th           { background: var(--bg-secondary); color: var(--text-secondary); border-bottom-color: var(--border-color); }
-[data-theme="dark"] .admin-row          { border-bottom-color: var(--border-color); }
-[data-theme="dark"] .admin-row:nth-child(even) { background: var(--bg-secondary); }
-[data-theme="dark"] .admin-row:hover    { background: rgba(255,72,128,0.06); }
-[data-theme="dark"] .admin-td          { color: var(--text-body); }
-[data-theme="dark"] .admin-pet-name,
-[data-theme="dark"] .admin-user-name   { color: var(--text-primary); }
-[data-theme="dark"] .admin-badge--available { background: #0d2e1c; color: #6edfa0; }
-[data-theme="dark"] .admin-badge--adopted   { background: #0d1a38; color: #7aaeff; }
-[data-theme="dark"] .admin-badge--fostered  { background: #2e2300; color: #f5c842; }
-[data-theme="dark"] .admin-icon-btn:hover   { background: var(--bg-secondary); }
-[data-theme="dark"] .confirm-dialog         { background: var(--bg-card); }
-[data-theme="dark"] .confirm-dialog-text    { color: var(--text-primary); }
-
-/* ── Bootstrap FloatingLabel ─────────────────────────────────────── */
-[data-theme="dark"] .form-floating > label { color: var(--text-secondary); }
-[data-theme="dark"] .form-floating > .form-control { background-color: var(--bg-input) !important; color: var(--text-body) !important; }
+/* ══════════════════════════════════════════════════
+   14. LEGAL PAGES
+   ══════════════════════════════════════════════════ */
 
 /* ── Legal pages (Terms of Use & Privacy Policy) ─────────────────── */
 .legal-page {
@@ -5324,10 +4355,1025 @@ label {
   margin-bottom: 0.4rem;
 }
 
-/* Dark mode */
+/* ══════════════════════════════════════════════════
+   16. ANIMATIONS (@keyframes)
+   ══════════════════════════════════════════════════ */
+
+@keyframes dog-bone-img {
+  0% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scaleX(1.3) scaleY(1.3) translateX(0px) translateY(0px)
+      rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes arrow-img {
+  0% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: scaleX(1) scaleY(1) translateX(20px) translateY(0px) rotate(0deg);
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes star-img {
+  0% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scaleX(1.3) scaleY(1.3) translateX(0px) translateY(0px)
+      rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+    opacity: 0.5;
+  }
+}
+
+@keyframes petImg2-hover {
+  0% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+  }
+
+  100% {
+    transform: scaleX(1.2) scaleY(1.2) translateX(0px) translateY(40px)
+      rotate(10deg);
+  }
+}
+
+@keyframes petImg2-unhover {
+  0% {
+    transform: scaleX(1.2) scaleY(1.2) translateX(0px) translateY(40px)
+      rotate(10deg);
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes petImg3-hover {
+  0% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(0.9) translateX(0px) translateY(20px)
+      rotate(-5deg);
+  }
+}
+
+@keyframes petImg3-unhover {
+  0% {
+    transform: scaleX(1) scaleY(0.9) translateX(0px) translateY(20px)
+      rotate(-5deg);
+  }
+
+  100% {
+    transform: scaleX(1) scaleY(1) translateX(0px) translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes site-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   17. DARK MODE OVERRIDES ([data-theme="dark"] ...)
+   ══════════════════════════════════════════════════ */
+
+/* ── Global backgrounds & text ─────────────────────────────────── */
+[data-theme="dark"] body { background-color: var(--bg-primary); color: var(--text-body); }
+[data-theme="dark"] .main-container { background-color: var(--bg-primary); }
+
+/* ── Navbar ─────────────────────────────────────────────────────── */
+[data-theme="dark"] .nb-nav { background-color: var(--bg-navbar); }
+[data-theme="dark"] .nb-mobile-menu { background-color: var(--bg-navbar); }
+[data-theme="dark"] .nb-logo-text { color: var(--accent-gold); }
+[data-theme="dark"] .nb-dropdown { background-color: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .nb-dropdown-header { border-bottom-color: var(--border-color); }
+[data-theme="dark"] .nb-dropdown-logout { border-top-color: var(--border-color); }
+
+/* ── Section and page containers ───────────────────────────────── */
+[data-theme="dark"] section { background-color: transparent; }
+[data-theme="dark"] .home-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .home-top-container { background-color: var(--bg-primary); }
+
+/* ── Hills / wave ────────────────────────────────────────────────── */
+[data-theme="dark"] .hills { color: var(--bg-primary); }
+
+/* ── Home: hero text ─────────────────────────────────────────────── */
+[data-theme="dark"] .welcome-title-top,
+[data-theme="dark"] .welcome-title-bottom-start,
+[data-theme="dark"] .welcome-title-bottom-end { text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+
+/* ── Home: welcome section ───────────────────────────────────────── */
+[data-theme="dark"] .home-welcome-container { background-color: var(--bg-secondary); }
+[data-theme="dark"] .home-welcome-heading        { color: var(--text-primary); }
+[data-theme="dark"] .home-welcome-title,
+[data-theme="dark"] .home-welcome-subtitle { color: var(--text-primary); }
+[data-theme="dark"] .home-welcome-text-top       { color: var(--text-secondary); }
+[data-theme="dark"] .home-welcome-icon-text-line { color: var(--text-primary); }
+[data-theme="dark"] .checkIcon                   { color: var(--accent-pink); }
+[data-theme="dark"] .petImg3                     { background-color: rgba(255,255,255,0.05); }
+[data-theme="dark"] .learn-more-button {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+[data-theme="dark"] .learn-more-button:hover {
+  background-color: var(--accent-pink);
+  color: #fff;
+  border-color: var(--accent-pink);
+}
+
+/* ── Home: photo gallery headings ────────────────────────────────── */
+[data-theme="dark"] .photo-gallery-heading-top    { color: var(--accent-pink); }
+[data-theme="dark"] .photo-gallery-heading-bottom { color: var(--text-primary); }
+
+/* ── Pet of the Week ─────────────────────────────────────────────── */
+[data-theme="dark"] .home-pet-of-the-week-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .pet-of-the-week-heading-top    { color: var(--accent-pink); }
+[data-theme="dark"] .pet-of-the-week-heading-bottom { color: var(--text-primary); }
+[data-theme="dark"] .pet-of-the-week-info { color: var(--text-secondary); }
+[data-theme="dark"] .pet-name                       { color: var(--accent-gold); }
+[data-theme="dark"] .pet-bio                        { color: var(--text-secondary); }
+[data-theme="dark"] .pet-meta                       { color: var(--accent-pink); }
+
+/* ── Testimonials carousel ───────────────────────────────────────── */
+[data-theme="dark"] .testimonials-container { background-color: var(--bg-secondary); }
+[data-theme="dark"] .testimonial-card { background-color: var(--bg-card); }
+[data-theme="dark"] .testimonial-text { color: var(--text-secondary); }
+[data-theme="dark"] .testimonial-author { color: var(--text-primary); }
+[data-theme="dark"] .clients-testimonias-heading { color: var(--text-primary); }
+[data-theme="dark"] .testimonial-quote           { color: var(--text-secondary); }
+[data-theme="dark"] .testimonial-author-loc      { color: var(--text-secondary); }
+[data-theme="dark"] .testimonial-location        { color: var(--text-secondary); }
+[data-theme="dark"] .testimonial-arrow { border-color: var(--text-primary); color: var(--text-primary); }
+[data-theme="dark"] .testimonial-arrow:hover { background: var(--text-primary); color: var(--bg-primary); }
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+[data-theme="dark"] .footer-container {
+  background-image: none;
+  background-color: #0d0d1a;
+}
+[data-theme="dark"] .social-media-header,
+[data-theme="dark"] .contact-us-header,
+[data-theme="dark"] .working-hours-header,
+[data-theme="dark"] .newsletter-header       { color: var(--text-primary); }
+[data-theme="dark"] .footer-social-media-text,
+[data-theme="dark"] .working-hours-text      { color: var(--text-secondary); }
+[data-theme="dark"] .contact-us-info         { color: var(--text-primary); }
+[data-theme="dark"] .twitter-link,
+[data-theme="dark"] .facebook-link,
+[data-theme="dark"] .instagram-link,
+[data-theme="dark"] .youTube-link {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+}
+[data-theme="dark"] .footer-bottom-breaking-line {
+  border-color: var(--border-color);
+  opacity: 0.4;
+}
+[data-theme="dark"] .footer-copyright-text { color: var(--text-secondary); }
+[data-theme="dark"] .newsletter-input {
+  background-color: var(--bg-input);
+  color: var(--text-body);
+  border-color: var(--border-color);
+}
+[data-theme="dark"] .newsletter-container { background-color: var(--bg-secondary); }
+
+/* ── Search / Browse ────────────────────────────────────────────── */
+[data-theme="dark"] .search-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .filter-bar { background-color: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .filter-input { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
+[data-theme="dark"] .filter-label { color: var(--text-secondary); }
+[data-theme="dark"] .browse-filter-bar     { background-color: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .browse-filter-input  { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
+[data-theme="dark"] .browse-filter-select { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
+[data-theme="dark"] .browse-filter-label  { color: var(--text-secondary); }
+[data-theme="dark"] .browse-type-all-btn  {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+[data-theme="dark"] .browse-type-all-btn:hover,
+[data-theme="dark"] .browse-type-all-btn.active {
+  background-color: var(--accent-pink);
+  color: #fff;
+  border-color: var(--accent-pink);
+}
+[data-theme="dark"] .search-no-result-text { color: var(--text-primary); }
+
+/* Bootstrap Cards (Search-PetCard) */
+[data-theme="dark"] .card { background-color: var(--bg-card) !important; border-color: var(--border-color) !important; color: var(--text-body) !important; }
+[data-theme="dark"] .card-body { background-color: var(--bg-card); }
+[data-theme="dark"] .card-title { color: var(--text-primary) !important; }
+[data-theme="dark"] .card-text { color: var(--text-secondary) !important; }
+
+/* ── Modern pet cards ────────────────────────────────────────────── */
+[data-theme="dark"] .pet-card-modern { border-color: var(--border-color); }
+[data-theme="dark"] .pet-card-modern       { background: var(--bg-card); }
+[data-theme="dark"] .pet-card-modern__body { background: var(--bg-card); }
+[data-theme="dark"] .pet-card-modern__breed { color: var(--text-secondary); }
+[data-theme="dark"] .pet-card-modern__heart { background: rgba(30,30,30,0.88); color: #666; }
+[data-theme="dark"] .pet-card-modern__heart--saved { color: #ff6b9d; }
+[data-theme="dark"] .pet-badge--type { background: #1e2a4a; color: #8ab0f5; }
+[data-theme="dark"] .pet-badge--available  { background: #0d2e1c; color: #6edfa0; }
+[data-theme="dark"] .pet-badge--adopted    { background: #2e0d0d; color: #f78a8a; }
+[data-theme="dark"] .pet-badge--fostered   { background: #2e2300; color: #f5c842; }
+
+/* ── Pet card (Pet-Info.jsx) ────────────────────────────────────── */
+[data-theme="dark"] .pet-card-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .pet-card { background-color: var(--bg-card); border-radius: 16px; padding: 1rem; }
+[data-theme="dark"] .pet-card-pet-name { color: var(--text-primary); }
+[data-theme="dark"] .pet-info { color: var(--text-secondary); }
+[data-theme="dark"] .card-right { background-color: var(--bg-card); }
+
+/* ── Share button ────────────────────────────────────────────────── */
+[data-theme="dark"] .share-dropdown { background: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .share-option { color: var(--text-primary); }
+[data-theme="dark"] .share-option:hover { background-color: var(--bg-secondary); }
+
+/* ── Action panel ────────────────────────────────────────────────── */
+[data-theme="dark"] .action-panel-note  { color: var(--text-secondary); }
+[data-theme="dark"] .action-btn-save    { color: var(--text-secondary); }
+[data-theme="dark"] .action-btn-save--saved { color: var(--accent-pink); }
+[data-theme="dark"] .action-btn-return { background: var(--bg-secondary); color: var(--text-secondary); border-color: var(--border-color); }
+[data-theme="dark"] .action-btn-return  {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+[data-theme="dark"] .action-btn-return:hover { background: var(--bg-card); color: var(--text-primary); }
+
+/* ── My Pets page ───────────────────────────────────────────────── */
+[data-theme="dark"] .my-pets-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .my-pets-toggle-btn { background-color: var(--bg-card); color: var(--text-primary); border-color: var(--border-color); }
+[data-theme="dark"] .my-pets-header     { color: var(--text-primary); }
+[data-theme="dark"] .my-pets-sub-header { color: var(--accent-pink); }
+[data-theme="dark"] .my-pets-saved-link { color: var(--text-secondary); }
+
+/* ── Saved Pets page ─────────────────────────────────────────────── */
+[data-theme="dark"] .saved-pets-title { color: var(--text-primary); }
+[data-theme="dark"] .saved-pets-title    { color: var(--text-primary); }
+[data-theme="dark"] .saved-pets-subtitle,
+[data-theme="dark"] .saved-pets-loading,
+[data-theme="dark"] .saved-pets-empty   { color: var(--text-secondary); }
+[data-theme="dark"] .saved-pet-card { background: var(--bg-card); }
+[data-theme="dark"] .saved-pet-name { color: var(--text-primary); }
+[data-theme="dark"] .saved-pet-actions { border-top-color: var(--border-color); }
+[data-theme="dark"] .heart-btn { background: rgba(30,30,30,0.85); color: #666; }
+[data-theme="dark"] .heart-btn--saved { color: #ff6b9d; }
+
+/* ── Profile Settings ───────────────────────────────────────────── */
+[data-theme="dark"] .ps-page           { background-color: var(--bg-secondary); }
+[data-theme="dark"] .ps-card           { background-color: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .ps-card-header    { border-bottom-color: var(--border-color); }
+[data-theme="dark"] .ps-input          { background: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
+[data-theme="dark"] .ps-title          { color: var(--text-primary); }
+[data-theme="dark"] .ps-subtitle       { color: var(--text-secondary); }
+
+/* ── Admin Dashboard ────────────────────────────────────────────── */
+[data-theme="dark"] .admin-tab-bar { border-color: var(--border-color); }
+[data-theme="dark"] .admin-tab-btn { color: var(--text-secondary); }
+[data-theme="dark"] .admin-tab-btn:hover { color: var(--text-primary); }
+[data-theme="dark"] .admin-stats-title { color: var(--text-primary); }
+[data-theme="dark"] .stat-card { background-color: var(--bg-card); border-top-color: var(--accent-blue); }
+[data-theme="dark"] .stat-card-value { color: var(--text-primary); }
+[data-theme="dark"] .stats-bar-section { background-color: var(--bg-card); }
+[data-theme="dark"] .stats-bar-title,
+[data-theme="dark"] .stats-bar-label { color: var(--text-primary); }
+[data-theme="dark"] .stats-bar-track { background: var(--border-color); }
+[data-theme="dark"] .admin-table-wrapper { background-color: var(--bg-card); }
+[data-theme="dark"] .admin-table { background-color: var(--bg-card); }
+[data-theme="dark"] .admin-table td { color: var(--text-primary); border-bottom-color: var(--border-color); }
+[data-theme="dark"] .admin-table tr:hover td { background: var(--bg-secondary); }
+[data-theme="dark"] .newsletter-count-badge { background: var(--bg-secondary); color: var(--text-primary); }
+[data-theme="dark"] .newsletter-confirm-dialog { background-color: var(--bg-card); }
+[data-theme="dark"] .newsletter-confirm-text { color: var(--text-primary); }
+[data-theme="dark"] .newsletter-confirm-no { background-color: var(--bg-input); color: var(--text-primary); border-color: var(--border-color); }
+[data-theme="dark"] .admin-table-wrap   { border-color: var(--border-color); }
+[data-theme="dark"] .admin-th           { background: var(--bg-secondary); color: var(--text-secondary); border-bottom-color: var(--border-color); }
+[data-theme="dark"] .admin-row          { border-bottom-color: var(--border-color); }
+[data-theme="dark"] .admin-row:nth-child(even) { background: var(--bg-secondary); }
+[data-theme="dark"] .admin-row:hover    { background: rgba(255,72,128,0.06); }
+[data-theme="dark"] .admin-td          { color: var(--text-body); }
+[data-theme="dark"] .admin-pet-name,
+[data-theme="dark"] .admin-user-name   { color: var(--text-primary); }
+[data-theme="dark"] .admin-badge--available { background: #0d2e1c; color: #6edfa0; }
+[data-theme="dark"] .admin-badge--adopted   { background: #0d1a38; color: #7aaeff; }
+[data-theme="dark"] .admin-badge--fostered  { background: #2e2300; color: #f5c842; }
+[data-theme="dark"] .admin-icon-btn:hover   { background: var(--bg-secondary); }
+[data-theme="dark"] .confirm-dialog         { background: var(--bg-card); }
+[data-theme="dark"] .confirm-dialog-text    { color: var(--text-primary); }
+
+/* ── Modals (Login / Signup) ────────────────────────────────────── */
+[data-theme="dark"] .modal-content { background-color: var(--bg-card); color: var(--text-body); }
+[data-theme="dark"] .modal-header { border-color: var(--border-color); }
+[data-theme="dark"] .modal-footer { border-color: var(--border-color); }
+[data-theme="dark"] .modal-title { color: var(--text-primary); }
+[data-theme="dark"] .SignupForm label,
+[data-theme="dark"] .loginForm label { color: var(--text-secondary); }
+
+/* ── Auth pages ─────────────────────────────────────────────────── */
+[data-theme="dark"] .forgot-password-container,
+[data-theme="dark"] .reset-password-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .forgot-password-card,
+[data-theme="dark"] .reset-password-card { background-color: var(--bg-card); }
+
+/* ── Contact page ───────────────────────────────────────────────── */
+[data-theme="dark"] .contact-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .contact-hero { background-color: var(--bg-secondary); }
+[data-theme="dark"] .contact-hero-title,
+[data-theme="dark"] .contact-hero-subtitle { color: var(--text-primary); }
+[data-theme="dark"] .contact-form-card,
+[data-theme="dark"] .contact-info-panel { background-color: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .contact-card-title { color: var(--text-primary); }
+[data-theme="dark"] .contact-label { color: var(--text-secondary); }
+[data-theme="dark"] .contact-input { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
+[data-theme="dark"] .contact-input:focus { border-color: var(--accent-pink); }
+[data-theme="dark"] .contact-info-item { color: var(--text-primary); }
+[data-theme="dark"] .contact-social-label { color: var(--text-primary); }
+
+/* ── About page ──────────────────────────────────────────────────── */
+[data-theme="dark"] .about-container,
+[data-theme="dark"] .adoption-success-container { background-color: var(--bg-primary); color: var(--text-body); }
+[data-theme="dark"] .about-hero-title    { color: var(--text-primary); }
+[data-theme="dark"] .about-hero-text     { color: var(--text-secondary); }
+[data-theme="dark"] .about-hero-badge    { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
+[data-theme="dark"] .about-section-title { color: var(--text-primary); }
+[data-theme="dark"] .about-section-subtitle { color: var(--text-secondary); }
+[data-theme="dark"] .about-count-card    { background: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .about-count-label   { color: var(--text-secondary); }
+[data-theme="dark"] .about-step-title    { color: var(--text-primary); }
+[data-theme="dark"] .about-step-desc     { color: var(--text-secondary); }
+/* Keep the pink process section as-is — it looks good in dark mode already */
+
+/* ── Legal pages ─────────────────────────────────────────────────── */
 [data-theme="dark"] .legal-page         { background-color: var(--bg-primary); }
 [data-theme="dark"] .legal-title        { color: var(--text-primary); }
 [data-theme="dark"] .legal-section-title { color: var(--accent-blue); }
 [data-theme="dark"] .legal-section p,
 [data-theme="dark"] .legal-list         { color: var(--text-secondary); }
 [data-theme="dark"] .legal-section      { border-bottom-color: var(--border-color); }
+
+/* ── Forms & inputs (global) ────────────────────────────────────── */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--bg-input);
+  color: var(--text-body);
+  border-color: var(--border-color);
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: var(--text-secondary); }
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus { border-color: var(--accent-pink); }
+
+/* ── Legacy Bootstrap form-control ──────────────────────────────── */
+[data-theme="dark"] .form-control  {
+  background-color: var(--bg-input) !important;
+  color: var(--text-body) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .form-control:focus { border-color: var(--accent-pink) !important; }
+[data-theme="dark"] .form-label         { color: var(--text-secondary); }
+[data-theme="dark"] .floating-label-control { color: var(--text-secondary); }
+[data-theme="dark"] .form-floating > label { color: var(--text-secondary); }
+[data-theme="dark"] .form-floating > .form-control { background-color: var(--bg-input) !important; color: var(--text-body) !important; }
+
+/* ── Back button ────────────────────────────────────────────────── */
+[data-theme="dark"] .back-button { color: var(--text-primary); border-color: var(--border-color); background-color: var(--bg-card); }
+
+/* ── Toast notifications ─────────────────────────────────────────── */
+[data-theme="dark"] .toast-item--success { background: #1a3326; color: #6edfa0; border-color: #2d6b4a; }
+[data-theme="dark"] .toast-item--error   { background: #3b1515; color: #f78a8a; border-color: #6b2d2d; }
+[data-theme="dark"] .toast-item--info    { background: #151d3b; color: #8ab0f5; border-color: #2d3f6b; }
+
+/* ══════════════════════════════════════════════════
+   18. MEDIA QUERIES
+   ══════════════════════════════════════════════════ */
+
+@media (max-width: 1150px) {
+  .home-welcome-content {
+    flex-flow: column nowrap;
+  }
+  .home-welcome-heading {
+    font-size: 2.5rem;
+  }
+  .home-welcome-text {
+    flex-basis: 100%;
+    order: 1;
+    padding: 2rem;
+    margin-bottom: 3rem;
+  }
+  .home-welcome-text-top,
+  .home-welcome-text-middle {
+    padding: 0;
+  }
+  .learn-more-button {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 1250px) {
+  .pet-of-the-week-card {
+    flex-flow: column wrap;
+  }
+  .pet-of-the-week-card-left {
+    margin: 0 auto;
+  }
+  .pet-of-the-week-ring {
+    width: 16rem;
+    height: 16rem;
+  }
+  .pet-of-the-week-card-right {
+    margin: 0 auto;
+    padding: 2rem 2rem 0;
+  }
+}
+
+@media (max-width: 850px) {
+  .clients-testimonias-heading {
+    font-size: 2rem;
+    margin-bottom: 0rem;
+    text-align: center;
+  }
+  .clients-testimonias-person {
+    flex-flow: column nowrap;
+    flex-basis: content;
+    text-align: center;
+  }
+  .clients-testimonias-person-image {
+    margin-top: 3rem;
+  }
+  .clients-testimonias-person-name {
+    margin-top: -1rem;
+    margin-bottom: -1rem;
+  }
+}
+
+/* ── Responsive: hide desktop nav, show hamburger ── */
+@media (max-width: 768px) {
+  .nb-links,
+  .nb-right {
+    display: none;
+  }
+  .nb-hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 600px) {
+  .ps-row { flex-direction: column; }
+  .ps-photo-body { flex-direction: column; text-align: center; }
+  .ps-field--half { max-width: 100%; }
+  .ps-actions { flex-direction: column-reverse; }
+  .ps-btn { width: 100%; text-align: center; }
+}
+
+/* tablet */
+@media (max-width: 1200px) {
+  .welcome-container {
+    top: 3rem;
+    right: 3rem;
+  }
+  .welcome-title-top {
+    font-size: 1.2rem;
+  }
+  .welcome-title-bottom-start,
+  .welcome-title-bottom-end {
+    font-size: 2.5rem;
+  }
+  .dog-bone-img {
+    top: 9rem;
+    right: 28rem;
+  }
+  .arrow-img {
+    bottom: 7rem;
+    right: 32rem;
+  }
+  .dog-footprints-img {
+    bottom: 15rem;
+    right: 4rem;
+  }
+  .hills {
+    height: 10%;
+  }
+  .home-welcome-img,
+  .petImg3,
+  .petImg2 {
+    display: none;
+  }
+
+  /* Footer */
+  .footer-social-media,
+  .footer-newsletter {
+    margin: 0;
+  }
+
+  /* Pet Card */
+  .pet-card {
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  .pet-card-image {
+    width: 30rem;
+    height: 30rem;
+    border-radius: 5px;
+  }
+  .card-right {
+    margin: 1rem 0;
+  }
+  .pet-card-pet-name {
+    font-size: 2.5rem;
+  }
+  .pet-card-button-container {
+    margin-top: 2rem;
+  }
+
+  /* Profile Settings — handled by .ps-* responsive rules */
+
+  /* Admin */
+  .admin-dashboard-pets-container,
+  .admin-add-pet-container,
+  .admin-edit-pet-container {
+    padding: 1rem;
+  }
+  th {
+    font-size: 0.7rem;
+  }
+  td {
+    font-size: 0.5rem;
+  }
+  .admin-add-pet-form {
+    padding: 1rem;
+    margin: 0;
+  }
+  .add-pet-row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  .admin-edit-pet-header-container {
+    flex-direction: column;
+  }
+  .pet-img {
+    width: 10rem;
+    height: 10rem;
+  }
+}
+
+/* Tablet — 3-column grid drops to 2 columns */
+@media (min-width: 701px) and (max-width: 1024px) {
+  .my-pets-grid--many {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  /* Nav Bar — handled by .nb-* @media (max-width: 768px) block */
+
+  /* Home */
+  .home-welcome-img,
+  .petImg3,
+  .petImg2 {
+    display: none;
+  }
+  .home-top-container {
+    flex-direction: column;
+  }
+  .welcome-container {
+    top: 0;
+    left: 0;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  .welcome-title-top {
+    position: absolute;
+    bottom: -100px;
+  }
+  .welcome-login-search-Button {
+    position: absolute;
+    bottom: 20%;
+    padding: 0.6rem 3rem;
+  }
+  .hills {
+    height: 10%;
+  }
+  .star-img {
+    top: 2rem;
+    right: 2rem;
+  }
+  .dog-bone-img {
+    top: 10rem;
+    left: 2rem;
+  }
+  .arrow-img {
+    bottom: 8rem;
+    right: 14rem;
+  }
+  .dog-footprints-img {
+    bottom: 11rem;
+    right: 2rem;
+  }
+
+  /* Home Welcome */
+  .home-welcome-container,
+  .home-welcome-content,
+  .home-welcome-text {
+    margin: 0;
+    padding: 0 1rem;
+  }
+
+  /* Photo Gallery */
+  .photo-gallery-image-container {
+    flex-direction: column;
+    gap: 10%;
+    width: 100%;
+    margin-top: 10rem;
+    padding: 0 1rem 0 1rem;
+  }
+  .photo-gallery-heading-bottom {
+    font-size: 2.5rem;
+  }
+  .photo-gallery-image {
+    margin: 0;
+    padding: 0;
+    height: 8rem;
+    width: 8rem;
+  }
+  .photo-gallery-image-col-1,
+  .photo-gallery-image-col-2,
+  .photo-gallery-image-col-3,
+  .photo-gallery-image-col-4,
+  .photo-gallery-image-col-5 {
+    margin: 0;
+    padding: 1rem 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10%;
+  }
+  /* Pet of the week */
+  .pet-of-the-week-heading-bottom {
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+  }
+  .pet-of-the-week-card-left {
+    margin: 0 auto;
+  }
+  .pet-of-the-week-ring {
+    width: 14rem;
+    height: 14rem;
+  }
+  .pet-of-the-week-card-right {
+    margin: 0;
+    padding: 1rem;
+  }
+
+  /* Clients Testimonials */
+  .clients-testimonias-container {
+    margin: 0;
+  }
+  .clients-testimonias-heading {
+    font-size: 2.5rem;
+  }
+  .clients-testimonias-person-recommendation {
+    text-align: left;
+  }
+  .clients-testimonias-person {
+    padding: 0;
+  }
+
+  /* Footer */
+  .footer-container {
+    margin: 0;
+  }
+  .footer-main {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  .footer-social-media,
+  .footer-contact-us,
+  .footer-working-hours,
+  .footer-newsletter {
+    flex-basis: 100%;
+    padding: 0;
+    margin: 1rem;
+  }
+  .newsletter-input {
+    width: auto;
+  }
+  .footer-social-media-links {
+    justify-content: flex-start;
+    gap: 10%;
+  }
+  .footer-bottom-breaking-line {
+    margin: 1rem 0;
+  }
+  .footer-bottom-copyright {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .footer-bottom-copyright > span {
+    margin-bottom: 1rem;
+  }
+
+  /* Search */
+  .search-header-text {
+    font-size: 2.5rem;
+  }
+  .advanced-search-container {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+  .search-pet-btn-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+  }
+  .search-pet-btn {
+    margin: 1rem auto;
+    width: 100%;
+  }
+  .pet-icon {
+    margin: 1rem;
+  }
+  .search-pet-results {
+    padding: 0 1.5rem;
+  }
+  section {
+    padding: 0;
+    margin: 0;
+  }
+  .pet-card-result {
+    margin: 2rem 0;
+  }
+
+  /* Pet Card */
+  .pet-card {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  .pet-card-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+  }
+  .pet-card-pet-name {
+    font-size: 2rem;
+  }
+  .pet-card-button-container {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .pet-card-button-container > div {
+    display: flex;
+  }
+  .pet-card-button {
+    padding: 0.4rem 1rem;
+    margin: 0.4rem 0.4rem 0 0;
+    font-size: 0.7rem;
+  }
+
+  /* Signup and Login Form */
+  .SignupForm,
+  .loginForm {
+    padding: 1rem;
+  }
+  .signup-buttons,
+  .login-buttons {
+    padding: 0;
+    flex-direction: column;
+  }
+  .signup-buttons {
+    margin-top: 1rem;
+  }
+  .signup-login-btn {
+    margin: 0.5rem 0;
+    padding: 0.6rem 2rem;
+    width: 100%;
+  }
+
+  /* My Pets */
+  .my-pets-container {
+    padding: 0;
+  }
+  .my-pets-header-container {
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  .my-pets-header {
+    font-size: 2rem;
+    margin: 1rem 0;
+  }
+  .my-pets-result-container {
+    padding: 0 0.5rem;
+    width: 100%;
+  }
+  .my-pets-sub-header {
+    padding: 0;
+  }
+  .search-pet-results {
+    padding: 0;
+  }
+  /* Mobile: all grid variants collapse to 1 column */
+  .my-pets-grid--single,
+  .my-pets-grid--double,
+  .my-pets-grid--many {
+    grid-template-columns: 1fr;
+    padding: 1rem 0.5rem;
+  }
+
+  /* Profile Settings — handled by .ps-* responsive rules */
+
+  /* Admin */
+  .admin-dashboard-header,
+  .admin-add-pet-header,
+  .admin-edit-pet-header {
+    font-size: 2.2rem;
+    margin: 1rem auto;
+  }
+  .admin-dashboard-table-header {
+    font-size: 1.2rem;
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+  }
+  th {
+    font-size: 10px;
+  }
+  td {
+    font-size: 10px;
+  }
+  .add-pet-button-link {
+    padding: 0.5rem 2rem;
+  }
+
+  /* Add Pet */
+  .add-pet-buttons-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .add-pet-buttons-container > .add-pet-buttons {
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+
+  /* Edit Pet */
+  .pet-img {
+    width: 7rem;
+    height: 7rem;
+  }
+  .edit-pet-row {
+    flex-direction: column;
+  }
+
+  /* Admin User Pets */
+  .admin-user-pets-container {
+    padding: 1rem;
+  }
+  .search-pet-results-column {
+    margin: 4rem 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-hero-title {
+    font-size: 2rem;
+  }
+  .about-section-title {
+    font-size: 1.6rem;
+  }
+  .about-container {
+    padding: 1rem;
+  }
+  .about-process-section {
+    padding: 2rem 1rem;
+  }
+  .adoption-success-card {
+    padding: 2rem 1.5rem;
+  }
+  .adoption-success-heading {
+    font-size: 2rem;
+  }
+}
+
+/* ── Browse page — tablet ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  .browse-filter-bar {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+/* ── Browse page — mobile ───────────────────────────────────── */
+@media (max-width: 700px) {
+  .browse-filter-bar {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .browse-type-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .browse-filter-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .browse-filter-group {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .browse-clear-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .browse-pagination {
+    gap: 0.3rem;
+  }
+
+  .browse-page-btn {
+    padding: 0.4rem 0.6rem;
+    min-width: 2.1rem;
+    font-size: 0.8rem;
+  }
+
+  .browse-page-nav {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .browse-page-indicator {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    margin-top: 0.3rem;
+  }
+}
+
+/* ── Admin Tables — mobile horizontal scroll ─────── */
+@media (max-width: 700px) {
+  .users-list,
+  .pets-list {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .users-list table,
+  .pets-list table {
+    min-width: 600px;
+  }
+
+  /* Override the squished font sizes set in the 700px breakpoint above */
+  th {
+    font-size: 0.8rem;
+  }
+
+  td {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.5rem;
+  }
+}
+
+/* ── Responsive tweaks ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .contact-hero-title { font-size: 2rem; }
+  .contact-main-section { padding: 0 1rem; }
+  .contact-form-card { padding: 1.5rem; }
+  .stat-cards-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .stats-bar-section { max-width: 100%; }
+  .newsletter-header-row { flex-direction: column; }
+}
