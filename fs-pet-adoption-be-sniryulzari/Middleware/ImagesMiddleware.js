@@ -1,6 +1,5 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
 
 // Credentials moved to .env — never hardcode secrets in source
 cloudinary.config({
@@ -12,8 +11,11 @@ cloudinary.config({
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
+// memoryStorage keeps the file in RAM as req.file.buffer — no temp files on disk.
+// This works in both traditional servers and serverless environments (Vercel)
+// where the filesystem is read-only outside of /tmp.
 const upload = multer({
-  dest: "./images",
+  storage: multer.memoryStorage(),
   limits: { fileSize: MAX_FILE_SIZE_BYTES },
   fileFilter: (_req, file, cb) => {
     if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
@@ -24,9 +26,8 @@ const upload = multer({
   },
 });
 
-// Promisified so errors are catchable with try/catch instead of nested callbacks.
-// The original code also had a bug: the callback used `err` (undefined) instead of `error`.
-const uploadToCloudinary = async (req, res, next) => {
+// Streams req.file.buffer directly to Cloudinary — no temp file needed.
+const uploadToCloudinary = (req, res, next) => {
   if (!req.file) {
     // No new image uploaded — skip Cloudinary and keep whatever imageUrl is
     // already in req.body (populated from the form data by multer).
@@ -34,19 +35,19 @@ const uploadToCloudinary = async (req, res, next) => {
     return next();
   }
 
-  try {
-    const result = await cloudinary.uploader.upload(req.file.path);
-    req.body.imageUrl = result.secure_url;
-    fs.unlinkSync(req.file.path); // remove temp file on success
-    next();
-  } catch (error) {
-    // Always clean up the temp file even on failure
-    if (fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+  const stream = cloudinary.uploader.upload_stream(
+    { resource_type: "image" },
+    (error, result) => {
+      if (error) {
+        console.error("Cloudinary upload error:", error.message);
+        return res.status(500).send("Image upload failed");
+      }
+      req.body.imageUrl = result.secure_url;
+      next();
     }
-    console.error("Cloudinary upload error:", error.message);
-    res.status(500).send("Image upload failed");
-  }
+  );
+
+  stream.end(req.file.buffer);
 };
 
 module.exports = { upload, uploadToCloudinary };
