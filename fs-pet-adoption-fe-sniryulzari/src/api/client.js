@@ -1,12 +1,11 @@
 import axios from "axios";
 
 // Single source of truth for the backend URL.
-// Previously getServerUrl() was a function re-created on every App render and
-// passed through both contexts, causing unnecessary re-renders in all consumers.
+// In production (Vercel) set REACT_APP_API_URL to your Railway backend URL.
+// CRA bakes REACT_APP_* vars into the bundle at build time, so the value must
+// be set in the Vercel environment variables dashboard before building.
 const SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://pet-adoption-bbvp.onrender.com"  // backend URL (was incorrectly the frontend URL)
-    : "http://localhost:8080";
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 const api = axios.create({
   baseURL: SERVER_URL,
