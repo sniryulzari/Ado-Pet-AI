@@ -1,0 +1,47 @@
+services:
+  # ── Backend — Node.js Web Service ───────────────────────────────────────────
+  - type: web
+    name: ado-pet-backend
+    runtime: node
+    rootDir: fs-pet-adoption-be-sniryulzari
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set to your Render frontend URL after first deploy:
+      # https://ado-pet-frontend.onrender.com
+      - key: FRONTEND_URL
+        sync: false
+      - key: MONGO_URI
+        sync: false
+      - key: TOKEN_SECRET
+        sync: false
+      - key: CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+
+  # ── Frontend — Static Site ───────────────────────────────────────────────────
+  - type: web
+    name: ado-pet-frontend
+    runtime: static
+    rootDir: fs-pet-adoption-fe-sniryulzari
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    envVars:
+      # Set to your Render backend URL after first deploy:
+      # https://ado-pet-backend.onrender.com
+      - key: REACT_APP_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
