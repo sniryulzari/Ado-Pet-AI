@@ -4,3 +4,5 @@ seed.js
 get-cloudinary-urls.js
 image-urls.json
 categorized-images.json
+.DS_Store
+**/.DS_Store
