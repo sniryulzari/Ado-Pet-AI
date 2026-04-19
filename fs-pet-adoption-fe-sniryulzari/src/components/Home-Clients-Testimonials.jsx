@@ -75,8 +75,22 @@ const slideVariants = {
   exit:  (dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60, transition: { duration: 0.3 } }),
 };
 
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.matchMedia("(min-width: 768px)").matches
+  );
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const handler = (e) => setIsDesktop(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+  return isDesktop;
+}
+
 export default function HomeClientsTestimonials() {
   const [[index, dir], setSlide] = useState([0, 0]);
+  const isDesktop = useIsDesktop();
 
   const go = useCallback(
     (newDir) =>
@@ -92,7 +106,9 @@ export default function HomeClientsTestimonials() {
     return () => clearInterval(id);
   }, [go]);
 
-  const t = TESTIMONIALS[index];
+  const visible = isDesktop
+    ? [0, 1, 2].map((offset) => TESTIMONIALS[(index + offset) % TESTIMONIALS.length])
+    : [TESTIMONIALS[index]];
 
   return (
     <section className="clients-testimonias-container">
@@ -100,27 +116,31 @@ export default function HomeClientsTestimonials() {
         <h2 className="clients-testimonias-heading">CLIENT'S TESTIMONIALS</h2>
       </div>
 
-      <div className="testimonial-carousel">
+      <div className={`testimonial-carousel${isDesktop ? " testimonial-carousel--desktop" : ""}`}>
         <AnimatePresence custom={dir} mode="wait">
           <motion.div
             key={index}
-            className="testimonial-slide"
+            className={`testimonial-slide-group${isDesktop ? " testimonial-slide-group--desktop" : ""}`}
             custom={dir}
             variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
           >
-            <img
-              src={t.avatar}
-              alt={t.name}
-              className="testimonial-avatar"
-              loading="lazy"
-            />
-            <StarRating count={t.stars} />
-            <p className="testimonial-quote">"{t.text}"</p>
-            <span className="testimonial-author-name">{t.name}</span>
-            <span className="testimonial-author-loc">{t.location}</span>
+            {visible.map((t, i) => (
+              <div key={i} className="testimonial-slide">
+                <img
+                  src={t.avatar}
+                  alt={t.name}
+                  className="testimonial-avatar"
+                  loading="lazy"
+                />
+                <StarRating count={t.stars} />
+                <p className="testimonial-quote">"{t.text}"</p>
+                <span className="testimonial-author-name">{t.name}</span>
+                <span className="testimonial-author-loc">{t.location}</span>
+              </div>
+            ))}
           </motion.div>
         </AnimatePresence>
 

@@ -34,6 +34,7 @@ app.use("/admin",         require("./Routes/AdminRoute"));
 app.use("/appOperations", require("./Routes/AppOperationsRoute"));
 app.use("/newsletter",    require("./Routes/NewsletterRoute"));
 app.use("/contact",       require("./Routes/ContactRoute"));
+app.use("/share",         require("./Routes/ShareRoute"));
 
 // Health check — used by Render and load balancers to verify the server is up
 app.get("/health", (_req, res) => res.sendStatus(200));

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
-import { FaShare, FaWhatsapp, FaFacebook, FaTwitter, FaCopy, FaPaw, FaHome, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaShare, FaWhatsapp, FaFacebook, FaTwitter, FaCopy, FaPaw, FaHome, FaHeart, FaRegHeart, FaInstagram, FaDownload } from "react-icons/fa";
 import { UsersContext } from "../Context/Context-Users";
 import { getPetById, adoptPetStatus, fosterPetStatus, returnPetStatus } from "../api/pets";
 import { getUserInfo, savePet, unsavePet, adoptPet, fosterPet, returnPet } from "../api/users";
@@ -13,7 +13,9 @@ function PetCard() {
   const [isSaved, setIsSaved]       = useState(false);
   const [isAdopted, setIsAdopted]   = useState(false);
   const [isFostered, setIsFostered] = useState(false);
-  const [shareOpen, setShareOpen]   = useState(false);
+  const [shareOpen, setShareOpen]         = useState(false);
+  const [instagramOpen, setInstagramOpen] = useState(false);
+  const [facebookOpen, setFacebookOpen]   = useState(false);
 
   const shareRef = useRef(null);
   const { isLoggedIn } = useContext(UsersContext);
@@ -54,6 +56,15 @@ function PetCard() {
 
   const petUrl = window.location.href;
 
+  // Backend share URL — carries OG meta tags so Facebook shows a rich preview.
+  // In production the Vercel proxy forwards /api/* → backend.
+  const backendBase =
+    process.env.REACT_APP_API_URL ||
+    (process.env.NODE_ENV === "production"
+      ? `${window.location.origin}/api`
+      : "http://localhost:8080");
+  const fbShareUrl = `${backendBase}/share/pet/${petId}`;
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(petUrl).then(() => {
       toast.success("Link copied to clipboard! 🐾");
@@ -68,8 +79,47 @@ function PetCard() {
   };
 
   const handleShareFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(petUrl)}`, "_blank");
     setShareOpen(false);
+    setFacebookOpen(true);
+  };
+
+  const handleOpenFbSharer = () => {
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fbShareUrl)}`,
+      "_blank"
+    );
+  };
+
+  const handleCopyFbPost = () => {
+    navigator.clipboard.writeText(facebookPost).then(() => {
+      toast.success("Post copied! 📋");
+    });
+  };
+
+  const handleShareInstagram = () => {
+    setShareOpen(false);
+    setInstagramOpen(true);
+  };
+
+  const handleDownloadPhoto = async () => {
+    try {
+      const res = await fetch(pet.imageUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${pet.name}-ado-pet.jpg`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(pet.imageUrl, "_blank");
+    }
+  };
+
+  const handleCopyCaption = () => {
+    navigator.clipboard.writeText(instagramCaption).then(() => {
+      toast.success("Caption copied! 📋");
+    });
   };
 
   const handleShareTwitter = () => {
@@ -143,6 +193,33 @@ function PetCard() {
 
   const isAvailable = pet.adoptionStatus === "Available";
 
+  const isHypo =
+    pet.hypoallergenic === true ||
+    String(pet.hypoallergenic).toLowerCase() === "yes" ||
+    String(pet.hypoallergenic).toLowerCase() === "true";
+
+  const instagramCaption =
+    `🐾 Meet ${pet.name}!\n\n` +
+    `${pet.name} is a ${pet.color} ${pet.breed} ${pet.type} ready to find a forever home ❤️\n\n` +
+    `📏 ${pet.height}cm · ⚖️ ${pet.weight}kg · ${isHypo ? "✅ Hypoallergenic" : "❌ Not hypoallergenic"}\n\n` +
+    (pet.bio ? `"${pet.bio}"\n\n` : "") +
+    `💛 Adopt or foster ${pet.name} today!\n` +
+    `🔗 Link in bio\n\n` +
+    `#PetAdoption #AdoptDontShop #${pet.type}sOfInstagram #RescuePet #AdoPet ` +
+    `#${pet.name.replace(/\s+/g, "")} #PetLovers #FosterPets #AnimalRescue`;
+
+  const facebookPost =
+    `🐾 Meet ${pet.name} — looking for a forever home!\n\n` +
+    `${pet.name} is a ${pet.color} ${pet.breed} ${pet.type}` +
+    (isHypo ? ` (hypoallergenic ✅)` : "") + `.\n` +
+    `📏 ${pet.height}cm tall · ⚖️ ${pet.weight}kg\n` +
+    (pet.dietaryRestrictions && pet.dietaryRestrictions !== "None"
+      ? `🥗 Dietary needs: ${pet.dietaryRestrictions}\n`
+      : "") +
+    (pet.bio ? `\n"${pet.bio}"\n` : "") +
+    `\n❤️ ${pet.name} deserves a loving home. Adopt or foster today!\n` +
+    `👉 ${petUrl}`;
+
   /* ── Action panel logic ───────────────────────────────────── */
   function ActionPanel() {
     // Not logged in: show locked buttons
@@ -205,9 +282,10 @@ function PetCard() {
   return (
     <section className="pet-card-container">
       <div className="pet-card-top-bar">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          <IoArrowBack size="1.1em" />
+        <button className="pet-card-back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+          <IoArrowBack size="1.2em" />
         </button>
+        <span className="pet-card-top-bar__title">{pet.name}</span>
         <div className="share-wrapper" ref={shareRef}>
           <button className="share-btn" onClick={() => setShareOpen((prev) => !prev)} aria-label="Share pet">
             <FaShare size="1em" /> Share
@@ -225,6 +303,9 @@ function PetCard() {
               </button>
               <button className="share-option share-option--twitter" onClick={handleShareTwitter}>
                 <FaTwitter size="0.95em" /> Twitter / X
+              </button>
+              <button className="share-option share-option--instagram" onClick={handleShareInstagram}>
+                <FaInstagram size="0.95em" /> Instagram
               </button>
             </div>
           )}
@@ -254,6 +335,100 @@ function PetCard() {
           <ActionPanel />
         </div>
       </div>
+
+      {facebookOpen && (
+        <div className="fb-overlay" onClick={() => setFacebookOpen(false)}>
+          <div className="fb-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="fb-modal-close" onClick={() => setFacebookOpen(false)}>✕</button>
+
+            <h3 className="fb-modal-title">
+              <FaFacebook className="fb-icon" size="1.15em" /> Share on Facebook
+            </h3>
+
+            <div className="fb-card-preview">
+              <img src={pet.imageUrl} alt={pet.name} />
+              <div className="fb-card-overlay">
+                <span className="fb-card-badge">🐾 Ado-Pet</span>
+                <div className="fb-card-bottom">
+                  <p className="fb-card-name">{pet.name}</p>
+                  <p className="fb-card-tagline">{pet.breed} · {pet.color} · {pet.type}</p>
+                  <span className="fb-card-cta">
+                    {pet.adoptionStatus === "Available" ? "Available for Adoption!" : pet.adoptionStatus}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p className="fb-post-label">Ready-to-use post text</p>
+            <textarea
+              className="fb-post-textarea"
+              readOnly
+              value={facebookPost}
+              rows={6}
+            />
+
+            <div className="fb-actions">
+              <button className="fb-btn fb-btn--copy" onClick={handleCopyFbPost}>
+                <FaCopy size="0.9em" /> Copy Post
+              </button>
+              <button className="fb-btn fb-btn--share" onClick={handleOpenFbSharer}>
+                <FaFacebook size="0.9em" /> Post to Facebook
+              </button>
+            </div>
+
+            <p className="fb-steps">
+              1. Copy the post text &nbsp;·&nbsp; 2. Click "Post to Facebook" &nbsp;·&nbsp; 3. Paste &amp; share
+            </p>
+          </div>
+        </div>
+      )}
+
+      {instagramOpen && (
+        <div className="ig-overlay" onClick={() => setInstagramOpen(false)}>
+          <div className="ig-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="ig-modal-close" onClick={() => setInstagramOpen(false)}>✕</button>
+
+            <h3 className="ig-modal-title">
+              <FaInstagram className="ig-icon" size="1.15em" /> Share on Instagram
+            </h3>
+
+            <div className="ig-card-preview">
+              <img src={pet.imageUrl} alt={pet.name} />
+              <div className="ig-card-overlay">
+                <span className="ig-card-badge">🐾 Ado-Pet</span>
+                <div className="ig-card-bottom">
+                  <p className="ig-card-name">{pet.name}</p>
+                  <p className="ig-card-tagline">{pet.breed} · {pet.color} · {pet.type}</p>
+                  <span className="ig-card-cta">
+                    {pet.adoptionStatus === "Available" ? "Available for Adoption!" : pet.adoptionStatus}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p className="ig-caption-label">Ready-to-use caption</p>
+            <textarea
+              className="ig-caption-textarea"
+              readOnly
+              value={instagramCaption}
+              rows={6}
+            />
+
+            <div className="ig-actions">
+              <button className="ig-btn ig-btn--copy" onClick={handleCopyCaption}>
+                <FaCopy size="0.9em" /> Copy Caption
+              </button>
+              <button className="ig-btn ig-btn--download" onClick={handleDownloadPhoto}>
+                <FaDownload size="0.9em" /> Save Photo
+              </button>
+            </div>
+
+            <p className="ig-steps">
+              1. Save the photo &nbsp;·&nbsp; 2. Copy the caption &nbsp;·&nbsp; 3. Open Instagram &nbsp;·&nbsp; 4. Create post &amp; paste
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

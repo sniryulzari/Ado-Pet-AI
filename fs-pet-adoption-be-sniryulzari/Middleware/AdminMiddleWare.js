@@ -4,7 +4,7 @@ const User = require("../Schemas/userSchemas");
 // the middleware without sending a response. Now the entire operation is guarded.
 async function isAdmin(req, res, next) {
   try {
-    const userId = req.body.userId;
+    const userId = req.userId;
     const userInfo = await User.findById(userId);
 
     if (!userInfo) {

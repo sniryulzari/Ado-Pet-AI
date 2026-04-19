@@ -29,9 +29,9 @@ async function getPetById(req, res) {
 
 async function adoptPetStatus(req, res) {
   try {
-    // Fixed: was `const { userId } = req.body.userId` which always destructured
+    // Fixed: was `const { userId } = req.userId` which always destructured
     // from a string (undefined), so userId was always undefined and the DB write silently failed.
-    const userId = req.body.userId;
+    const userId = req.userId;
     const { petId } = req.body;
     await adoptPetStatusModel(userId, petId);
     res.send({ ok: true });
@@ -44,7 +44,7 @@ async function adoptPetStatus(req, res) {
 async function fosterPetStatus(req, res) {
   try {
     // Same destructuring fix as adoptPetStatus
-    const userId = req.body.userId;
+    const userId = req.userId;
     const { petId } = req.body;
     await fosterPetStatusModel(userId, petId);
     res.send({ ok: true });
@@ -56,7 +56,8 @@ async function fosterPetStatus(req, res) {
 
 async function returnPet(req, res) {
   try {
-    const { userId, petId } = req.body;
+    const userId = req.userId;
+    const { petId } = req.body;
     await returnPetModel(userId, petId);
     res.send({ ok: true });
   } catch (err) {

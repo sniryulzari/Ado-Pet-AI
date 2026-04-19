@@ -46,12 +46,12 @@ describe("Auth Middleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("calls next() and sets req.body.userId for a valid token", async () => {
+  it("calls next() and sets req.userId for a valid token", async () => {
     const userId = "abc123def456";
     req.cookies.token = jwt.sign({ id: userId }, SECRET, { expiresIn: "1h" });
     await Auth(req, res, next);
     expect(next).toHaveBeenCalledTimes(1);
-    expect(req.body.userId).toBe(userId);
+    expect(req.userId).toBe(userId);
     expect(res.status).not.toHaveBeenCalled();
   });
 

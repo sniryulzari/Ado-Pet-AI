@@ -11,7 +11,7 @@ import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
 
 function NavigationBar() {
-  const { isAdmin, isLoggedIn, setIsLoggedIn, setIsAdmin, firstName, lastName, profileImage } =
+  const { isAdmin, isLoggedIn, setIsLoggedIn, setIsAdmin, firstName, lastName, profileImage, setProfileImage, setSavedPetIds } =
     useContext(UsersContext);
   const { isDarkMode, setIsDarkMode } = useContext(ThemeContext);
 
@@ -39,6 +39,8 @@ function NavigationBar() {
       localStorage.clear();
       setIsLoggedIn(false);
       setIsAdmin(false);
+      setProfileImage("");
+      setSavedPetIds(new Set());
       setDropdownOpen(false);
       setMenuOpen(false);
       navigate("/");

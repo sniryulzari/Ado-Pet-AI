@@ -2030,7 +2030,7 @@ label {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0 1rem;
+  padding: 0;
 }
 
 .pet-card {
@@ -3803,17 +3803,57 @@ label {
    ══════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════
-   SHARE PET BUTTON
+   PET DETAIL — STICKY APP BAR
    ═══════════════════════════════════════════════════════════════════ */
 .pet-card-top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  box-sizing: border-box;
   margin-bottom: 1rem;
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 1rem;
+}
+
+.pet-card-top-bar__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #393d72;
+  text-align: center;
+  flex: 1;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pet-card-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  min-width: 2.4rem;
+  background: transparent;
+  border: 2px solid #ff4880;
+  border-radius: 50%;
+  color: #ff4880;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.pet-card-back-btn:hover {
+  background-color: #ff4880;
+  color: #ffffff;
 }
 
 .share-wrapper {
@@ -3867,9 +3907,396 @@ label {
 }
 
 .share-option:hover { background-color: #f5efe7; }
-.share-option--whatsapp:hover { color: #25d366; }
-.share-option--facebook:hover { color: #1877f2; }
-.share-option--twitter:hover  { color: #1da1f2; }
+.share-option--whatsapp:hover  { color: #25d366; }
+.share-option--facebook:hover  { color: #1877f2; }
+.share-option--twitter:hover   { color: #1da1f2; }
+.share-option--instagram:hover { color: #e1306c; }
+
+/* ── Instagram share modal ──────────────────────────────────────── */
+.ig-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.ig-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+}
+
+.ig-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.ig-modal-close:hover { background: #f0f0f0; }
+
+.ig-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #393d72;
+  margin-bottom: 1.1rem;
+}
+
+.ig-icon {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card preview */
+.ig-card-preview {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  max-height: 260px;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+.ig-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ig-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.85rem;
+  color: #fff;
+}
+
+.ig-card-badge {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.28rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.4px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.ig-card-bottom { display: flex; flex-direction: column; }
+
+.ig-card-name {
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+  margin: 0 0 0.2rem;
+}
+
+.ig-card-tagline {
+  font-size: 0.82rem;
+  font-weight: 500;
+  opacity: 0.88;
+  margin: 0 0 0.5rem;
+}
+
+.ig-card-cta {
+  align-self: flex-start;
+  background: linear-gradient(135deg, #e85d04, #f48c06);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.28rem 0.7rem;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Caption */
+.ig-caption-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.4rem;
+}
+
+.ig-caption-textarea {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  color: #333;
+  resize: none;
+  background: #fafafa;
+  line-height: 1.55;
+  font-family: inherit;
+  margin-bottom: 0.85rem;
+  box-sizing: border-box;
+}
+
+/* Action buttons */
+.ig-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.ig-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: inherit;
+}
+
+.ig-btn--copy {
+  background: #393d72;
+  color: #fff;
+}
+.ig-btn--copy:hover { opacity: 0.85; }
+
+.ig-btn--download {
+  background: #f5efe7;
+  color: #393d72;
+  border: 2px solid #393d72;
+}
+.ig-btn--download:hover { background: #ebe0d0; }
+
+.ig-steps {
+  font-size: 0.75rem;
+  color: #aaa;
+  text-align: center;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── Facebook share modal ───────────────────────────────────────── */
+.fb-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.fb-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+}
+
+.fb-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.fb-modal-close:hover { background: #f0f0f0; }
+
+.fb-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1877f2;
+  margin-bottom: 1.1rem;
+}
+
+.fb-icon { color: #1877f2; }
+
+.fb-card-preview {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  max-height: 260px;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+.fb-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fb-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.85rem;
+  color: #fff;
+}
+
+.fb-card-badge {
+  align-self: flex-start;
+  background: rgba(24, 119, 242, 0.75);
+  backdrop-filter: blur(6px);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.28rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.4px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.fb-card-bottom { display: flex; flex-direction: column; }
+
+.fb-card-name {
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+  margin: 0 0 0.2rem;
+}
+
+.fb-card-tagline {
+  font-size: 0.82rem;
+  font-weight: 500;
+  opacity: 0.88;
+  margin: 0 0 0.5rem;
+}
+
+.fb-card-cta {
+  align-self: flex-start;
+  background: #1877f2;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.28rem 0.7rem;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.fb-post-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.4rem;
+}
+
+.fb-post-textarea {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  color: #333;
+  resize: none;
+  background: #fafafa;
+  line-height: 1.55;
+  font-family: inherit;
+  margin-bottom: 0.85rem;
+  box-sizing: border-box;
+}
+
+.fb-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.fb-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: inherit;
+}
+
+.fb-btn--copy {
+  background: #f0f2f5;
+  color: #1877f2;
+  border: 2px solid #1877f2;
+}
+.fb-btn--copy:hover { background: #dde8fb; }
+
+.fb-btn--share {
+  background: #1877f2;
+  color: #fff;
+}
+.fb-btn--share:hover { opacity: 0.88; }
+
+.fb-steps {
+  font-size: 0.75rem;
+  color: #aaa;
+  text-align: center;
+  line-height: 1.7;
+  margin: 0;
+}
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -4165,6 +4592,23 @@ label {
   gap: 1.5rem;
 }
 
+.testimonial-carousel--desktop {
+  max-width: 1100px;
+}
+
+.testimonial-slide-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.testimonial-slide-group--desktop {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
 .testimonial-slide {
   width: 100%;
   display: flex;
@@ -4173,6 +4617,11 @@ label {
   text-align: center;
   padding: 0 1rem;
   min-height: 240px;
+}
+
+.testimonial-slide-group--desktop .testimonial-slide {
+  flex: 1;
+  min-width: 0;
 }
 
 .testimonial-avatar {
@@ -4607,6 +5056,10 @@ label {
 
 /* ── Pet card (Pet-Info.jsx) ────────────────────────────────────── */
 [data-theme="dark"] .pet-card-container { background-color: var(--bg-primary); }
+[data-theme="dark"] .pet-card-top-bar { background: rgba(30, 30, 40, 0.92); border-bottom-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .pet-card-top-bar__title { color: var(--text-primary); }
+[data-theme="dark"] .pet-card-back-btn { border-color: #ff4880; color: #ff4880; }
+[data-theme="dark"] .pet-card-back-btn:hover { background-color: #ff4880; color: #ffffff; }
 [data-theme="dark"] .pet-card { background-color: var(--bg-card); border-radius: 16px; padding: 1rem; }
 [data-theme="dark"] .pet-card-pet-name { color: var(--text-primary); }
 [data-theme="dark"] .pet-info { color: var(--text-secondary); }
@@ -4616,6 +5069,27 @@ label {
 [data-theme="dark"] .share-dropdown { background: var(--bg-card); border-color: var(--border-color); }
 [data-theme="dark"] .share-option { color: var(--text-primary); }
 [data-theme="dark"] .share-option:hover { background-color: var(--bg-secondary); }
+
+/* ── Instagram modal ─────────────────────────────────────────────── */
+[data-theme="dark"] .ig-modal { background: var(--bg-card); }
+[data-theme="dark"] .ig-modal-title { color: var(--text-primary); }
+[data-theme="dark"] .ig-modal-close { color: var(--text-secondary); }
+[data-theme="dark"] .ig-modal-close:hover { background: var(--bg-secondary); }
+[data-theme="dark"] .ig-caption-label { color: var(--text-secondary); }
+[data-theme="dark"] .ig-caption-textarea { background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary); }
+[data-theme="dark"] .ig-btn--download { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color); }
+[data-theme="dark"] .ig-btn--download:hover { background: var(--bg-primary); }
+[data-theme="dark"] .ig-steps { color: var(--text-secondary); }
+
+/* ── Facebook modal ──────────────────────────────────────────────── */
+[data-theme="dark"] .fb-modal { background: var(--bg-card); }
+[data-theme="dark"] .fb-modal-close { color: var(--text-secondary); }
+[data-theme="dark"] .fb-modal-close:hover { background: var(--bg-secondary); }
+[data-theme="dark"] .fb-post-label { color: var(--text-secondary); }
+[data-theme="dark"] .fb-post-textarea { background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary); }
+[data-theme="dark"] .fb-btn--copy { background: var(--bg-secondary); }
+[data-theme="dark"] .fb-btn--copy:hover { background: var(--bg-primary); }
+[data-theme="dark"] .fb-steps { color: var(--text-secondary); }
 
 /* ── Action panel ────────────────────────────────────────────────── */
 [data-theme="dark"] .action-panel-note  { color: var(--text-secondary); }
@@ -4796,7 +5270,10 @@ label {
     padding: 0;
   }
   .learn-more-button {
+    display: block;
+    width: 100%;
     margin-left: 0;
+    text-align: center;
   }
 }
 
@@ -5047,6 +5524,15 @@ label {
     margin-bottom: 1rem;
     font-size: 2.5rem;
   }
+  .home-pet-of-the-week-container {
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+  .pet-of-the-week-card {
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
   .pet-of-the-week-card-left {
     margin: 0 auto;
   }
@@ -5055,8 +5541,15 @@ label {
     height: 14rem;
   }
   .pet-of-the-week-card-right {
+    width: 100%;
     margin: 0;
-    padding: 1rem;
+    padding: 1rem 1rem;
+    box-sizing: border-box;
+  }
+  .pet-of-the-week-button {
+    display: block;
+    width: 100%;
+    text-align: center;
   }
 
   /* Clients Testimonials */
@@ -5065,6 +5558,9 @@ label {
   }
   .clients-testimonias-heading {
     font-size: 2.5rem;
+  }
+  .clients-testimonias-content {
+    padding: 0 1rem;
   }
   .clients-testimonias-person-recommendation {
     text-align: left;

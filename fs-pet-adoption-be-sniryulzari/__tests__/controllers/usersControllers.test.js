@@ -253,7 +253,7 @@ describe("usersControllers", () => {
     it("returns { ok: true } on success", async () => {
       usersModel.savePetModel.mockResolvedValue(undefined);
       req.params = { petId: "pet123" };
-      req.body.userId = "user123";
+      req.userId = "user123";
       await savePet(req, res);
       expect(res.send).toHaveBeenCalledWith({ ok: true });
     });
@@ -261,7 +261,7 @@ describe("usersControllers", () => {
     it("returns 500 when the model throws", async () => {
       usersModel.savePetModel.mockRejectedValue(new Error("DB error"));
       req.params = { petId: "pet123" };
-      req.body.userId = "user123";
+      req.userId = "user123";
       await savePet(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
     });
@@ -271,7 +271,7 @@ describe("usersControllers", () => {
     it("returns { ok: true } on success", async () => {
       usersModel.deleteSavePetModel.mockResolvedValue(undefined);
       req.params = { petId: "pet123" };
-      req.body.userId = "user123";
+      req.userId = "user123";
       await deleteSavedPet(req, res);
       expect(res.send).toHaveBeenCalledWith({ ok: true });
     });
@@ -281,7 +281,7 @@ describe("usersControllers", () => {
     it("returns userId in response on success", async () => {
       usersModel.returnPetModel.mockResolvedValue(undefined);
       req.params = { petId: "pet123" };
-      req.body.userId = "user123";
+      req.userId = "user123";
       await returnPet(req, res);
       expect(res.send).toHaveBeenCalledWith({ userId: "user123" });
     });
@@ -293,14 +293,14 @@ describe("usersControllers", () => {
     it("returns the user document from the model", async () => {
       const mockUser = { _id: "user123", adoptPet: ["pet1"], fosterPet: [] };
       usersModel.myPetsModel.mockResolvedValue(mockUser);
-      req.body.userId = "user123";
+      req.userId = "user123";
       await getMyPets(req, res);
       expect(res.send).toHaveBeenCalledWith(mockUser);
     });
 
     it("returns 500 on model error", async () => {
       usersModel.myPetsModel.mockRejectedValue(new Error("DB error"));
-      req.body.userId = "user123";
+      req.userId = "user123";
       await getMyPets(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
     });

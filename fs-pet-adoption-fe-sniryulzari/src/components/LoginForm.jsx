@@ -9,7 +9,7 @@ function LoginForm({ handleLoginClose, handleShow }) {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
 
-  const { setIsLoggedIn, setFirstName, setLastName, setIsAdmin } =
+  const { setIsLoggedIn, setFirstName, setLastName, setIsAdmin, setProfileImage, setSavedPetIds } =
     useContext(UsersContext);
   const navigate = useNavigate();
 
@@ -28,6 +28,8 @@ function LoginForm({ handleLoginClose, handleShow }) {
         setIsAdmin(user.isAdmin === true);
         setFirstName(user.firstName || "");
         setLastName(user.lastName || "");
+        setProfileImage(user.profileImage || "");
+        setSavedPetIds(new Set(user.savedPet || []));
         handleLoginClose();
         toast.success("Login successful!", { position: toast.POSITION.BOTTOM_RIGHT });
       }

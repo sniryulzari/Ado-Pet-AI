@@ -12,7 +12,7 @@ async function Auth(req, res, next) {
       return;
     }
     if (decoded) {
-      req.body.userId = decoded.id;
+      req.userId = decoded.id;
 
       next();
     }

@@ -86,7 +86,7 @@ function logout(_req, res) {
 
 async function savePet(req, res) {
   try {
-    await savePetModel(req.params, req.body.userId);
+    await savePetModel(req.params, req.userId);
     res.send({ ok: true });
   } catch (err) {
     console.error("Save pet error:", err.message);
@@ -96,7 +96,7 @@ async function savePet(req, res) {
 
 async function deleteSavedPet(req, res) {
   try {
-    await deleteSavePetModel(req.params, req.body.userId);
+    await deleteSavePetModel(req.params, req.userId);
     res.send({ ok: true });
   } catch (err) {
     console.error("Delete saved pet error:", err.message);
@@ -107,7 +107,7 @@ async function deleteSavedPet(req, res) {
 async function adoptPet(req, res) {
   try {
     const { petId } = req.params;
-    const { userId } = req.body;
+    const userId = req.userId;
     await adoptPetModel(petId, userId);
     res.send({ userId });
 
@@ -140,7 +140,7 @@ async function adoptPet(req, res) {
 async function fosterPet(req, res) {
   try {
     const { petId } = req.params;
-    const { userId } = req.body;
+    const userId = req.userId;
     await fosterPetModel(petId, userId);
     res.send({ userId });
 
@@ -172,8 +172,8 @@ async function fosterPet(req, res) {
 
 async function returnPet(req, res) {
   try {
-    await returnPetModel(req.params.petId, req.body.userId);
-    res.send({ userId: req.body.userId });
+    await returnPetModel(req.params.petId, req.userId);
+    res.send({ userId: req.userId });
   } catch (err) {
     console.error("Return pet error:", err.message);
     res.status(500).send("Server error");
@@ -182,7 +182,7 @@ async function returnPet(req, res) {
 
 async function getMyPets(req, res) {
   try {
-    const myPets = await myPetsModel(req.body.userId);
+    const myPets = await myPetsModel(req.userId);
     res.send(myPets);
   } catch (err) {
     console.error("Get my pets error:", err.message);
@@ -192,7 +192,7 @@ async function getMyPets(req, res) {
 
 async function getUserInfoById(req, res) {
   try {
-    const userInfo = await getUserInfoByIdModel(req.body.userId);
+    const userInfo = await getUserInfoByIdModel(req.userId);
     // Strip the password hash — clients have no legitimate use for it,
     // and sending it exposes data that could be targeted for offline attacks.
     const { password: _pw, ...safeUser } = userInfo.toObject();
@@ -205,7 +205,7 @@ async function getUserInfoById(req, res) {
 
 async function editUser(req, res) {
   try {
-    const userId = req.body.userId;
+    const userId = req.userId;
     // Whitelist the fields that users are allowed to update.
     // Previously the entire req.body was passed to findByIdAndUpdate, which
     // combined with additionalProperties:true in the schema allowed any user
@@ -275,7 +275,7 @@ async function resetPassword(req, res) {
 
 async function getSavedPets(req, res) {
   try {
-    const pets = await getSavedPetsModel(req.body.userId);
+    const pets = await getSavedPetsModel(req.userId);
     res.send(pets);
   } catch (err) {
     console.error("Get saved pets error:", err.message);
