@@ -1,7 +1,12 @@
 const Pets = require("../Schemas/petsSchemas");
 
 async function searchPetsModel(petsQuery) {
-  return Pets.find(petsQuery);
+  const pets = await Pets.find(petsQuery).lean();
+  for (let i = pets.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pets[i], pets[j]] = [pets[j], pets[i]];
+  }
+  return pets;
 }
 
 async function getPetByIdModel(petId) {
