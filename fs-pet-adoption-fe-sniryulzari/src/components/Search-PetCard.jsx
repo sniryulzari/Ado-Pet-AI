@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHeart, FaRegHeart, FaDog } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -11,10 +11,19 @@ function statusBadgeClass(status) {
   return "pet-badge pet-badge--fostered";
 }
 
+function buildCloudinaryUrl(url, transforms) {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/${transforms}/`);
+}
+
 function SearchPetCard({ id, breed, name, type, adoptionStatus, imageUrl, index = 0 }) {
+  const [loaded, setLoaded] = useState(false);
   const navigate = useNavigate();
   const { isLoggedIn, savedPetIds, toggleSavedPet } = useContext(UsersContext);
   const isSaved = savedPetIds?.has(id);
+
+  const placeholderUrl = buildCloudinaryUrl(imageUrl, "c_fill,g_face,w_20,h_15,q_auto,f_auto,e_blur:600");
+  const fullUrl       = buildCloudinaryUrl(imageUrl, "c_fill,g_face,w_500,h_375,q_auto,f_auto");
 
   const handleHeartClick = async (e) => {
     e.stopPropagation();
@@ -43,8 +52,26 @@ function SearchPetCard({ id, breed, name, type, adoptionStatus, imageUrl, index 
       aria-label={`View ${name}`}
     >
       {/* Image */}
-      <div className="pet-card-modern__img-wrap">
-        <img src={imageUrl} alt={name} className="pet-card-modern__img" />
+      <div
+        className="pet-card-modern__img-wrap"
+        style={{
+          backgroundImage: `url(${placeholderUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center top",
+          filter: loaded ? "none" : "blur(8px)",
+          transition: "filter 0.3s ease",
+        }}
+      >
+        <img
+          src={fullUrl}
+          alt={name}
+          className="pet-card-modern__img"
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          onError={(e) => { e.currentTarget.src = imageUrl; }}
+          style={{ opacity: loaded ? 1 : 0, transition: "opacity 0.3s ease" }}
+        />
         <div className="pet-card-modern__gradient" />
         <span className="pet-card-modern__name-overlay">{name}</span>
         <button
