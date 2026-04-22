@@ -41,6 +41,31 @@ async function getPetInfoModel(petId) {
   return Pets.findById(petId);
 }
 
+async function addReviewModel(petId, review) {
+  return Pets.findByIdAndUpdate(
+    petId,
+    { $push: { reviews: review } },
+    { new: true }
+  );
+}
+
+async function deleteReviewModel(petId, reviewId, userId) {
+  return Pets.findByIdAndUpdate(
+    petId,
+    { $pull: { reviews: { _id: reviewId, userId } } },
+    { new: true }
+  );
+}
+
+async function getPetStatsModel() {
+  const [adopted, fostered, available] = await Promise.all([
+    Pets.countDocuments({ adoptionStatus: "Adopted" }),
+    Pets.countDocuments({ adoptionStatus: "Fostered" }),
+    Pets.countDocuments({ adoptionStatus: "Available" }),
+  ]);
+  return { adopted, fostered, available };
+}
+
 module.exports = {
   searchPetsModel,
   getPetByIdModel,
@@ -48,4 +73,7 @@ module.exports = {
   fosterPetStatusModel,
   returnPetModel,
   getPetInfoModel,
+  addReviewModel,
+  deleteReviewModel,
+  getPetStatsModel,
 };

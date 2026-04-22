@@ -110,7 +110,51 @@ async function deleteNewsletterSubscriber(req, res) {
   }
 }
 
+function escapeCSV(value) {
+  if (value == null) return "";
+  const str = String(value);
+  if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+function toCSV(rows, headers) {
+  const headerLine = headers.map(escapeCSV).join(",");
+  const dataLines = rows.map((row) => headers.map((h) => escapeCSV(row[h])).join(","));
+  return [headerLine, ...dataLines].join("\n");
+}
+
+async function exportPetsCSV(_req, res) {
+  try {
+    const pets = await getAllPetsModel();
+    const headers = ["_id", "name", "type", "breed", "adoptionStatus", "height", "weight", "color", "hypoallergenic", "dietaryRestrictions", "createdAt"];
+    const csv = toCSV(pets.map((p) => p.toObject()), headers);
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=pets.csv");
+    res.send(csv);
+  } catch (err) {
+    console.error("Export pets CSV error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
+async function exportUsersCSV(_req, res) {
+  try {
+    const users = await getAllUsersModel();
+    const headers = ["_id", "firstName", "lastName", "email", "phoneNumber", "isAdmin", "createdAt"];
+    const csv = toCSV(users.map((u) => u.toObject()), headers);
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=users.csv");
+    res.send(csv);
+  } catch (err) {
+    console.error("Export users CSV error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
 module.exports = {
   addPet, getAllPets, getPetById, getAllUsers, deletePet, editPet,
   getStats, getNewsletterSubscribers, deleteNewsletterSubscriber,
+  exportPetsCSV, exportUsersCSV,
 };

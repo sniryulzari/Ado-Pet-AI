@@ -11,6 +11,8 @@ router.get('/all', Auth, isAdmin, AdminController.getAllPets);
 router.get('/stats', Auth, isAdmin, AdminController.getStats);
 router.get('/newsletter-subscribers', Auth, isAdmin, AdminController.getNewsletterSubscribers);
 router.delete('/newsletter-subscribers/:email', Auth, isAdmin, AdminController.deleteNewsletterSubscriber);
+router.get('/export/pets',  Auth, isAdmin, AdminController.exportPetsCSV);
+router.get('/export/users', Auth, isAdmin, AdminController.exportUsersCSV);
 router.put('/editpet', Auth, isAdmin, upload.single('petImage'), uploadToCloudinary, AdminController.editPet);
 router.get("/:petId", Auth, isAdmin, AdminController.getPetById);
 router.delete('/:petId', Auth, isAdmin, AdminController.deletePet);

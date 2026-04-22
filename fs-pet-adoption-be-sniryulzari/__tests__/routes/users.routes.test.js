@@ -156,7 +156,7 @@ describe("Users Routes – Integration", () => {
   // ── POST /users/login ────────────────────────────────────────────────────
 
   describe("POST /users/login", () => {
-    it("sets an httpOnly cookie and returns user info on success", async () => {
+    it("sets httpOnly access + refresh token cookies and returns user info on success", async () => {
       const hash = await bcrypt.hash("secret123", 10);
       usersModel.getUserByEmailModel.mockResolvedValue({
         _id:       "user123",
@@ -165,14 +165,15 @@ describe("Users Routes – Integration", () => {
         firstName: "John",
         lastName:  "Doe",
       });
+      usersModel.saveRefreshTokenModel.mockResolvedValue(undefined);
       const res = await request(app)
         .post("/users/login")
         .send({ email: "john@example.com", password: "secret123" });
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({ id: "user123", firstName: "John" });
-      // Cookie must be present and httpOnly
       const cookies = res.headers["set-cookie"] ?? [];
       expect(cookies.some((c) => c.includes("token=") && c.includes("HttpOnly"))).toBe(true);
+      expect(cookies.some((c) => c.includes("refreshToken=") && c.includes("HttpOnly"))).toBe(true);
     });
 
     it("does not include the JWT in the response body", async () => {
@@ -184,6 +185,7 @@ describe("Users Routes – Integration", () => {
         firstName: "J",
         lastName: "D",
       });
+      usersModel.saveRefreshTokenModel.mockResolvedValue(undefined);
       const res = await request(app)
         .post("/users/login")
         .send({ email: "j@e.com", password: "secret123" });
@@ -222,10 +224,40 @@ describe("Users Routes – Integration", () => {
   // ── POST /users/logout ───────────────────────────────────────────────────
 
   describe("POST /users/logout", () => {
-    it("clears the cookie and returns { ok: true }", async () => {
+    it("clears the cookies and returns { ok: true }", async () => {
       const res = await request(app).post("/users/logout");
       expect(res.status).toBe(200);
       expect(res.body).toEqual({ ok: true });
+    });
+  });
+
+  // ── POST /users/refresh ───────────────────────────────────────────────────
+
+  describe("POST /users/refresh", () => {
+    it("returns 401 when no refreshToken cookie is present", async () => {
+      const res = await request(app).post("/users/refresh");
+      expect(res.status).toBe(401);
+    });
+
+    it("returns 401 when the refresh token is not in the DB", async () => {
+      usersModel.getUserByRefreshTokenModel.mockResolvedValue(null);
+      const res = await request(app)
+        .post("/users/refresh")
+        .set("Cookie", "refreshToken=sometoken");
+      expect(res.status).toBe(401);
+    });
+
+    it("issues new access + refresh cookies when the token is valid", async () => {
+      usersModel.getUserByRefreshTokenModel.mockResolvedValue({ _id: "user123" });
+      usersModel.saveRefreshTokenModel.mockResolvedValue(undefined);
+      const res = await request(app)
+        .post("/users/refresh")
+        .set("Cookie", "refreshToken=validtoken");
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ ok: true });
+      const cookies = res.headers["set-cookie"] ?? [];
+      expect(cookies.some((c) => c.includes("token=") && c.includes("HttpOnly"))).toBe(true);
+      expect(cookies.some((c) => c.includes("refreshToken=") && c.includes("HttpOnly"))).toBe(true);
     });
   });
 

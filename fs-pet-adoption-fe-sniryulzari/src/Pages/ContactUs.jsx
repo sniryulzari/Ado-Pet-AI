@@ -195,7 +195,7 @@ export default function ContactUs() {
           <div className="contact-map-wrapper">
             <iframe
               title="Ado-Pet location — Tel Aviv"
-              src="https://www.openstreetmap.org/export/embed.html?bbox=34.7,32.0,35.0,32.1&layer=mapnik"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=34.7768%2C32.0683%2C34.8068%2C32.0783&layer=mapnik&marker=32.0733%2C34.7918"
               width="100%"
               height="220"
               style={{ border: 0, borderRadius: "12px" }}

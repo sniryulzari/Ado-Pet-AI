@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
-import { FaShare, FaWhatsapp, FaFacebook, FaTwitter, FaCopy, FaPaw, FaHome, FaHeart, FaRegHeart, FaInstagram, FaDownload } from "react-icons/fa";
+import { FaShare, FaWhatsapp, FaFacebook, FaTwitter, FaCopy, FaPaw, FaHome, FaHeart, FaRegHeart, FaInstagram, FaDownload, FaCalendarAlt, FaBalanceScale } from "react-icons/fa";
 import { UsersContext } from "../Context/Context-Users";
+import { PetContext } from "../Context/Context-Pets";
 import { getPetById, adoptPetStatus, fosterPetStatus, returnPetStatus } from "../api/pets";
 import { getUserInfo, savePet, unsavePet, adoptPet, fosterPet, returnPet } from "../api/users";
 import { toast } from "../utils/toast";
+import ScheduleVisitModal from "./ScheduleVisitModal";
+import PetReviews from "./PetReviews";
 
 function PetCard() {
   const [pet, setPet]               = useState(null);
@@ -16,9 +19,13 @@ function PetCard() {
   const [shareOpen, setShareOpen]         = useState(false);
   const [instagramOpen, setInstagramOpen] = useState(false);
   const [facebookOpen, setFacebookOpen]   = useState(false);
+  const [visitModalOpen, setVisitModalOpen] = useState(false);
+  const [currentUserId, setCurrentUserId]   = useState(null);
+  const [canReview, setCanReview]           = useState(false);
 
   const shareRef = useRef(null);
   const { isLoggedIn } = useContext(UsersContext);
+  const { addToCompare } = useContext(PetContext);
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -36,10 +43,12 @@ function PetCard() {
     if (!isLoggedIn || !petId) return;
     getUserInfo()
       .then((res) => {
-        const { savedPet = [], adoptPet: adopted = [], fosterPet: fostered = [] } = res.data;
+        const { savedPet = [], adoptPet: adopted = [], fosterPet: fostered = [], _id } = res.data;
         setIsSaved(savedPet.includes(petId));
         setIsAdopted(adopted.includes(petId));
         setIsFostered(fostered.includes(petId));
+        setCurrentUserId(_id);
+        setCanReview(adopted.includes(petId) || fostered.includes(petId));
       })
       .catch(() => {});
   }, [isLoggedIn, petId]);
@@ -271,6 +280,9 @@ function PetCard() {
             {isSaved ? <FaHeart size="1em" /> : <FaRegHeart size="1em" />}
             {isSaved ? "Saved" : "Save for later"}
           </button>
+          <button className="action-btn-visit" onClick={() => setVisitModalOpen(true)}>
+            <FaCalendarAlt size="0.9em" /> Schedule a Visit
+          </button>
           <p className="action-panel-note">By adopting you give a pet a forever home ❤️</p>
         </div>
       );
@@ -286,29 +298,38 @@ function PetCard() {
           <IoArrowBack size="1.2em" />
         </button>
         <span className="pet-card-top-bar__title">{pet.name}</span>
-        <div className="share-wrapper" ref={shareRef}>
-          <button className="share-btn" onClick={() => setShareOpen((prev) => !prev)} aria-label="Share pet">
-            <FaShare size="1em" /> Share
+        <div className="pet-card-top-bar__actions">
+          <button
+            className="compare-btn"
+            onClick={() => { addToCompare(pet); toast.info(`${pet.name} added to comparison.`); }}
+            title="Add to comparison"
+          >
+            <FaBalanceScale size="0.9em" /> Compare
           </button>
-          {shareOpen && (
-            <div className="share-dropdown">
-              <button className="share-option" onClick={handleCopyLink}>
-                <FaCopy size="0.95em" /> Copy link
-              </button>
-              <button className="share-option share-option--whatsapp" onClick={handleShareWhatsApp}>
-                <FaWhatsapp size="0.95em" /> WhatsApp
-              </button>
-              <button className="share-option share-option--facebook" onClick={handleShareFacebook}>
-                <FaFacebook size="0.95em" /> Facebook
-              </button>
-              <button className="share-option share-option--twitter" onClick={handleShareTwitter}>
-                <FaTwitter size="0.95em" /> Twitter / X
-              </button>
-              <button className="share-option share-option--instagram" onClick={handleShareInstagram}>
-                <FaInstagram size="0.95em" /> Instagram
-              </button>
-            </div>
-          )}
+          <div className="share-wrapper" ref={shareRef}>
+            <button className="share-btn" onClick={() => setShareOpen((prev) => !prev)} aria-label="Share pet">
+              <FaShare size="1em" /> Share
+            </button>
+            {shareOpen && (
+              <div className="share-dropdown">
+                <button className="share-option" onClick={handleCopyLink}>
+                  <FaCopy size="0.95em" /> Copy link
+                </button>
+                <button className="share-option share-option--whatsapp" onClick={handleShareWhatsApp}>
+                  <FaWhatsapp size="0.95em" /> WhatsApp
+                </button>
+                <button className="share-option share-option--facebook" onClick={handleShareFacebook}>
+                  <FaFacebook size="0.95em" /> Facebook
+                </button>
+                <button className="share-option share-option--twitter" onClick={handleShareTwitter}>
+                  <FaTwitter size="0.95em" /> Twitter / X
+                </button>
+                <button className="share-option share-option--instagram" onClick={handleShareInstagram}>
+                  <FaInstagram size="0.95em" /> Instagram
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -429,6 +450,21 @@ function PetCard() {
           </div>
         </div>
       )}
+
+      {visitModalOpen && (
+        <ScheduleVisitModal
+          petId={petId}
+          petName={pet.name}
+          onClose={() => setVisitModalOpen(false)}
+        />
+      )}
+
+      <PetReviews
+        petId={petId}
+        initialReviews={pet.reviews || []}
+        canReview={canReview}
+        currentUserId={currentUserId}
+      />
     </section>
   );
 }

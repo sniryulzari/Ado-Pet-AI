@@ -65,10 +65,18 @@ function Footer() {
             Finding loving homes for every pet. Because every animal deserves a family.
           </p>
           <div className="footer-social-media-links">
-            <GrTwitter size="2em" className="twitter-link" />
-            <RiFacebookFill size="2em" className="facebook-link" />
-            <AiOutlineInstagram size="2em" className="instagram-link" />
-            <GrYoutube size="2em" className="youTube-link" />
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter / X">
+              <GrTwitter size="2em" className="twitter-link" />
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <RiFacebookFill size="2em" className="facebook-link" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <AiOutlineInstagram size="2em" className="instagram-link" />
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+              <GrYoutube size="2em" className="youTube-link" />
+            </a>
           </div>
         </div>
 

@@ -16,4 +16,5 @@ export const fosterPet      = (petId)       => api.put(`/users/foster/${petId}`,
 export const returnPet      = (petId)       => api.delete(`/users/returnPet/${petId}`);
 export const forgotPassword  = (email)           => api.post("/users/forgot-password", { email });
 export const resetPassword   = (token, password) => api.post("/users/reset-password", { token, password });
-export const getSavedPets    = ()                => api.get("/users/savedPets");
+export const getSavedPets      = ()                => api.get("/users/savedPets");
+export const getRecommendations = ()              => api.get("/users/recommendations");

@@ -102,6 +102,73 @@ async function getSavedPetsModel(userId) {
   return Pet.find({ _id: { $in: user.savedPet } });
 }
 
+async function getRecommendationsModel(userId) {
+  const Pet = require("../Schemas/petsSchemas");
+  const user = await User.findById(userId).select("savedPet adoptPet fosterPet");
+  if (!user) return [];
+
+  const interactedIds = [
+    ...(user.savedPet || []),
+    ...(user.adoptPet || []),
+    ...(user.fosterPet || []),
+  ];
+
+  let recommendations = [];
+
+  if (interactedIds.length > 0) {
+    const interactedPets = await Pet.find({ _id: { $in: interactedIds } }).select("type");
+    const preferredTypes = [...new Set(interactedPets.map((p) => p.type))];
+
+    recommendations = await Pet.find({
+      adoptionStatus: "Available",
+      _id: { $nin: interactedIds },
+      type: { $in: preferredTypes },
+    }).limit(12);
+
+    // Fisher-Yates shuffle
+    for (let i = recommendations.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [recommendations[i], recommendations[j]] = [recommendations[j], recommendations[i]];
+    }
+    recommendations = recommendations.slice(0, 8);
+  }
+
+  // Pad with newest available pets if we don't have enough
+  if (recommendations.length < 8) {
+    const existingIds = recommendations.map((p) => p._id);
+    const fallback = await Pet.find({
+      adoptionStatus: "Available",
+      _id: { $nin: [...interactedIds, ...existingIds] },
+    })
+      .sort({ createdAt: -1 })
+      .limit(8 - recommendations.length);
+    recommendations = [...recommendations, ...fallback];
+  }
+
+  return recommendations;
+}
+
+async function saveRefreshTokenModel(userId, hashedToken, expires) {
+  return User.findByIdAndUpdate(userId, {
+    refreshToken: hashedToken,
+    refreshTokenExpires: expires,
+  });
+}
+
+async function getUserByRefreshTokenModel(hashedToken) {
+  return User.findOne({
+    refreshToken: hashedToken,
+    refreshTokenExpires: { $gt: new Date() },
+  });
+}
+
+async function clearRefreshTokenModel(userId) {
+  return User.findByIdAndUpdate(userId, {
+    refreshToken: null,
+    refreshTokenExpires: null,
+  });
+}
+
 module.exports = {
   signupModel,
   getUserByEmailModel,
@@ -117,4 +184,8 @@ module.exports = {
   getUserByResetTokenModel,
   resetPasswordModel,
   getSavedPetsModel,
+  getRecommendationsModel,
+  saveRefreshTokenModel,
+  getUserByRefreshTokenModel,
+  clearRefreshTokenModel,
 };

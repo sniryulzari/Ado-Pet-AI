@@ -22,6 +22,15 @@ export function UsersProvider({ children }) {
   const [users, setUsers]           = useState([]);
   const [userPets, setUserPets]     = useState({});
 
+  function clearAuthState() {
+    setIsLoggedIn(false);
+    setIsAdmin(false);
+    setFirstName("");
+    setLastName("");
+    setProfileImage("");
+    setSavedPetIds(new Set());
+  }
+
   // Run once on mount to restore auth state from the httpOnly cookie.
   useEffect(() => {
     getUserInfo()
@@ -44,6 +53,13 @@ export function UsersProvider({ children }) {
         setAuthChecked(true);
       });
   }, []);
+
+  // When the axios interceptor exhausts both the access token and the refresh
+  // token it fires this event. Clear UI auth state so protected routes redirect.
+  useEffect(() => {
+    window.addEventListener("auth:session-expired", clearAuthState);
+    return () => window.removeEventListener("auth:session-expired", clearAuthState);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Toggle a pet's saved state globally; avoids prop-drilling into every card.
   async function toggleSavedPet(petId) {

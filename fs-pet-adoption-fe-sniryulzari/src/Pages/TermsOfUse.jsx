@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 
@@ -5,6 +6,8 @@ const LAST_UPDATED = "April 16, 2026";
 
 export default function TermsOfUse() {
   const navigate = useNavigate();
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   return (
     <div className="legal-page">

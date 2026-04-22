@@ -9,3 +9,5 @@ export const deletePet  = (petId)    => api.delete(`/admin/${petId}`);
 export const getAdminStats                = ()      => api.get("/admin/stats");
 export const getNewsletterSubscribers     = ()      => api.get("/admin/newsletter-subscribers");
 export const deleteNewsletterSubscriber   = (email) => api.delete(`/admin/newsletter-subscribers/${encodeURIComponent(email)}`);
+export const exportPetsCSV   = () => api.get("/admin/export/pets",  { responseType: "blob" });
+export const exportUsersCSV  = () => api.get("/admin/export/users", { responseType: "blob" });

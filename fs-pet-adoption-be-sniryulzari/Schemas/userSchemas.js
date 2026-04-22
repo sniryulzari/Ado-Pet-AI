@@ -17,6 +17,8 @@ const userSchema = new Schema(
     profileImage: { type: String },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
+    refreshToken: { type: String },
+    refreshTokenExpires: { type: Date },
   },
   { collection: "users", timestamps: true }
 );

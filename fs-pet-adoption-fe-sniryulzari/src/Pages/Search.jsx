@@ -113,6 +113,29 @@ const SearchPets = () => {
   const hasActiveFilters =
     filters.name || filters.type || filters.status || filters.minHeight || filters.maxHeight;
 
+  const activeChips = [
+    filters.type      && { key: "type",   label: filters.type },
+    filters.name      && { key: "name",   label: `"${filters.name}"` },
+    filters.status    && { key: "status", label: filters.status },
+    (filters.minHeight || filters.maxHeight) && {
+      key: "height",
+      label: filters.minHeight && filters.maxHeight
+        ? `${filters.minHeight}–${filters.maxHeight} cm`
+        : filters.minHeight
+        ? `≥ ${filters.minHeight} cm`
+        : `≤ ${filters.maxHeight} cm`,
+    },
+  ].filter(Boolean);
+
+  function removeChip(key) {
+    if (key === "height") {
+      setFilters((prev) => ({ ...prev, minHeight: "", maxHeight: "" }));
+    } else {
+      updateFilter(key, "");
+    }
+    setPage(1);
+  }
+
   return (
     <div className="search-page-container">
       <div className="search-header">
@@ -214,6 +237,27 @@ const SearchPets = () => {
 
         {/* ── Main grid area ── */}
         <main ref={gridRef} className="browse-main">
+          {/* Active filter chips */}
+          {activeChips.length > 0 && (
+            <div className="browse-chips">
+              {activeChips.map(({ key, label }) => (
+                <span key={key} className="browse-chip">
+                  {label}
+                  <button
+                    className="browse-chip__remove"
+                    onClick={() => removeChip(key)}
+                    aria-label={`Remove ${label} filter`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <button className="browse-chip browse-chip--clear" onClick={clearFilters}>
+                Clear all
+              </button>
+            </div>
+          )}
+
           {loading ? (
             <Spinner />
           ) : filteredPets.length === 0 ? (

@@ -13,6 +13,10 @@ const {
   resetPasswordModel,
   getUserByEmailModel,
   getSavedPetsModel,
+  getRecommendationsModel,
+  saveRefreshTokenModel,
+  getUserByRefreshTokenModel,
+  clearRefreshTokenModel,
 } = require("../Models/usersModel");
 
 const jwt = require("jsonwebtoken");
@@ -23,7 +27,8 @@ const Pet = require("../Schemas/petsSchemas");
 const User = require("../Schemas/userSchemas");
 require("dotenv").config();
 
-const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+const FIFTEEN_MIN_MS  = 15 * 60 * 1000;
+const SEVEN_DAYS_MS   = 7 * 24 * 60 * 60 * 1000;
 
 async function signup(req, res) {
   try {
@@ -38,28 +43,28 @@ async function signup(req, res) {
   }
 }
 
-function login(req, res) {
+async function login(req, res) {
   try {
     const { user } = req.body;
-    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
-      expiresIn: "2h",
-    });
-    // Cookie maxAge matches JWT expiry exactly (2 hours).
-    // secure flag is tied to NODE_ENV — not the literal expression `true / false`
-    // which previously evaluated to 1 (always truthy).
-    // Token is NOT included in the response body — the httpOnly cookie is the
-    // only token carrier. Putting the token in the body and localStorage defeats
-    // the XSS protection that httpOnly cookies provide.
-    // sameSite:"none" requires secure:true — browsers silently reject the cookie
-    // otherwise. In development (localhost) both ports are the same site so
-    // sameSite:"lax" works and doesn't require HTTPS.
     const isProd = process.env.NODE_ENV === "production";
-    res.cookie("token", token, {
-      maxAge: TWO_HOURS_MS,
+    const cookieOpts = (maxAge) => ({
+      maxAge,
       httpOnly: true,
       sameSite: isProd ? "none" : "lax",
       secure: isProd,
     });
+
+    // Short-lived access token (15 min)
+    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: "15m" });
+    res.cookie("token", token, cookieOpts(FIFTEEN_MIN_MS));
+
+    // Long-lived refresh token (7 days) — stored hashed in DB to allow revocation
+    const rawRefresh = crypto.randomBytes(40).toString("hex");
+    const hashedRefresh = crypto.createHash("sha256").update(rawRefresh).digest("hex");
+    const refreshExpires = new Date(Date.now() + SEVEN_DAYS_MS);
+    await saveRefreshTokenModel(user._id, hashedRefresh, refreshExpires);
+    res.cookie("refreshToken", rawRefresh, cookieOpts(SEVEN_DAYS_MS));
+
     res.send({ id: user._id, firstName: user.firstName, lastName: user.lastName });
   } catch (err) {
     console.error("Login error:", err.message);
@@ -67,16 +72,25 @@ function login(req, res) {
   }
 }
 
-function logout(_req, res) {
+async function logout(req, res) {
   try {
-    // clearCookie must pass the same options used when setting the cookie,
-    // otherwise some browsers won't honour the clear instruction.
     const isProd = process.env.NODE_ENV === "production";
-    res.clearCookie("token", {
+    const cookieOpts = {
       httpOnly: true,
       sameSite: isProd ? "none" : "lax",
       secure: isProd,
-    });
+    };
+
+    // Revoke refresh token in DB if present
+    const { refreshToken } = req.cookies;
+    if (refreshToken) {
+      const hashed = crypto.createHash("sha256").update(refreshToken).digest("hex");
+      const user = await getUserByRefreshTokenModel(hashed);
+      if (user) await clearRefreshTokenModel(user._id);
+    }
+
+    res.clearCookie("token", cookieOpts);
+    res.clearCookie("refreshToken", cookieOpts);
     res.send({ ok: true });
   } catch (err) {
     console.error("Logout error:", err.message);
@@ -273,6 +287,41 @@ async function resetPassword(req, res) {
   }
 }
 
+async function refreshToken(req, res) {
+  try {
+    const { refreshToken: rawToken } = req.cookies;
+    if (!rawToken) return res.status(401).send("No refresh token");
+
+    const hashed = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const user = await getUserByRefreshTokenModel(hashed);
+    if (!user) return res.status(401).send("Invalid or expired refresh token");
+
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieOpts = (maxAge) => ({
+      maxAge,
+      httpOnly: true,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
+    });
+
+    // Issue new access token
+    const newToken = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: "15m" });
+    res.cookie("token", newToken, cookieOpts(FIFTEEN_MIN_MS));
+
+    // Rotate refresh token (prevents reuse of stolen tokens)
+    const newRaw = crypto.randomBytes(40).toString("hex");
+    const newHashed = crypto.createHash("sha256").update(newRaw).digest("hex");
+    const newExpires = new Date(Date.now() + SEVEN_DAYS_MS);
+    await saveRefreshTokenModel(user._id, newHashed, newExpires);
+    res.cookie("refreshToken", newRaw, cookieOpts(SEVEN_DAYS_MS));
+
+    res.send({ ok: true });
+  } catch (err) {
+    console.error("Refresh token error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
 async function getSavedPets(req, res) {
   try {
     const pets = await getSavedPetsModel(req.userId);
@@ -283,10 +332,21 @@ async function getSavedPets(req, res) {
   }
 }
 
+async function getRecommendations(req, res) {
+  try {
+    const pets = await getRecommendationsModel(req.userId);
+    res.send(pets);
+  } catch (err) {
+    console.error("Get recommendations error:", err.message);
+    res.status(500).send("Server error");
+  }
+}
+
 module.exports = {
   signup,
   login,
   logout,
+  refreshToken,
   savePet,
   deleteSavedPet,
   adoptPet,
@@ -298,4 +358,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   getSavedPets,
+  getRecommendations,
 };

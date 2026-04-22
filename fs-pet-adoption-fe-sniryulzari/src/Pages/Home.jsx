@@ -8,9 +8,13 @@ import HomeWelcome from "../components/Home-Welcome";
 import HomePhotoGallery from "../components/Home-Photo-Gallery";
 import PetOfTheWeek from "../components/Home-PetOfTheWeek";
 import HomeClientsTestimonials from "../components/Home-Clients-Testimonials";
+import HomeStatsBar from "../components/Home-StatsBar";
+import HomeTypeFilter from "../components/Home-TypeFilter";
 import Footer from "../components/Footer";
 import desktopImage from "../Images/dog-4310597_1280.jpg";
 import mobileImage from "../Images/alvan-nee-ZCHj_2lJP00-unsplash.jpg";
+
+const PET_TYPES = ["Dog", "Cat", "Horse", "Dolphin", "Tiger"];
 
 // Inline SVG so CSS can control fill color via currentColor (dark mode support)
 function HillsWave() {
@@ -46,9 +50,19 @@ const fadeUp = {
 const Home = () => {
   const [show, setShow]           = useState(false);
   const [loginShow, setLoginShow] = useState(false);
+  const [heroType, setHeroType]   = useState("");
+  const [heroName, setHeroName]   = useState("");
 
   const { isLoggedIn, setFirstName, setLastName } = useContext(UsersContext);
   const navigate = useNavigate();
+
+  function handleHeroSearch(e) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (heroType) params.set("type", heroType);
+    if (heroName.trim()) params.set("name", heroName.trim());
+    navigate(`/search${params.toString() ? `?${params}` : ""}`);
+  }
 
   useEffect(() => {
     // Restore display name from localStorage on mount (set during login).
@@ -81,20 +95,50 @@ const Home = () => {
           <span className="welcome-title-top">Two Is always Better Than One</span>
           <span className="welcome-title-bottom-start">AdoPet Your</span>
           <span className="welcome-title-bottom-end">New Best Friend</span>
-          {isLoggedIn ? (
-            <button className="welcome-login-search-Button" onClick={() => navigate("/search")}>
-              Search
+
+          <form className="hero-quick-search" onSubmit={handleHeroSearch}>
+            <select
+              className="hero-qs-select"
+              value={heroType}
+              onChange={(e) => setHeroType(e.target.value)}
+              aria-label="Pet type"
+            >
+              <option value="">Any Type</option>
+              {PET_TYPES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+
+            <input
+              className="hero-qs-input"
+              type="text"
+              placeholder="Pet name…"
+              value={heroName}
+              onChange={(e) => setHeroName(e.target.value)}
+              aria-label="Pet name"
+            />
+
+            <button type="submit" className="hero-qs-btn">
+              Find a Pet
             </button>
-          ) : (
-            <button className="welcome-login-search-Button" onClick={() => setLoginShow(true)}>
-              LOGIN
-            </button>
+          </form>
+
+          {!isLoggedIn && (
+            <p className="hero-qs-login-hint">
+              Already have an account?{" "}
+              <button className="hero-qs-login-link" onClick={() => setLoginShow(true)}>
+                Log in
+              </button>
+            </p>
           )}
         </div>
 
         <SignupModal show={show} handleClose={() => setShow(false)} handleLoginShow={() => setLoginShow(true)} />
         <LoginModal loginShow={loginShow} handleLoginClose={() => setLoginShow(false)} handleShow={() => setShow(true)} />
       </div>
+
+      <HomeStatsBar />
+      <HomeTypeFilter />
 
       {[HomeWelcome, HomePhotoGallery, PetOfTheWeek, HomeClientsTestimonials, Footer].map(
         (Section, i) => (

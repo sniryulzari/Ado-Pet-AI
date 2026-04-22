@@ -14,6 +14,7 @@ import AdminAddPet from "./Pages/Admin-AddPet";
 import AdminEditPet from "./Pages/Admin-EditPet";
 import AdminDashboard from "./Pages/Admin-Dashboard";
 import AdminUserPets from "./Pages/Admin-UserPets";
+import AdminUserDetail from "./Pages/Admin-UserDetail";
 import SearchPets from "./Pages/Search";
 import PetCard from "./components/Pet-Info";
 import AboutUs from "./Pages/AboutUs";
@@ -25,9 +26,14 @@ import SavedPets from "./Pages/SavedPets";
 import TermsOfUse from "./Pages/TermsOfUse";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import NotFound from "./Pages/NotFound";
+import Recommendations from "./Pages/Recommendations";
+import MyVisits from "./Pages/MyVisits";
+import Compare from "./Pages/Compare";
 import UserRoute from "./routes/userRoute";
 import AdminRoute from "./routes/adminRoute";
 import ToastNotifications from "./components/ToastNotifications";
+import CompareBar from "./components/CompareBar";
+import ScrollRestoration from "./components/ScrollRestoration";
 
 // AnimatedRoutes must be a child of BrowserRouter so useLocation works.
 function AnimatedRoutes() {
@@ -46,10 +52,14 @@ function AnimatedRoutes() {
         <Route path="/terms"   element={<PageTransition><TermsOfUse /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
 
+        <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
+
         <Route element={<UserRoute />}>
           <Route path="/profile-Settings" element={<PageTransition><ProfileSettings /></PageTransition>} />
           <Route path="/myPets" element={<PageTransition><MyPets /></PageTransition>} />
           <Route path="/saved-pets" element={<PageTransition><SavedPets /></PageTransition>} />
+          <Route path="/recommendations" element={<PageTransition><Recommendations /></PageTransition>} />
+          <Route path="/my-visits" element={<PageTransition><MyVisits /></PageTransition>} />
         </Route>
 
         <Route element={<AdminRoute />}>
@@ -57,6 +67,7 @@ function AnimatedRoutes() {
           <Route path="/admin-EditPet" element={<PageTransition><AdminEditPet /></PageTransition>} />
           <Route path="/admin-Dashboard" element={<PageTransition><AdminDashboard /></PageTransition>} />
           <Route path="/admin-UserPets" element={<PageTransition><AdminUserPets /></PageTransition>} />
+          <Route path="/admin-UserDetail" element={<PageTransition><AdminUserDetail /></PageTransition>} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
@@ -72,8 +83,10 @@ const App = () => (
       <PetsProvider>
         <div className="main-container">
           <BrowserRouter>
+            <ScrollRestoration />
             <NavigationBar />
             <ToastNotifications />
+            <CompareBar />
             <ErrorBoundary>
               <AnimatedRoutes />
             </ErrorBoundary>

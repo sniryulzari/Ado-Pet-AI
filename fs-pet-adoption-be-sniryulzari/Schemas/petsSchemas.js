@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const reviewSchema = new Schema(
+  {
+    userId:    { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userName:  { type: String, required: true },
+    rating:    { type: Number, required: true, min: 1, max: 5 },
+    comment:   { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
 const petSchema = new Schema(
   {
     type: { type: String, required: true },
@@ -18,6 +28,7 @@ const petSchema = new Schema(
     adopt: { type: Array },
     foster: { type: Array },
     userId: { type: String },
+    reviews: { type: [reviewSchema], default: [] },
   },
   { timestamps: true },
   { collection: "pets" }

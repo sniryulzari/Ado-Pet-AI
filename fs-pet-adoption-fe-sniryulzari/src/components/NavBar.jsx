@@ -125,6 +125,20 @@ function NavigationBar() {
                   >
                     Saved Pets
                   </NavLink>
+                  <NavLink
+                    className="nb-dropdown-item"
+                    to="/recommendations"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Recommendations
+                  </NavLink>
+                  <NavLink
+                    className="nb-dropdown-item"
+                    to="/my-visits"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    My Visits
+                  </NavLink>
                   <button
                     className="nb-dropdown-item nb-dropdown-logout"
                     onClick={handleLogout}
@@ -192,6 +206,12 @@ function NavigationBar() {
                 </NavLink>
                 <NavLink className={linkClass} to="/saved-pets" onClick={() => setMenuOpen(false)}>
                   Saved Pets
+                </NavLink>
+                <NavLink className={linkClass} to="/recommendations" onClick={() => setMenuOpen(false)}>
+                  Recommendations
+                </NavLink>
+                <NavLink className={linkClass} to="/my-visits" onClick={() => setMenuOpen(false)}>
+                  My Visits
                 </NavLink>
                 <button className="nb-link nb-link--logout-btn" onClick={handleLogout}>
                   Logout

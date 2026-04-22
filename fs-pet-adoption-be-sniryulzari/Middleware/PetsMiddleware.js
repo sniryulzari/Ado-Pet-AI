@@ -20,8 +20,10 @@ function filterQuery(req, _res, next) {
     req.query.name = { $regex: escapeRegex(name), $options: "i" };
   }
 
-  if (adoptionStatus) {
+  if (adoptionStatus && adoptionStatus !== "Adopted") {
     req.query.adoptionStatus = adoptionStatus;
+  } else if (!adoptionStatus) {
+    req.query.adoptionStatus = { $ne: "Adopted" };
   }
 
   if (minHeight && maxHeight) {

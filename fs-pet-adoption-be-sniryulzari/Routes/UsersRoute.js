@@ -19,6 +19,7 @@ const authLimiter = rateLimit({
 
 router.post("/signup", authLimiter, validatebody(signupSchema), passwordMatch, isNewUser, hashPassword, UsersController.signup);
 router.post("/login", authLimiter, validatebody(loginSchema), isExistingUser, verifyPassword, UsersController.login);
+router.post("/refresh", UsersController.refreshToken);
 
 // Changed from GET to POST — GET requests must not have side effects (RFC 7231).
 // Logout clears a session cookie, which is a state change.
@@ -37,6 +38,7 @@ router.put("/userInfo", Auth, upload.single("profileImage"), uploadToCloudinary,
 // GET /savedPets must be declared before PUT /:petId — otherwise Express would
 // try to match "savedPets" as a petId parameter.
 router.get("/savedPets", Auth, UsersController.getSavedPets);
+router.get("/recommendations", Auth, UsersController.getRecommendations);
 
 router.put("/:petId", Auth, UsersController.savePet);
 router.delete("/:petId", Auth, UsersController.deleteSavedPet);
