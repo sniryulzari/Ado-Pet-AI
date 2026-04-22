@@ -19,6 +19,14 @@ const INITIAL_FILTERS = {
   maxHeight: "",
 };
 
+const TYPE_OPTIONS = [
+  { label: "Dog",     Icon: FaDog,       color: "#00a277" },
+  { label: "Cat",     Icon: FaCat,       color: "#222"    },
+  { label: "Horse",   Icon: FaHorse,     color: "#e03535" },
+  { label: "Dolphin", Icon: GiDolphin,   color: "#1750fa" },
+  { label: "Tiger",   Icon: GiTigerHead, color: "#ffae00" },
+];
+
 function getPageNumbers(current, total) {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const set = new Set([1, total, current]);
@@ -49,7 +57,6 @@ const SearchPets = () => {
 
   const gridRef = useRef(null);
 
-  // Load all pets once on mount
   useEffect(() => {
     searchPets({})
       .then((res) => setAllPets(res.data))
@@ -57,7 +64,6 @@ const SearchPets = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Persist filters + page to URL so navigating back restores state
   useEffect(() => {
     const params = {};
     if (filters.name)      params.name      = filters.name;
@@ -70,9 +76,9 @@ const SearchPets = () => {
   }, [filters, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredPets = useMemo(() => {
-    const nameQ      = filters.name.trim().toLowerCase();
-    const minH       = filters.minHeight !== "" ? Number(filters.minHeight) : null;
-    const maxH       = filters.maxHeight !== "" ? Number(filters.maxHeight) : null;
+    const nameQ = filters.name.trim().toLowerCase();
+    const minH  = filters.minHeight !== "" ? Number(filters.minHeight) : null;
+    const maxH  = filters.maxHeight !== "" ? Number(filters.maxHeight) : null;
 
     return allPets.filter((pet) => {
       if (nameQ && !pet.name.toLowerCase().includes(nameQ)) return false;
@@ -84,18 +90,14 @@ const SearchPets = () => {
     });
   }, [allPets, filters]);
 
-  const totalPages   = Math.max(1, Math.ceil(filteredPets.length / PETS_PER_PAGE));
-  const safePage     = Math.min(page, totalPages);
-  const startIndex   = (safePage - 1) * PETS_PER_PAGE;
+  const totalPages    = Math.max(1, Math.ceil(filteredPets.length / PETS_PER_PAGE));
+  const safePage      = Math.min(page, totalPages);
+  const startIndex    = (safePage - 1) * PETS_PER_PAGE;
   const paginatedPets = filteredPets.slice(startIndex, startIndex + PETS_PER_PAGE);
 
   function updateFilter(key, value) {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setPage(1);
-  }
-
-  function toggleType(type) {
-    updateFilter("type", filters.type === type ? "" : type);
   }
 
   function clearFilters() {
@@ -111,111 +113,107 @@ const SearchPets = () => {
   const hasActiveFilters =
     filters.name || filters.type || filters.status || filters.minHeight || filters.maxHeight;
 
-  const typeIconProps = (type) => ({
-    className: `pet-icon ${type.toLowerCase()}-icon`,
-    size: "3.5em",
-    title: type,
-    style: filters.type === type
-      ? { border: "2px solid #393d72", borderRadius: "16px", padding: "0.4rem", background: "rgba(57,61,114,0.06)" }
-      : { border: "2px solid transparent", padding: "0.4rem" },
-    onClick: () => toggleType(type),
-  });
-
   return (
     <div className="search-page-container">
-      <div className="search-container">
-        <div className="search-header">
-          <h1 className="search-header-text">Browse Pets</h1>
-        </div>
+      <div className="search-header">
+        <h1 className="search-header-text">Browse Pets</h1>
+      </div>
 
-        {/* ── Filter bar ── */}
-        <div className="browse-filter-bar">
+      <div className="browse-layout">
 
-          {/* Row 1: type icons */}
-          <div className="browse-type-row">
+        {/* ── Sidebar ── */}
+        <aside className="browse-sidebar">
+          <h2 className="browse-sidebar-heading">Filters</h2>
+
+          {/* Type */}
+          <div className="browse-sidebar-section">
             <span className="browse-filter-label">Type</span>
-            <div className="browse-type-icons">
+            <div className="browse-type-list">
               <button
-                className={`browse-type-all-btn${filters.type === "" ? " active" : ""}`}
+                className={`browse-type-list-btn${filters.type === "" ? " active" : ""}`}
                 onClick={() => updateFilter("type", "")}
               >
-                All
+                All pets
               </button>
-              <FaDog       {...typeIconProps("Dog")} />
-              <FaCat       {...typeIconProps("Cat")} />
-              <FaHorse     {...typeIconProps("Horse")} />
-              <GiDolphin   {...typeIconProps("Dolphin")} />
-              <GiTigerHead {...typeIconProps("Tiger")} />
+              {TYPE_OPTIONS.map(({ label, Icon, color }) => (
+                <button
+                  key={label}
+                  className={`browse-type-list-btn${filters.type === label ? " active" : ""}`}
+                  onClick={() => updateFilter("type", filters.type === label ? "" : label)}
+                >
+                  <Icon size="1.1em" style={{ color, flexShrink: 0 }} />
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Row 2: text/select/range controls */}
-          <div className="browse-filter-row">
-            <div className="browse-filter-group">
-              <label className="browse-filter-label">Search by name</label>
+          {/* Name */}
+          <div className="browse-sidebar-section">
+            <label className="browse-filter-label">Name</label>
+            <input
+              type="text"
+              className="browse-filter-input"
+              placeholder="e.g. Buddy"
+              value={filters.name}
+              onChange={(e) => updateFilter("name", e.target.value)}
+            />
+          </div>
+
+          {/* Status */}
+          <div className="browse-sidebar-section">
+            <label className="browse-filter-label">Status</label>
+            <select
+              className="browse-filter-select"
+              value={filters.status}
+              onChange={(e) => updateFilter("status", e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="Available">Available</option>
+              <option value="Adopted">Adopted</option>
+              <option value="Fostered">Fostered</option>
+            </select>
+          </div>
+
+          {/* Height */}
+          <div className="browse-sidebar-section">
+            <label className="browse-filter-label">Height (cm)</label>
+            <div className="browse-range-inputs">
               <input
-                type="text"
-                className="browse-filter-input"
-                placeholder="e.g. Buddy"
-                value={filters.name}
-                onChange={(e) => updateFilter("name", e.target.value)}
+                type="number"
+                className="browse-filter-input browse-range-input"
+                placeholder="Min"
+                min={0}
+                value={filters.minHeight}
+                onChange={(e) => updateFilter("minHeight", e.target.value)}
+              />
+              <span className="browse-range-sep">–</span>
+              <input
+                type="number"
+                className="browse-filter-input browse-range-input"
+                placeholder="Max"
+                min={0}
+                value={filters.maxHeight}
+                onChange={(e) => updateFilter("maxHeight", e.target.value)}
               />
             </div>
-
-            <div className="browse-filter-group">
-              <label className="browse-filter-label">Status</label>
-              <select
-                className="browse-filter-select"
-                value={filters.status}
-                onChange={(e) => updateFilter("status", e.target.value)}
-              >
-                <option value="">All</option>
-                <option value="Available">Available</option>
-                <option value="Adopted">Adopted</option>
-                <option value="Fostered">Fostered</option>
-              </select>
-            </div>
-
-            <div className="browse-filter-group">
-              <label className="browse-filter-label">Height (cm)</label>
-              <div className="browse-range-inputs">
-                <input
-                  type="number"
-                  className="browse-filter-input browse-range-input"
-                  placeholder="Min"
-                  min={0}
-                  value={filters.minHeight}
-                  onChange={(e) => updateFilter("minHeight", e.target.value)}
-                />
-                <span className="browse-range-sep">–</span>
-                <input
-                  type="number"
-                  className="browse-filter-input browse-range-input"
-                  placeholder="Max"
-                  min={0}
-                  value={filters.maxHeight}
-                  onChange={(e) => updateFilter("maxHeight", e.target.value)}
-                />
-              </div>
-            </div>
-
-            {hasActiveFilters && (
-              <button className="browse-clear-btn" onClick={clearFilters}>
-                Clear filters
-              </button>
-            )}
           </div>
-        </div>
 
-        {/* Result count */}
-        {!loading && (
-          <p className="browse-result-count">
-            Showing <strong>{filteredPets.length}</strong> pet{filteredPets.length !== 1 ? "s" : ""}
-          </p>
-        )}
+          {hasActiveFilters && (
+            <button className="browse-clear-btn" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
 
-        {/* Grid */}
-        <section ref={gridRef} className="browse-grid-section">
+          {!loading && (
+            <p className="browse-result-count browse-result-count--sidebar">
+              <strong>{filteredPets.length}</strong> pet{filteredPets.length !== 1 ? "s" : ""} found
+            </p>
+          )}
+        </aside>
+
+        {/* ── Main grid area ── */}
+        <main ref={gridRef} className="browse-main">
           {loading ? (
             <Spinner />
           ) : filteredPets.length === 0 ? (
@@ -240,7 +238,6 @@ const SearchPets = () => {
                 ))}
               </Row>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="browse-pagination">
                   <button
@@ -280,8 +277,9 @@ const SearchPets = () => {
               )}
             </>
           )}
-        </section>
+        </main>
       </div>
+
       <Footer />
     </div>
   );
