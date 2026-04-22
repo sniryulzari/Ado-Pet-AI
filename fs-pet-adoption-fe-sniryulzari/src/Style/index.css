@@ -1906,13 +1906,13 @@ label {
   align-items: flex-start;
   gap: 2rem;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 1.5rem 2rem;
+  padding: 0 1rem 2rem;
 }
 
 .browse-sidebar {
-  width: 240px;
+  width: 280px;
   flex-shrink: 0;
   background: #f8f8fc;
   border: 1px solid rgba(57, 61, 114, 0.12);
@@ -2084,6 +2084,7 @@ label {
   font-family: 'MikadoBold';
   font-size: 0.8rem;
   color: #ff4880;
+  margin-top: 1rem;
   background: transparent;
   border: 1px solid #ff4880;
   border-radius: 20px;
@@ -2211,6 +2212,29 @@ label {
   padding: 0;
   text-decoration: underline;
 }
+
+/* Infinite scroll */
+.browse-infinite-footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+}
+
+.browse-sentinel {
+  height: 1px;
+}
+
+.browse-infinite-end {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: #858687;
+}
+
+.browse-infinite-end strong {
+  color: #393d72;
+}
+
+[data-theme="dark"] .browse-infinite-end        { color: var(--text-secondary); }
+[data-theme="dark"] .browse-infinite-end strong { color: var(--text-primary); }
 
 /* Pagination */
 .browse-pagination {

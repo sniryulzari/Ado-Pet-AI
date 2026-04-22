@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { FaDog, FaCat, FaHorse } from "react-icons/fa";
@@ -27,23 +27,10 @@ const TYPE_OPTIONS = [
   { label: "Tiger",   Icon: GiTigerHead, color: "#ffae00" },
 ];
 
-function getPageNumbers(current, total) {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const set = new Set([1, total, current]);
-  if (current > 1) set.add(current - 1);
-  if (current < total) set.add(current + 1);
-  const sorted = [...set].sort((a, b) => a - b);
-  const result = [];
-  for (let i = 0; i < sorted.length; i++) {
-    if (i > 0 && sorted[i] - sorted[i - 1] > 1) result.push("…");
-    result.push(sorted[i]);
-  }
-  return result;
-}
-
 const SearchPets = () => {
   const [allPets, setAllPets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(PETS_PER_PAGE);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [filters, setFilters] = useState({
@@ -53,9 +40,8 @@ const SearchPets = () => {
     minHeight: searchParams.get("minHeight") ?? "",
     maxHeight: searchParams.get("maxHeight") ?? "",
   });
-  const [page, setPage] = useState(Math.max(1, Number(searchParams.get("page")) || 1));
 
-  const gridRef = useRef(null);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
     searchPets({})
@@ -64,6 +50,7 @@ const SearchPets = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Persist filters to URL
   useEffect(() => {
     const params = {};
     if (filters.name)      params.name      = filters.name;
@@ -71,9 +58,8 @@ const SearchPets = () => {
     if (filters.status)    params.status    = filters.status;
     if (filters.minHeight) params.minHeight = filters.minHeight;
     if (filters.maxHeight) params.maxHeight = filters.maxHeight;
-    if (page > 1)          params.page      = String(page);
     setSearchParams(params, { replace: true });
-  }, [filters, page]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredPets = useMemo(() => {
     const nameQ = filters.name.trim().toLowerCase();
@@ -90,24 +76,33 @@ const SearchPets = () => {
     });
   }, [allPets, filters]);
 
-  const totalPages    = Math.max(1, Math.ceil(filteredPets.length / PETS_PER_PAGE));
-  const safePage      = Math.min(page, totalPages);
-  const startIndex    = (safePage - 1) * PETS_PER_PAGE;
-  const paginatedPets = filteredPets.slice(startIndex, startIndex + PETS_PER_PAGE);
+  const visiblePets = filteredPets.slice(0, visibleCount);
+  const hasMore     = visibleCount < filteredPets.length;
+
+  // IntersectionObserver — load more when sentinel enters viewport
+  const loadMore = useCallback(() => {
+    setVisibleCount((prev) => prev + PETS_PER_PAGE);
+  }, []);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) loadMore(); },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore, hasMore]);
 
   function updateFilter(key, value) {
     setFilters((prev) => ({ ...prev, [key]: value }));
-    setPage(1);
+    setVisibleCount(PETS_PER_PAGE);
   }
 
   function clearFilters() {
     setFilters(INITIAL_FILTERS);
-    setPage(1);
-  }
-
-  function handlePageChange(newPage) {
-    setPage(newPage);
-    setTimeout(() => gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    setVisibleCount(PETS_PER_PAGE);
   }
 
   const hasActiveFilters =
@@ -130,10 +125,10 @@ const SearchPets = () => {
   function removeChip(key) {
     if (key === "height") {
       setFilters((prev) => ({ ...prev, minHeight: "", maxHeight: "" }));
+      setVisibleCount(PETS_PER_PAGE);
     } else {
       updateFilter(key, "");
     }
-    setPage(1);
   }
 
   return (
@@ -236,7 +231,7 @@ const SearchPets = () => {
         </aside>
 
         {/* ── Main grid area ── */}
-        <main ref={gridRef} className="browse-main">
+        <main className="browse-main">
           {/* Active filter chips */}
           {activeChips.length > 0 && (
             <div className="browse-chips">
@@ -274,51 +269,24 @@ const SearchPets = () => {
             </div>
           ) : (
             <>
-              <Row xs={1} md={2} lg={3} className="search-pet-results g-4">
-                {paginatedPets.map((pet) => (
+              <Row xs={1} md={2} xl={3} className="search-pet-results g-4">
+                {visiblePets.map((pet) => (
                   <Col key={pet._id} className="pet-card-result">
                     <SearchPetCard {...pet} id={pet._id} />
                   </Col>
                 ))}
               </Row>
 
-              {totalPages > 1 && (
-                <div className="browse-pagination">
-                  <button
-                    className="browse-page-btn browse-page-nav"
-                    onClick={() => handlePageChange(safePage - 1)}
-                    disabled={safePage <= 1}
-                  >
-                    ← Prev
-                  </button>
-
-                  {getPageNumbers(safePage, totalPages).map((item, idx) =>
-                    item === "…" ? (
-                      <span key={`ellipsis-${idx}`} className="browse-page-ellipsis">…</span>
-                    ) : (
-                      <button
-                        key={item}
-                        className={`browse-page-btn${item === safePage ? " active" : ""}`}
-                        onClick={() => handlePageChange(item)}
-                      >
-                        {item}
-                      </button>
-                    )
-                  )}
-
-                  <button
-                    className="browse-page-btn browse-page-nav"
-                    onClick={() => handlePageChange(safePage + 1)}
-                    disabled={safePage >= totalPages}
-                  >
-                    Next →
-                  </button>
-
-                  <span className="browse-page-indicator">
-                    Page {safePage} of {totalPages}
-                  </span>
-                </div>
-              )}
+              {/* Sentinel + status */}
+              <div className="browse-infinite-footer">
+                {hasMore ? (
+                  <div ref={sentinelRef} className="browse-sentinel" aria-hidden="true" />
+                ) : (
+                  <p className="browse-infinite-end">
+                    Showing all <strong>{filteredPets.length}</strong> pet{filteredPets.length !== 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
             </>
           )}
         </main>
