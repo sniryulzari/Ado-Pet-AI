@@ -99,10 +99,12 @@ export default function AdminVisitsList() {
                       <span className={`visit-card__status ${meta.cls}`}>{meta.icon} {v.status}</span>
                     </td>
                     <td>
-                      {v.status === "pending" && (
+                      {v.status !== "cancelled" && (
                         <div className="admin-visits-actions">
-                          <button className="admin-visit-confirm-btn" onClick={() => handleStatus(v._id, "confirmed")}>Confirm</button>
-                          <button className="admin-visit-cancel-btn"  onClick={() => handleStatus(v._id, "cancelled")}>Cancel</button>
+                          {v.status === "pending" && (
+                            <button className="admin-visit-confirm-btn" onClick={() => handleStatus(v._id, "confirmed")}>Confirm</button>
+                          )}
+                          <button className="admin-visit-cancel-btn" onClick={() => handleStatus(v._id, "cancelled")}>Cancel</button>
                         </div>
                       )}
                     </td>

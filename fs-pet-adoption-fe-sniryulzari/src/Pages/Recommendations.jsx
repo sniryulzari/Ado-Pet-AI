@@ -61,7 +61,7 @@ export default function Recommendations() {
           <button className="rec-login-btn" onClick={() => navigate("/search")}>Browse Pets</button>
         </div>
       ) : (
-        <div className="search-grid">
+        <div className="recommendations-grid">
           {pets.map((pet, i) => (
             <SearchPetCard
               key={pet._id}

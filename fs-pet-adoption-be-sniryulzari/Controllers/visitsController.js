@@ -1,5 +1,5 @@
 const { createVisitModel, getMyVisitsModel, cancelVisitModel, getAllVisitsModel, updateVisitStatusModel } = require("../Models/visitsModel");
-const { sendVisitConfirmationEmail } = require("../utils/emailService");
+const { sendVisitConfirmationEmail, sendVisitCancellationEmail } = require("../utils/emailService");
 
 const VALID_TIME_SLOTS = ["Morning (9:00–12:00)", "Afternoon (12:00–16:00)", "Evening (16:00–19:00)"];
 
@@ -61,25 +61,38 @@ async function updateVisitStatus(req, res) {
     if (!visit) return res.status(404).send("Visit not found");
     res.send(visit);
 
-    if (status === "confirmed") {
+    if (status === "confirmed" || status === "cancelled") {
       try {
         const user = visit.userId;
         const pet  = visit.petId;
         if (user && pet) {
-          await sendVisitConfirmationEmail({
-            toEmail:     user.email,
-            userName:    user.firstName,
-            petName:     pet.name,
-            petType:     pet.type,
-            petBreed:    pet.breed,
-            petImageUrl: pet.imageUrl,
-            date:        visit.date,
-            timeSlot:    visit.timeSlot,
-            notes:       visit.notes || "",
-          });
+          if (status === "confirmed") {
+            await sendVisitConfirmationEmail({
+              toEmail:     user.email,
+              userName:    user.firstName,
+              petName:     pet.name,
+              petType:     pet.type,
+              petBreed:    pet.breed,
+              petImageUrl: pet.imageUrl,
+              date:        visit.date,
+              timeSlot:    visit.timeSlot,
+              notes:       visit.notes || "",
+            });
+          } else {
+            await sendVisitCancellationEmail({
+              toEmail:     user.email,
+              userName:    user.firstName,
+              petName:     pet.name,
+              petType:     pet.type,
+              petBreed:    pet.breed,
+              petImageUrl: pet.imageUrl,
+              date:        visit.date,
+              timeSlot:    visit.timeSlot,
+            });
+          }
         }
       } catch (emailErr) {
-        console.error("Visit confirmation email failed:", emailErr.message);
+        console.error("Visit status email failed:", emailErr.message);
       }
     }
   } catch (err) {

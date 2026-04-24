@@ -570,4 +570,189 @@ async function sendVisitConfirmationEmail({ toEmail, userName, petName, petType,
   await apiInstance.sendTransacEmail(sendSmtpEmail);
 }
 
-module.exports = { sendPasswordResetEmail, sendAdoptionConfirmationEmail, sendVisitConfirmationEmail };
+function buildVisitCancellationHtml({ userName, petName, petType, petBreed, petImageUrl, date, timeSlot, frontendUrl }) {
+  const formattedDate = new Date(date).toLocaleDateString("en-GB", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric",
+  });
+
+  const petImageSection = petImageUrl
+    ? `<tr>
+        <td align="center" style="padding: 0 40px 28px;">
+          <div style="position:relative;display:inline-block;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
+            <img src="${petImageUrl}" alt="${petName}"
+              style="width:100%;max-width:480px;height:240px;object-fit:cover;display:block;filter:grayscale(20%);" />
+            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.6));padding:16px 20px 14px;">
+              <span style="color:#fff;font-size:20px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,0.4);">${petName} 🐾</span>
+            </div>
+          </div>
+        </td>
+      </tr>`
+    : "";
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visit Cancelled — ${petName}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5efe7;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5efe7;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+          style="max-width:600px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12);">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background:linear-gradient(135deg,#c0392b 0%,#e74c3c 100%);padding:44px 40px 36px;">
+              <div style="font-size:52px;margin-bottom:8px;line-height:1;">😔</div>
+              <h1 style="margin:0 0 6px;font-size:36px;font-weight:900;color:#ffffff;letter-spacing:1px;">
+                Visit Cancelled
+              </h1>
+              <p style="margin:0;font-size:16px;color:rgba(255,255,255,0.92);font-weight:600;">
+                Your visit with ${petName} has been cancelled
+              </p>
+              <div style="margin-top:14px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.65);">
+                Ado-Pet
+              </div>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding:36px 40px 20px;">
+              <h2 style="margin:0 0 12px;font-size:22px;color:#393d72;font-weight:900;">
+                Hey ${userName},
+              </h2>
+              <p style="margin:0;font-size:15px;color:#555;line-height:1.8;">
+                We're sorry to let you know that your scheduled visit with
+                <strong style="color:#393d72;">${petName}</strong> has been cancelled by our team.
+                We apologise for any inconvenience — but don't worry, you can easily book a new time that works for you!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Cancelled visit details -->
+          <tr>
+            <td style="padding:0 40px 28px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                style="background:linear-gradient(135deg,#fdf0f0 0%,#fff5f5 100%);border-radius:16px;overflow:hidden;border-left:5px solid #e74c3c;">
+                <tr>
+                  <td style="padding:18px 24px 12px;border-bottom:1px solid rgba(231,76,60,0.15);">
+                    <p style="margin:0 0 3px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e74c3c;">❌ Cancelled Date</p>
+                    <p style="margin:0;font-size:18px;font-weight:900;color:#393d72;text-decoration:line-through;opacity:0.7;">${formattedDate}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 24px 12px;border-bottom:1px solid rgba(231,76,60,0.15);">
+                    <p style="margin:0 0 3px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e74c3c;">🕐 Time Slot</p>
+                    <p style="margin:0;font-size:18px;font-weight:900;color:#393d72;text-decoration:line-through;opacity:0.7;">${timeSlot}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 24px 18px;">
+                    <p style="margin:0 0 3px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e74c3c;">🐾 Pet</p>
+                    <p style="margin:0;font-size:18px;font-weight:900;color:#393d72;">${petName}</p>
+                    <p style="margin:4px 0 0;font-size:13px;color:#858687;">
+                      <span style="background:#393d72;color:#fff;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;">${petType}</span>
+                      &nbsp; ${petBreed}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          ${petImageSection}
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 40px;"><hr style="border:none;border-top:2px dashed #f0e8df;margin:0;" /></td>
+          </tr>
+
+          <!-- Reschedule encouragement -->
+          <tr>
+            <td style="padding:32px 40px 20px;">
+              <div style="display:inline-block;background:#393d72;color:#fff;
+                font-size:11px;font-weight:700;letter-spacing:1.5px;
+                text-transform:uppercase;border-radius:20px;padding:5px 16px;margin-bottom:16px;">
+                💛 ${petName} is still waiting!
+              </div>
+              <p style="margin:0;font-size:15px;color:#555;line-height:1.8;">
+                The good news? <strong style="color:#393d72;">${petName}</strong> would still love to meet you!
+                Pick a new date and time that works for you — we'd be happy to welcome you to our shelter.
+              </p>
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td align="center" style="background-color:#393d72;padding:36px 40px;">
+              <h3 style="margin:0 0 6px;font-size:20px;color:#ffffff;font-weight:900;">
+                Ready to reschedule?
+              </h3>
+              <p style="margin:0 0 22px;font-size:14px;color:rgba(255,255,255,0.75);">
+                Head over to ${petName}'s profile and book a new visit — it only takes a minute.
+              </p>
+              <a href="${frontendUrl}/search"
+                style="display:inline-block;background:#ff4880;color:#ffffff;
+                  text-decoration:none;font-size:13px;font-weight:700;
+                  text-transform:uppercase;letter-spacing:1px;
+                  border-radius:24px;padding:14px 40px;margin-right:10px;
+                  box-shadow:0 4px 14px rgba(255,72,128,0.4);">
+                Find ${petName} →
+              </a>
+              <a href="${frontendUrl}/contact"
+                style="display:inline-block;background:rgba(255,255,255,0.15);color:#ffffff;
+                  text-decoration:none;font-size:13px;font-weight:700;
+                  text-transform:uppercase;letter-spacing:1px;
+                  border-radius:24px;padding:14px 36px;">
+                Contact Us
+              </a>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding:24px 40px;background-color:#f5efe7;">
+              <p style="margin:0 0 4px;font-size:13px;color:#393d72;font-weight:700;">
+                🐾 Ado-Pet Adoption Centre
+              </p>
+              <p style="margin:0;font-size:12px;color:#858687;">
+                Menachem Begin 121, Tel Aviv, 61st Floor &nbsp;|&nbsp;
+                <a href="mailto:Ado-Pet@PetLover.com" style="color:#ff4880;text-decoration:none;">
+                  Ado-Pet@PetLover.com
+                </a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+}
+
+async function sendVisitCancellationEmail({ toEmail, userName, petName, petType, petBreed, petImageUrl, date, timeSlot }) {
+  if (!process.env.BREVO_API_KEY) {
+    console.warn("emailService: BREVO_API_KEY not configured — skipping cancellation email");
+    return;
+  }
+
+  const apiInstance = getBrevoClient();
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.to = [{ email: toEmail }];
+  sendSmtpEmail.sender = { email: process.env.EMAIL_FROM, name: "Ado-Pet" };
+  sendSmtpEmail.subject = `Your visit with ${petName} has been cancelled 😔`;
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  sendSmtpEmail.htmlContent = buildVisitCancellationHtml({ userName, petName, petType, petBreed, petImageUrl, date, timeSlot, frontendUrl });
+
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
+}
+
+module.exports = { sendPasswordResetEmail, sendAdoptionConfirmationEmail, sendVisitConfirmationEmail, sendVisitCancellationEmail };

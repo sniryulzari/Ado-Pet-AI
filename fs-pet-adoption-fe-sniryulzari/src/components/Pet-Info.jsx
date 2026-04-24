@@ -9,6 +9,7 @@ import { getUserInfo, savePet, unsavePet, adoptPet, fosterPet, returnPet } from 
 import { toast } from "../utils/toast";
 import ScheduleVisitModal from "./ScheduleVisitModal";
 import PetReviews from "./PetReviews";
+import LoginModal from "./LoginModal";
 
 function PetCard() {
   const [pet, setPet]               = useState(null);
@@ -19,9 +20,10 @@ function PetCard() {
   const [shareOpen, setShareOpen]         = useState(false);
   const [instagramOpen, setInstagramOpen] = useState(false);
   const [facebookOpen, setFacebookOpen]   = useState(false);
-  const [visitModalOpen, setVisitModalOpen] = useState(false);
-  const [currentUserId, setCurrentUserId]   = useState(null);
-  const [canReview, setCanReview]           = useState(false);
+  const [visitModalOpen, setVisitModalOpen]   = useState(false);
+  const [showLoginModal, setShowLoginModal]   = useState(false);
+  const [currentUserId, setCurrentUserId]     = useState(null);
+  const [canReview, setCanReview]             = useState(false);
 
   const shareRef = useRef(null);
   const { isLoggedIn } = useContext(UsersContext);
@@ -231,15 +233,12 @@ function PetCard() {
 
   /* ── Action panel logic ───────────────────────────────────── */
   function ActionPanel() {
-    // Not logged in: show locked buttons
+    // Not logged in: show single login button
     if (!isLoggedIn) {
       return (
         <div className="action-panel">
-          <button className="action-btn-adopt" onClick={() => navigate("/")}>
-            <FaPaw size="0.9em" /> Login to Adopt
-          </button>
-          <button className="action-btn-foster" onClick={() => navigate("/")}>
-            <FaHome size="0.9em" /> Login to Foster
+          <button className="action-btn-adopt" onClick={() => setShowLoginModal(true)}>
+            <FaPaw size="0.9em" /> Login to Adopt or Foster
           </button>
           <p className="action-panel-note">By adopting you give a pet a forever home ❤️</p>
         </div>
@@ -458,6 +457,12 @@ function PetCard() {
           onClose={() => setVisitModalOpen(false)}
         />
       )}
+
+      <LoginModal
+        loginShow={showLoginModal}
+        handleLoginClose={() => setShowLoginModal(false)}
+        handleShow={() => {}}
+      />
 
       <PetReviews
         petId={petId}

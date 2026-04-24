@@ -6404,6 +6404,12 @@ label {
 }
 .rec-login-btn:hover { opacity: 0.85; }
 
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
 /* ── Schedule Visit Modal ───────────────────────────────────────── */
 .visit-modal {
   background: #fff;
