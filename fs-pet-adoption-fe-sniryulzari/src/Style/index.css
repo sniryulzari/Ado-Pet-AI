@@ -5493,6 +5493,9 @@ label {
 [data-theme="dark"] .browse-filter-input   { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
 [data-theme="dark"] .browse-filter-select  { background-color: var(--bg-input); color: var(--text-body); border-color: var(--border-color); }
 [data-theme="dark"] .browse-filter-label   { color: var(--text-secondary); }
+[data-theme="dark"] .browse-filter-toggle  { background: var(--bg-card); color: var(--text-primary); border-color: var(--border-color); }
+[data-theme="dark"] .browse-filter-toggle:hover { background: var(--bg-secondary); }
+[data-theme="dark"] .browse-filter-toggle--active { background: #00a277; color: #fff; border-color: #00a277; }
 [data-theme="dark"] .browse-type-list-btn  { color: var(--text-body); }
 [data-theme="dark"] .browse-type-list-btn:hover { background-color: rgba(255,255,255,0.07); border-color: var(--border-color); }
 [data-theme="dark"] .browse-type-list-btn.active { background-color: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
@@ -6267,6 +6270,9 @@ label {
   }
 }
 
+/* ── Browse filter toggle — hidden on desktop ───────────────── */
+.browse-filter-toggle { display: none; }
+
 /* ── Browse page — mobile ───────────────────────────────────── */
 @media (max-width: 768px) {
   .browse-layout {
@@ -6275,12 +6281,57 @@ label {
     gap: 1rem;
   }
 
+  /* Toggle button */
+  .browse-filter-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.7rem 1.25rem;
+    background: #fff;
+    color: #393d72;
+    border: 2px solid #393d72;
+    border-radius: 24px;
+    font-family: 'MikadoBold', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    order: 0;
+  }
+  .browse-filter-toggle:hover { background: rgba(57,61,114,0.07); }
+  .browse-filter-toggle--active {
+    background: #00a277;
+    color: #fff;
+    border-color: #00a277;
+  }
+  .browse-filter-toggle--active:hover { background: #008f68; border-color: #008f68; }
+
+  .browse-filter-toggle__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #00a277;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.7rem;
+    font-family: 'MikadoBold', sans-serif;
+  }
+
+  /* Sidebar — hidden by default on mobile, shown when toggled */
   .browse-sidebar {
+    display: none;
     width: 100%;
     position: static;
     border-radius: 14px;
     padding: 1rem;
+    order: 1;
   }
+  .browse-sidebar--open { display: block; }
+
+  .browse-main { order: 2; }
 
   .browse-type-list {
     flex-direction: row;
@@ -7166,4 +7217,14 @@ label {
   .visit-card__img { width: 100%; height: 160px; }
   .pet-card-top-bar__actions { gap: 0.3rem; }
   .compare-btn { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
+
+  /* Pet details — center action buttons on mobile */
+  .card-right {
+    align-items: center;
+    width: 100%;
+  }
+  .action-panel {
+    width: 100%;
+    max-width: 420px;
+  }
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
-import { FaDog, FaCat, FaHorse } from "react-icons/fa";
+import { FaDog, FaCat, FaHorse, FaFilter, FaTimes } from "react-icons/fa";
 import { GiDolphin, GiTigerHead } from "react-icons/gi";
 import Spinner from "../components/Spinner";
 import SearchPetCard from "../components/Search-PetCard";
@@ -32,6 +32,8 @@ const SearchPets = () => {
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(PETS_PER_PAGE);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     name:      searchParams.get("name")      ?? "",
@@ -139,8 +141,21 @@ const SearchPets = () => {
 
       <div className="browse-layout">
 
+        {/* ── Mobile filter toggle (hidden on desktop via CSS) ── */}
+        <button
+          className={`browse-filter-toggle${activeChips.length > 0 ? " browse-filter-toggle--active" : ""}`}
+          onClick={() => setFiltersOpen((o) => !o)}
+          aria-expanded={filtersOpen}
+        >
+          {filtersOpen ? <FaTimes size="0.9em" /> : <FaFilter size="0.9em" />}
+          {filtersOpen ? "Hide Filters" : "Filters"}
+          {activeChips.length > 0 && (
+            <span className="browse-filter-toggle__badge">{activeChips.length}</span>
+          )}
+        </button>
+
         {/* ── Sidebar ── */}
-        <aside className="browse-sidebar">
+        <aside className={`browse-sidebar${filtersOpen ? " browse-sidebar--open" : ""}`}>
           <h2 className="browse-sidebar-heading">Filters</h2>
 
           {/* Type */}
